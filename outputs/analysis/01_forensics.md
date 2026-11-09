@@ -188,7 +188,7 @@ Merges and links that string matching cannot find, from knowledge of the vendors
 | 130 Papertrail Inc; 311 Solarwinds, Inc | link: SolarWinds (shared parent) | Papertrail is a SolarWinds product |
 | 26 Linkedin Ireland Limited; 81 Microsoft Ireland Operations Limited; 125 Npm Inc | link: Microsoft (shared parent) | LinkedIn and npm (through GitHub) are Microsoft companies |
 | 95 Icici Lombard Gic Ltd; 143 Cici Prudential Life Insurance Co. Ltd. | link: ICICI group (shared parent) | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
-| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | link: Sodexo and Pluxee (same lineage) | Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10) |
+| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | link: Sodexo and Pluxee (same lineage) | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10) |
 
 Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendors (383 if the proposed merge is reversed):
 
@@ -219,7 +219,7 @@ Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendo
 | GRT Hotels & Resorts | same brand, separate entities | 171, 190 | $3,437 |
 | DHL | same brand, separate entities | 303, 336 | $310 |
 
-- Implication for classification: merged rows are classified once, as one vendor; the proposed 4i merge is treated the same way until web verification confirms or reverses it. Linked vendors are classified one by one, and the link lets a recommendation name the shared agreement or brand (Slack inside the Salesforce renewal, one Bupa or Apple relationship across countries). Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
+- Implication for classification: the sheet is filled per row, so all 386 rows get their own department, description and recommendation (decision of step 2c, `docs/decisions.md`). Merges and links serve only ranking and savings roll-ups. Rows in a merge or link group carry the same recommendation, and each rationale names the group (Slack inside the Salesforce renewal, one Bupa relationship across countries); the proposed 4i merge counts as a group until web verification confirms or reverses it. Two shared-parent groups whose rows are different products (Amazon, Microsoft) are an open point in `docs/decisions.md`. Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
 - Implication for the memo: the vendor count is 382 (383 if the 4i merge is reversed), not 386. Navan, already second, grows from $357,984 to $415,913 across its old and new names. A linked group can be quoted as one figure where one negotiation covers it (Telefónica $96,037, HR Solution International $87,810), but its vendors stay separate rows.
 
 ## 7. Payee types
@@ -410,7 +410,7 @@ Payees over $5,000 whose function the name does not show:
 
 ## 9. What this means for classification
 
-- Classify 386 rows but treat the 4 merge groups (one of them proposed) as single vendors, so each gets one department, one description and one recommendation that names the entity to keep; the 15 link groups stay separate vendors whose rationales can name the shared agreement.
+- Classify all 386 rows, each with its own department, description and recommendation. Rows in one of the 4 merge groups (one of them proposed) or 15 link groups carry the same recommendation, and each rationale names the group; merges and links otherwise serve only ranking and savings roll-ups.
 - Set confidence low for the 69 payees whose function the name does not show and for the six individuals; say so in the description rather than guessing.
 - Use the Croatian glossary terms surfaced here (obrt, vl., grad, osiguranje, medicina rada, prijevoz, dostava, ugostiteljstvo, savjetovanje, udruga) so Croatian descriptions are translations.
 - Statutory, government and customer-mandated payees take Optimize with the non-discretionary rationale.

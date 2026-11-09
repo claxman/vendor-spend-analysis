@@ -41,7 +41,7 @@ Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in secti
 4. **Tags and truncation marks** moved out of the display name and into `name_notes`.
 5. **Casing.** The source Title Cased every name, so acronyms, legal forms and brands are restored: the acronyms named in prompt 6 (BDO, DHL, HP, SS&C, TOG, GPT, CBRE, NCC, HEP, plus PricewaterhouseCoopers and LaSalle), other acronyms in the names, legal forms (LLP, LLC, GmbH; d.o.o. and d.d. in lower case as written in Croatia), brand casing (HubSpot, LinkedIn, DocuSign) and possessives (Kat's). AWS is the canonical name of the merged Amazon Web Services group; PwC and JLL are the canonical names of PricewaterhouseCoopers LLP and Jones Lang LaSalle.
 6. **Matching key** (`match_key`): the clean name with accents, legal forms, geography, stop words and the Supplier tag removed. It is used for matching only and never displayed.
-7. **Entity merge map.** 4 merge groups (1 proposed) covering 8 rows; every other row is its own group, and `group_id` is the vendor_id of the group's largest row. 15 link groups tie related vendors together without merging them (`link_group`).
+7. **Entity merge map.** 4 merge groups (1 proposed) covering 8 rows; every other row is its own group, and `group_id` is the vendor_id of the group's largest row. 15 link groups tie related vendors together without merging them (`link_group`). Both serve only ranking and savings roll-ups: every row is still classified on its own, and the rows of a group share one recommendation (decision of step 2c).
 
 ## 3. Name changes
 
@@ -115,7 +115,7 @@ Casing changes (205 rule applications on 183 rows) are listed in full in `qa/nam
 
 ## 4. Entity merge map
 
-Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). Where entities share a parent or brand but supply different products or contracts, or share a lineage, the vendors stay separate and are tied together through `link_group`.
+Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). Where entities share a parent or brand but supply different products or contracts, or share a lineage, the vendors stay separate and are tied together through `link_group`. Whatever the grouping, the sheet is filled per row: all rows get their own department, description and recommendation, and the rows of a merge or link group share one recommendation whose rationale names the group (decision of step 2c).
 
 386 rows become 382 vendors (383 if the proposed merge is reversed).
 
@@ -140,7 +140,7 @@ Linked vendors stay separate rows and separate vendors. The combined spend is sh
 | HR Solution International | same brand, separate entities | V0016 HR Solution International GmbH; V0090 Hrsolution International AG | $87,810 | a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them |
 | Microsoft | shared parent | V0026 LinkedIn Ireland Limited; V0081 Microsoft Ireland Operations Limited; V0125 npm Inc | $68,929 | LinkedIn and npm (through GitHub) are Microsoft companies |
 | Bupa | same brand, separate entities | V0047 Bupa; V0071 Bupa Australia | $35,263 | two Bupa entities with separate insurance contracts, one of them Bupa Australia |
-| Sodexo and Pluxee | same lineage | V0054 Sodexo SVC India Private Limited; V0128 Pluxee India Private Limited | $21,804 | Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10) |
+| Sodexo and Pluxee | same lineage | V0054 Sodexo SVC India Private Limited; V0128 Pluxee India Private Limited | $21,804 | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10) |
 | Acclime | same brand, separate entities | V0099 Acclime Corporate Services; V0105 Acclime USA, Inc | $10,408 | Acclime's corporate services entity and its US entity, presumably separate engagements |
 | ICICI group | shared parent | V0095 ICICI Lombard GIC Ltd; V0143 Cici Prudential Life Insurance Co. Ltd. | $9,167 | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
 | Apple | same brand, separate entities | V0123 Apple Retail UK Ltd; V0172 Apple Pty Ltd; V0175 Apple Distribution International Ltd; V0229 Apple - AMER | $8,256 | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |

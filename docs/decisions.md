@@ -2,6 +2,44 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: decisions confirmed (prompt 8, step 2c)
+
+### 1. The step 2b proposals are confirmed
+
+- The eight links that followed from the merge policy stand: Bupa, Apple, the Amazon marketplaces, HR Solution International, Acclime, DHL, Telefónica and GRT Hotels & Resorts.
+- AWS stays merged.
+- Student labour is Optimize (addressable, 0% savings assumption).
+
+### 2. Sodexo and Pluxee: the web verification decides
+
+If the Sodexo SVC India invoices (`V0054`) are meal cards billed under Pluxee India's former name, it is a rename and the two rows become a merge. If they are catering, the link stands. Until the verification, the two rows stay linked.
+
+### 3. The sheet deliverable is per row
+
+All 386 original rows get their own department, description and recommendation. Merges and links exist only for ranking and savings roll-ups. Rows in a merge or link group carry the same recommendation and a rationale that names the group.
+
+In practice:
+
+- `outputs/vendors_classified.csv` has exactly 386 rows, one per source row, keyed by `vendor_id`. It fills the sheet's Department, 1-line Description and Suggestions columns for every row.
+- Department, description and cluster are set row by row, so rows of one group can differ where the rows themselves differ (Slack is SaaS while Salesforce is Sales).
+- The recommendation is set once per group and repeated on every row of it. Each row's rationale names the group, so a reader of a single row sees the connection ("one of two Navan entities", "part of the Bupa link group").
+- The under-$1,000 rule is measured on the group total, so all rows of a group land on the same side of it.
+- Rankings use the merged view (`canonical_vendor`); savings roll-ups use the cost clusters and, where one negotiation covers a link group, the group total.
+- The QA script checks that the rows of every group share one recommendation and that each of their rationales names the group.
+
+### 4. Open point: two link groups where one recommendation does not fit
+
+Applying point 3 to every link group meets two shared-parent groups whose rows are different products with different levers under `docs/recommendation_rules.md`:
+
+| Link group | Rows | What the rules give each row on its own |
+|---|---|---|
+| Amazon | AWS (`V0014`, `V0103`, merged); Amazon.co.uk (`V0203`); Amazon (Aus) (`V0291`) | AWS: Optimize (named in the Optimize list). The marketplaces: Terminate (consumer retail purchases through AP) |
+| Microsoft | LinkedIn (`V0026`); Microsoft Ireland (`V0081`, Microsoft 365 in the taxonomy); npm (`V0125`) | LinkedIn: Optimize (seat review). Microsoft 365: Consolidate (two productivity suites). npm: a developer tool, decided on its own |
+
+Sodexo and Pluxee would join them if the link stands, as on-site catering and meal cards are different services.
+
+Proposed resolution, awaiting confirmation: one shared recommendation for every merge and for every link whose rows supply the same kind of thing (same-brand links, and the shared-parent links Salesforce with Slack, Atlassian with Trello, SolarWinds with Papertrail, and the two ICICI insurers). Shared-parent and same-lineage links whose rows are different products (Amazon, Microsoft, and Sodexo and Pluxee if the link stands) keep row-level recommendations, and their rationales still name the group.
+
 ## 2026-11-10: rule decisions (prompt 7, step 2b)
 
 ### 1. Department and cluster answer different questions

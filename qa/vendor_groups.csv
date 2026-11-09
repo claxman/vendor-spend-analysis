@@ -51,7 +51,7 @@ V0050,50,Mightyhive Ltd,MightyHive Ltd,mightyhive,V0050,MightyHive Ltd,keep,sing
 V0051,51,Cedar Recruitment Ltd,Cedar Recruitment Ltd,cedar recruitment,V0051,Cedar Recruitment Ltd,keep,single entity,,,,
 V0052,52,Eurofast International Ltd-Greec,Eurofast International Ltd,eurofast,V0052,Eurofast International Ltd,keep,single entity,,,,
 V0053,53,Hrvatski Telekom D.D.,Hrvatski Telekom d.d.,hrvatski telekom,V0053,Hrvatski Telekom d.d.,keep,different vendors,,,,share only Hrvatski (Croatian)
-V0054,54,Sodexo Svc India Private Limited,Sodexo SVC India Private Limited,sodexo svc,V0054,Sodexo SVC India Private Limited,keep,linked: same lineage,,Sodexo and Pluxee,same lineage,Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10)
+V0054,54,Sodexo Svc India Private Limited,Sodexo SVC India Private Limited,sodexo svc,V0054,Sodexo SVC India Private Limited,keep,linked: same lineage,,Sodexo and Pluxee,same lineage,"same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10)"
 V0055,55,Peakon Aps,Peakon ApS,peakon,V0055,Peakon ApS,keep,single entity,,,,
 V0056,56,Plus Your Business Ltd,Plus Your Business Ltd,plus your business,V0056,Plus Your Business Ltd,keep,single entity,,,,
 V0057,57,Benefit Systems D.O.O.,Benefit Systems d.o.o.,benefit systems,V0057,Benefit Systems d.o.o.,keep,single entity,,,,
@@ -125,7 +125,7 @@ V0124,124,"Kryterion, Inc.","Kryterion, Inc.",kryterion,V0124,"Kryterion, Inc.",
 V0125,125,Npm Inc,npm Inc,npm,V0125,npm Inc,keep,linked: shared parent,,Microsoft,shared parent,LinkedIn and npm (through GitHub) are Microsoft companies
 V0126,126,Pinsent Masons Mpillay Llp,Pinsent Masons MPillay LLP,pinsent masons mpillay,V0126,Pinsent Masons MPillay LLP,keep,single entity,,,,
 V0127,127,Calm Achiever(A Unit Of Mohsin Ali Vakil),Calm Achiever (A Unit Of Mohsin Ali Vakil),calm achiever unit mohsin ali vakil,V0127,Calm Achiever (A Unit Of Mohsin Ali Vakil),keep,single entity,,,,
-V0128,128,Pluxee India Private Limited,Pluxee India Private Limited,pluxee,V0128,Pluxee India Private Limited,keep,linked: same lineage,,Sodexo and Pluxee,same lineage,Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10)
+V0128,128,Pluxee India Private Limited,Pluxee India Private Limited,pluxee,V0128,Pluxee India Private Limited,keep,linked: same lineage,,Sodexo and Pluxee,same lineage,"same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10)"
 V0129,129,Oâ€™Donnell Salzano Lawyers,O'Donnell Salzano Lawyers,o donnell salzano lawyers,V0129,O'Donnell Salzano Lawyers,keep,single entity,,,,
 V0130,130,Papertrail Inc,Papertrail Inc,papertrail,V0130,Papertrail Inc,keep,linked: shared parent,,SolarWinds,shared parent,Papertrail is a SolarWinds product
 V0131,131,Sniper Systems And Solutions Private Limited,Sniper Systems And Solutions Private Limited,sniper systems solutions,V0131,Sniper Systems And Solutions Private Limited,keep,single entity,,,,

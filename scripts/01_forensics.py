@@ -684,12 +684,14 @@ def names_section(na: dict, recs_by_row: dict) -> list[str]:
                  [[g["label"], g["type"], ", ".join(map(str, g["rows"])), money(spend(g["rows"]))]
                   for g in sorted(LINK_GROUPS, key=lambda g: -spend(g["rows"]))])
     out.append("")
-    out.append("- Implication for classification: merged rows are classified once, as one vendor; the proposed 4i merge is "
-               "treated the same way until web verification confirms or reverses it. Linked vendors are classified one by "
-               "one, and the link lets a recommendation name the shared agreement or brand (Slack inside the Salesforce "
-               "renewal, one Bupa or Apple relationship across countries). Same-type vendors that are neither merged nor "
-               "linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the "
-               "classification step.")
+    out.append(f"- Implication for classification: the sheet is filled per row, so all {n} rows get their own department, "
+               "description and recommendation (decision of step 2c, `docs/decisions.md`). Merges and links serve only "
+               "ranking and savings roll-ups. Rows in a merge or link group carry the same recommendation, and each "
+               "rationale names the group (Slack inside the Salesforce renewal, one Bupa relationship across countries); "
+               "the proposed 4i merge counts as a group until web verification confirms or reverses it. Two shared-parent "
+               "groups whose rows are different products (Amazon, Microsoft) are an open point in `docs/decisions.md`. "
+               "Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate "
+               "secretaries) are consolidation questions for the classification step.")
     link_spend = {g["label"]: spend(g["rows"]) for g in LINK_GROUPS}
     out.append(f"- Implication for the memo: the vendor count is {vendors} ({vendors_if_reversed} if the 4i merge is "
                f"reversed), not {n}. Navan, already second, grows from {money(recs_by_row[3]['cost'])} to "
@@ -858,9 +860,10 @@ def rollup_sections(c: dict, flags: list[dict], total: float) -> list[str]:
         "Recruitment agencies", "Job boards and recruiting platforms", "Employer of record, payroll and HR outsourcing")}
     out = ["## 9. What this means for classification", ""]
     out += [
-        f"- Classify {c['n']} rows but treat the {len(MERGE_GROUPS)} merge groups (one of them proposed) as single "
-        "vendors, so each gets one department, one description and one recommendation that names the entity to keep; "
-        f"the {len(LINK_GROUPS)} link groups stay separate vendors whose rationales can name the shared agreement.",
+        f"- Classify all {c['n']} rows, each with its own department, description and recommendation. Rows in one of the "
+        f"{len(MERGE_GROUPS)} merge groups (one of them proposed) or {len(LINK_GROUPS)} link groups carry the same "
+        "recommendation, and each rationale names the group; merges and links otherwise serve only ranking and savings "
+        "roll-ups.",
         f"- Set confidence low for the {unk_n} payees whose function the name does not show and for the six individuals; "
         "say so in the description rather than guessing.",
         "- Use the Croatian glossary terms surfaced here (obrt, vl., grad, osiguranje, medicina rada, prijevoz, dostava, "

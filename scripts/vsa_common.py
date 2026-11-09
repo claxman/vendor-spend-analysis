@@ -338,7 +338,7 @@ LINK_GROUPS = [
     {"label": "GRT Hotels & Resorts", "rows": [171, 190], "type": "same brand, separate entities",
      "reason": "two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts"},
     {"label": "Sodexo and Pluxee", "rows": [54, 128], "type": "same lineage",
-     "reason": "Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10)"},
+     "reason": "same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10)"},
 ]
 
 # Candidate sets from the string search that are reviewed and neither merged nor linked.

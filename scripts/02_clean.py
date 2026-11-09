@@ -390,7 +390,9 @@ def main() -> int:
         "Supplier tag removed. It is used for matching only and never displayed.",
         f"7. **Entity merge map.** {len(MERGE_GROUPS)} merge groups ({len(proposed)} proposed) covering {merge_rows} rows; "
         "every other row is its own group, and `group_id` is the vendor_id of the group's largest row. "
-        f"{len(LINK_GROUPS)} link groups tie related vendors together without merging them (`link_group`).",
+        f"{len(LINK_GROUPS)} link groups tie related vendors together without merging them (`link_group`). Both serve "
+        "only ranking and savings roll-ups: every row is still classified on its own, and the rows of a group share "
+        "one recommendation (decision of step 2c).",
         "",
         "## 3. Name changes",
         "",
@@ -428,7 +430,9 @@ def main() -> int:
               "Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship "
               "under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). "
               "Where entities share a parent or brand but supply different products or contracts, or share a lineage, the "
-              "vendors stay separate and are tied together through `link_group`.", "",
+              "vendors stay separate and are tied together through `link_group`. Whatever the grouping, the sheet is "
+              "filled per row: all rows get their own department, description and recommendation, and the rows of a "
+              "merge or link group share one recommendation whose rationale names the group (decision of step 2c).", "",
               f"{len(recs)} rows become {n_vendors} vendors ({n_if_reversed} if the proposed merge is reversed).", "",
               "### Merges", ""]
     lines += table(["Canonical vendor", "group_id", "Rows", "12-month cost", "Status", "Relationship", "Confidence", "Reason"],

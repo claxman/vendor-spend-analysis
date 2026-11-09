@@ -1,6 +1,6 @@
 # Recommendation rules
 
-Every vendor gets exactly one recommendation from {Terminate, Consolidate, Optimize} and a one-sentence rationale. Rows merged into one vendor in `qa/vendor_groups.csv` get one recommendation for the whole group. A recommendation is a decision label: any savings figure attached to it is computed by a script from the spend data, with its assumption written next to it (`CLAUDE.md`).
+Every row of the sheet, all 386 of them, gets exactly one recommendation from {Terminate, Consolidate, Optimize} and a one-sentence rationale. Rows in a merge or link group in `qa/vendor_groups.csv` carry the same recommendation, and each rationale names the group (see "Merged and linked rows" below). A recommendation is a decision label: any savings figure attached to it is computed by a script from the spend data, with its assumption written next to it (`CLAUDE.md`).
 
 The context is fixed by the brief: the company has been acquired by a remote-first parent that has its own talent, finance and legal functions.
 
@@ -54,7 +54,7 @@ Still classified. Terminate if non-essential; otherwise Optimize with the note "
 
 ## Addressability and savings assumptions
 
-Every vendor carries `is_addressable` (decision of 2026-11-10):
+Every row carries `is_addressable` (decision of 2026-11-10):
 
 - FALSE for statutory payees (taxes, government and municipal fees, regulators and statutory registrations, statutory workers' compensation and occupational health) and for customer-mandated fees, the Telefónica payments included. They are excluded from the savings base.
 - TRUE for everything else, student labour included.
@@ -66,15 +66,24 @@ A savings assumption is the share of addressable spend the savings script counts
 | Student labour (cluster Student labour) | TRUE | 0% | workforce cost, set by the hiring plan, not a vendor action |
 | Statutory payees, customer-mandated fees, Telefónica | FALSE | none: outside the savings base | non-discretionary, excluded from the savings base |
 
+## Merged and linked rows
+
+The sheet is filled per row (decision of 2026-11-10, step 2c): all 386 rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups.
+
+- Rows in one merge or link group carry the same recommendation, decided once for the group.
+- Each of their rationales names the group, for example "one of two Navan entities" or "part of the Bupa link group".
+- Size tests, such as the under-$1,000 rule, use the group total.
+- Open point: the Amazon and Microsoft shared-parent groups mix products these rules treat differently; see `docs/decisions.md`, step 2c, point 4. Their department and description can be set now; their recommendations wait until it is settled.
+
 ## Order of application (approved 2026-11-10)
 
-The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides.
+The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides. For a merge or link group the steps are applied once, to the group.
 
 1. Statutory payee, customer-mandated fee or Telefónica payment: Optimize, not addressable, "non-discretionary, excluded from the savings base"; for Telefónica the rationale adds that rebates would belong against revenue. This comes first so that nothing non-discretionary is terminated or consolidated.
-2. Student labour: Optimize, addressable, 0% savings assumption, rationale "workforce cost, set by the hiring plan, not a vendor action". The label is Claude's reading of the decision, which fixed the rationale and the assumption: with no vendor action, Optimize is the only label that fits.
+2. Student labour: Optimize, addressable, 0% savings assumption, rationale "workforce cost, set by the hiring plan, not a vendor action". Label confirmed 2026-11-10 (step 2c).
 3. Named in the Optimize list (Salesforce, AWS, Navan, the insurance broker, LinkedIn): Optimize. Where the vendor is paid through two entities, the rationale names the one entity to keep.
 4. Unidentified payee: Terminate until identified.
-5. Under $1,000 in 12-month spend, measured on the merged vendor: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
+5. Under $1,000 in 12-month spend, measured on the merge or link group total, or on the row when it is in no group: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
 6. In a Terminate category: Terminate, stating any condition.
 7. The same vendor paid through more than one entity, whether merged or linked as the same brand: Consolidate, naming the entity to keep.
 8. The same function as other vendors: Consolidate, naming the vendor to keep.
@@ -82,4 +91,4 @@ The rules above can point two ways for the same vendor; for example, Navan is pa
 
 ## Writing the rationale
 
-One sentence that names something specific. For Consolidate, it names the vendor or entity to keep; for Optimize, the lever; for Terminate, what makes the vendor redundant or the condition that would. Plain wording, no em dashes, none of the banned phrases from `CLAUDE.md`.
+One sentence that names something specific. For Consolidate, it names the vendor or entity to keep; for Optimize, the lever; for Terminate, what makes the vendor redundant or the condition that would. For a row in a merge or link group, it also names the group. Plain wording, no em dashes, none of the banned phrases from `CLAUDE.md`.

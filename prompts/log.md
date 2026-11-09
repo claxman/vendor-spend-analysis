@@ -97,3 +97,9 @@ Two rule changes before classification: student labour is addressable (is_addres
 
 Commit as "Step 2b: rule decisions".
 ```
+
+## Prompt 8 (2026-11-10)
+
+```text
+Approved on all three: links for the eight groups, AWS stays merged, student labour is Optimize. On Sodexo and Pluxee, let the web verification decide: if the Sodexo SVC India invoices are meal cards under the former name, it is a rename and becomes a merge; if they are catering, the link stands. One requirement to make explicit in docs/decisions.md: the sheet deliverable is per row, so all 386 original rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups. Rows in a merge or link group carry the same recommendation and a rationale that names the group. Commit as "Step 2c: decisions confirmed".
+```
