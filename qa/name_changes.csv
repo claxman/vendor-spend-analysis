@@ -1,0 +1,227 @@
+vendor_id,step,before,after,reason
+V0002,tag,Salesforce Uk Ltd-Uk,Salesforce Uk Ltd,country tag -Uk removed
+V0002,casing,Salesforce Uk Ltd,Salesforce UK Ltd,acronym
+V0003,casing,Navan (Tripactions Inc),Navan (TripActions Inc),brand casing
+V0004,casing,Bdo Llp,Bdo LLP,legal form
+V0004,casing,Bdo LLP,BDO LLP,acronym
+V0005,casing,Tog Uk Properties Limited,TOG Uk Properties Limited,acronym
+V0005,casing,TOG Uk Properties Limited,TOG UK Properties Limited,acronym
+V0006,casing,Cloudcrossing Bvba,Cloudcrossing BVBA,legal form
+V0007,casing,Zagrebtower D.O.O.,Zagrebtower d.o.o.,Croatian legal form written in lower case
+V0009,casing,Weking D.O.O.,Weking d.o.o.,Croatian legal form written in lower case
+V0011,casing,Gpt Space & Co,GPT Space & Co,acronym
+V0013,casing,Rsm Uk Corporate Finance Llp,Rsm Uk Corporate Finance LLP,legal form
+V0013,casing,Rsm Uk Corporate Finance LLP,Rsm UK Corporate Finance LLP,acronym
+V0013,casing,Rsm UK Corporate Finance LLP,RSM UK Corporate Finance LLP,acronym
+V0014,casing,Amazon Web Services Llc,Amazon Web Services LLC,legal form
+V0015,casing,Telefonica Global Services Gmbh,Telefonica Global Services GmbH,legal form
+V0016,casing,Hr Solution International Gmbh,Hr Solution International GmbH,legal form
+V0016,casing,Hr Solution International GmbH,HR Solution International GmbH,acronym
+V0017,casing,4I Advisory Services,4i Advisory Services,brand casing
+V0022,casing,Wework Singapore Pte. Ltd.,WeWork Singapore Pte. Ltd.,brand casing
+V0026,casing,Linkedin Ireland Limited,LinkedIn Ireland Limited,brand casing
+V0028,casing,Sage Uk Limited,Sage UK Limited,acronym
+V0030,mojibake,"Sveuä_x008d_Iliå¡Te U Zagrebu, Studentski Centar","Sveučilište U Zagrebu, Studentski Centar",UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0031,casing,Ss&C Intralinks Inc,SS&C Intralinks Inc,acronym
+V0032,casing,Veniture D.O.O.,Veniture d.o.o.,Croatian legal form written in lower case
+V0035,casing,"Houlihan Lokey Advisors, Llc","Houlihan Lokey Advisors, LLC",legal form
+V0036,casing,Vector Capital Management Lp,Vector Capital Management LP,legal form
+V0037,casing,Hubspot Ireland Limited,HubSpot Ireland Limited,brand casing
+V0042,casing,Agram Life Osiguranje D.O.O.,Agram Life Osiguranje d.o.o.,Croatian legal form written in lower case
+V0044,casing,Zuric I Partneri Odvjetnicko Drustvo D.O.O.,Zuric I Partneri Odvjetnicko Drustvo d.o.o.,Croatian legal form written in lower case
+V0046,spacing,New Star Networks(Nsn),New Star Networks (Nsn),space added before an opening bracket
+V0046,casing,New Star Networks (Nsn),New Star Networks (NSN),acronym
+V0047,tag,Bupa- Supplier,Bupa,Supplier tag removed; the source system appears to hold a second record for this company
+V0049,casing,Technet It Recruitment,Technet IT Recruitment,acronym
+V0050,casing,Mightyhive Ltd,MightyHive Ltd,brand casing
+V0052,tag,Eurofast International Ltd-Greec,Eurofast International Ltd,"country tag -Greec (Greece, cut short in the source) removed"
+V0053,casing,Hrvatski Telekom D.D.,Hrvatski Telekom d.d.,Croatian legal form written in lower case
+V0054,casing,Sodexo Svc India Private Limited,Sodexo SVC India Private Limited,acronym
+V0055,casing,Peakon Aps,Peakon ApS,legal form
+V0057,casing,Benefit Systems D.O.O.,Benefit Systems d.o.o.,Croatian legal form written in lower case
+V0058,casing,Smart Group Services D.O.O.,Smart Group Services d.o.o.,Croatian legal form written in lower case
+V0059,casing,Jones Lang Lasalle (Nsw) Pty Ltd,Jones Lang LaSalle (Nsw) Pty Ltd,brand casing
+V0059,casing,Jones Lang LaSalle (Nsw) Pty Ltd,Jones Lang LaSalle (NSW) Pty Ltd,acronym
+V0061,casing,Konzum Plus D.O.O.,Konzum Plus d.o.o.,Croatian legal form written in lower case
+V0065,casing,Pingo D.O.O.,Pingo d.o.o.,Croatian legal form written in lower case
+V0066,manual fix,Magazin Raunalni Sistemi D.O.O.,Magazin Računalni Sistemi D.O.O.,"the letter č was dropped; računalni (computer) is the only Croatian word that fits, and the analyst hint spells it so"
+V0066,casing,Magazin Računalni Sistemi D.O.O.,Magazin Računalni Sistemi d.o.o.,Croatian legal form written in lower case
+V0067,casing,Tp Prime D.O.O.,Tp Prime d.o.o.,Croatian legal form written in lower case
+V0067,casing,Tp Prime d.o.o.,TP Prime d.o.o.,acronym
+V0068,casing,Granttree Limited,GrantTree Limited,brand casing
+V0069,casing,Cigna Sg,Cigna SG,acronym
+V0072,casing,4I Management Consulting Private Limited,4i Management Consulting Private Limited,brand casing
+V0073,mojibake,"Grad Zagreb, Gradski Ured Za Prostorno Ureä‘Enje,..","Grad Zagreb, Gradski Ured Za Prostorno Uređenje,..",UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0073,tag,"Grad Zagreb, Gradski Ured Za Prostorno Uređenje,..","Grad Zagreb, Gradski Ured Za Prostorno Uređenje","name cut short in the source; trailing ,.. removed"
+V0075,casing,Ramiro D.O.O.,Ramiro d.o.o.,Croatian legal form written in lower case
+V0083,casing,Omonia D.O.O.,Omonia d.o.o.,Croatian legal form written in lower case
+V0085,casing,Cbre Limited,CBRE Limited,acronym
+V0088,casing,Intertrust Singapore Corporate Services Pte Ltd - Csc,Intertrust Singapore Corporate Services Pte Ltd - CSC,acronym
+V0089,casing,Goto Technologies Uk Limited,Goto Technologies UK Limited,acronym
+V0089,casing,Goto Technologies UK Limited,GoTo Technologies UK Limited,brand casing
+V0090,casing,Hrsolution International Ag,Hrsolution International AG,legal form or acronym
+V0093,mojibake,Telefã³Nica Compras Electrã³Nicas S.L.,Telefónica Compras Electrónicas S.L.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0095,casing,Icici Lombard Gic Ltd,ICICI Lombard Gic Ltd,acronym
+V0095,casing,ICICI Lombard Gic Ltd,ICICI Lombard GIC Ltd,acronym
+V0096,casing,Mosaic Concept D.O.O.,Mosaic Concept d.o.o.,Croatian legal form written in lower case
+V0097,casing,Limes Plus D.O.O.,Limes Plus d.o.o.,Croatian legal form written in lower case
+V0104,casing,Telemach Hrvatska D.O.O.,Telemach Hrvatska d.o.o.,Croatian legal form written in lower case
+V0105,casing,"Acclime Usa, Inc","Acclime USA, Inc",acronym
+V0106,casing,Centar Za Sigurnost D.O.O.,Centar Za Sigurnost d.o.o.,Croatian legal form written in lower case
+V0107,casing,Profi Bar D.O.O.,Profi Bar d.o.o.,Croatian legal form written in lower case
+V0108,casing,Pricewaterhousecoopers Llp,Pricewaterhousecoopers LLP,legal form
+V0108,casing,Pricewaterhousecoopers LLP,PricewaterhouseCoopers LLP,brand casing
+V0109,casing,Pinnacle Partnership Ca,Pinnacle Partnership CA,acronym
+V0113,casing,Jetbrains S.R.O.,Jetbrains s.r.o.,Czech and Slovak legal form written in lower case
+V0113,casing,Jetbrains s.r.o.,JetBrains s.r.o.,brand casing
+V0114,casing,Crowe Horwath Revizija D.O.O.,Crowe Horwath Revizija d.o.o.,Croatian legal form written in lower case
+V0116,casing,Orionw Llc,Orionw LLC,legal form
+V0118,casing,"Common Desk, Llc","Common Desk, LLC",legal form
+V0119,casing,Hep Elektra D.O.O.,Hep Elektra d.o.o.,Croatian legal form written in lower case
+V0119,casing,Hep Elektra d.o.o.,HEP Elektra d.o.o.,acronym
+V0120,casing,Zivi Napitak D.O.O.,Zivi Napitak d.o.o.,Croatian legal form written in lower case
+V0121,casing,Gym4You D.O.O.,Gym4You d.o.o.,Croatian legal form written in lower case
+V0123,casing,Apple Retail Uk Ltd,Apple Retail UK Ltd,acronym
+V0125,casing,Npm Inc,npm Inc,brand casing
+V0126,casing,Pinsent Masons Mpillay Llp,Pinsent Masons Mpillay LLP,legal form
+V0126,casing,Pinsent Masons Mpillay LLP,Pinsent Masons MPillay LLP,brand casing
+V0127,spacing,Calm Achiever(A Unit Of Mohsin Ali Vakil),Calm Achiever (A Unit Of Mohsin Ali Vakil),space added before an opening bracket
+V0129,mojibake,Oâ€™Donnell Salzano Lawyers,O’Donnell Salzano Lawyers,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0129,punctuation,O’Donnell Salzano Lawyers,O'Donnell Salzano Lawyers,typographic apostrophe made plain
+V0134,casing,Golubica Parking D.O.O.,Golubica Parking d.o.o.,Croatian legal form written in lower case
+V0136,casing,Ikea Hrvatska D.O.O.,Ikea Hrvatska d.o.o.,Croatian legal form written in lower case
+V0136,casing,Ikea Hrvatska d.o.o.,IKEA Hrvatska d.o.o.,acronym
+V0137,casing,Orcola D.O.O.,Orcola d.o.o.,Croatian legal form written in lower case
+V0141,casing,Akton D.O.O.,Akton d.o.o.,Croatian legal form written in lower case
+V0142,casing,Bureau Veritas Croatia D.O.O.,Bureau Veritas Croatia d.o.o.,Croatian legal form written in lower case
+V0144,casing,Ncc Services Limited,NCC Services Limited,acronym
+V0146,casing,Good Game Global D.O.O.,Good Game Global d.o.o.,Croatian legal form written in lower case
+V0147,mojibake,Garaå¾A Firule D.O.O.,Garaža Firule D.O.O.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0147,casing,Garaža Firule D.O.O.,Garaža Firule d.o.o.,Croatian legal form written in lower case
+V0151,casing,Elemental Life Solutions Llp,Elemental Life Solutions LLP,legal form
+V0153,casing,Mcburneys Charted Accountants,McBurneys Charted Accountants,Mc prefix
+V0155,casing,Ag Grid Ltd,AG Grid Ltd,legal form or acronym
+V0157,casing,My Foodiverse Llp,My Foodiverse LLP,legal form
+V0163,tag,Starhub Ltd (Supplier),Starhub Ltd,Supplier tag removed; the source system appears to hold a second record for this company
+V0163,casing,Starhub Ltd,StarHub Ltd,brand casing
+V0167,casing,Hp Inc Uk Limited,HP Inc Uk Limited,acronym
+V0167,casing,HP Inc Uk Limited,HP Inc UK Limited,acronym
+V0168,casing,Cision Pr Newswire,Cision PR Newswire,acronym
+V0171,casing,Grt Hotels And Resorts P Ltd,GRT Hotels And Resorts P Ltd,acronym
+V0176,mojibake,Porezno Savjetniå¡Tvo Tuk D.O.O.,Porezno Savjetništvo Tuk D.O.O.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0176,casing,Porezno Savjetništvo Tuk D.O.O.,Porezno Savjetništvo Tuk d.o.o.,Croatian legal form written in lower case
+V0180,casing,Aquila Remete D.O.O.,Aquila Remete d.o.o.,Croatian legal form written in lower case
+V0187,casing,Lajnap Comedy Booking D.O.O.,Lajnap Comedy Booking d.o.o.,Croatian legal form written in lower case
+V0189,casing,Etm Concessions Ltd,ETM Concessions Ltd,acronym
+V0190,casing,Radisson Grt - Unit Of Hotels & Resorts Pvt Ltd,Radisson GRT - Unit Of Hotels & Resorts Pvt Ltd,acronym
+V0193,casing,Quadrant Law Llc,Quadrant Law LLC,legal form
+V0194,casing,Docusign,DocuSign,brand casing
+V0196,casing,Rhea D.O.O.,Rhea d.o.o.,Croatian legal form written in lower case
+V0198,casing,Fastspring,FastSpring,brand casing
+V0199,casing,Dsv Solutions A/S,DSV Solutions A/S,acronym
+V0201,casing,Icare Nsw,Icare NSW,acronym
+V0201,casing,Icare NSW,icare NSW,brand casing
+V0203,casing,Amazon.Co.Uk,Amazon.co.uk,brand casing
+V0205,casing,Oladi D.O.O.,Oladi d.o.o.,Croatian legal form written in lower case
+V0207,mojibake,Mãœller Trgovina Zagreb D.O.O.,Müller Trgovina Zagreb D.O.O.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0207,casing,Müller Trgovina Zagreb D.O.O.,Müller Trgovina Zagreb d.o.o.,Croatian legal form written in lower case
+V0208,casing,Lunch Nutrition D.O.O.,Lunch Nutrition d.o.o.,Croatian legal form written in lower case
+V0210,casing,Digitalna Produkcija J.D.O.O.,Digitalna Produkcija j.d.o.o.,Croatian legal form written in lower case
+V0212,casing,Allianz Wa,Allianz WA,acronym
+V0213,casing,Trending Technology Services Gmbh,Trending Technology Services GmbH,legal form
+V0214,casing,"Godaddy.Com, Llc","GoDaddy.com, Llc",brand casing
+V0214,casing,"GoDaddy.com, Llc","GoDaddy.com, LLC",legal form
+V0216,casing,Raiffeisenbank Austria D.D.,Raiffeisenbank Austria d.d.,Croatian legal form written in lower case
+V0217,casing,Galop-Prijevoz D.O.O.,Galop-Prijevoz d.o.o.,Croatian legal form written in lower case
+V0218,casing,Lane Ip Limited,Lane IP Limited,acronym
+V0219,casing,Urbani Eventi D.O.O.,Urbani Eventi d.o.o.,Croatian legal form written in lower case
+V0220,casing,Smashing Media Ag,Smashing Media AG,legal form or acronym
+V0221,casing,Epignosis Llc,Epignosis LLC,legal form
+V0223,casing,Bb Football Scouting J.D.O.O.,Bb Football Scouting j.d.o.o.,Croatian legal form written in lower case
+V0223,casing,Bb Football Scouting j.d.o.o.,BB Football Scouting j.d.o.o.,acronym
+V0224,casing,Boe Croatia D.O.O.,Boe Croatia d.o.o.,Croatian legal form written in lower case
+V0225,casing,Potomac D.O.O.,Potomac d.o.o.,Croatian legal form written in lower case
+V0229,casing,Apple - Amer,Apple - AMER,acronym
+V0230,casing,Klg - Kalra Legal Group,KLG - Kalra Legal Group,acronym
+V0231,casing,Kilgannon & Partners Llp,Kilgannon & Partners LLP,legal form
+V0232,casing,Uk Postbox Limited,UK Postbox Limited,acronym
+V0233,mojibake,Catering Iviä‡ D.O.O.,Catering Ivić D.O.O.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0233,casing,Catering Ivić D.O.O.,Catering Ivić d.o.o.,Croatian legal form written in lower case
+V0238,casing,Dun & Bradstreet D.O.O.,Dun & Bradstreet d.o.o.,Croatian legal form written in lower case
+V0242,casing,Arena Center Zagreb D.O.O.,Arena Center Zagreb d.o.o.,Croatian legal form written in lower case
+V0244,casing,Oakberry Jr D.O.O.,Oakberry Jr d.o.o.,Croatian legal form written in lower case
+V0245,casing,Tau On-Line D.O.O.,Tau On-Line d.o.o.,Croatian legal form written in lower case
+V0248,casing,Roto Dinamic D.O.O.,Roto Dinamic d.o.o.,Croatian legal form written in lower case
+V0249,casing,Tm Forum,TM Forum,acronym
+V0250,casing,Marvie Hotel - Krupa D.O.O.,Marvie Hotel - Krupa d.o.o.,Croatian legal form written in lower case
+V0252,casing,Yellow Submarine D.O.O.,Yellow Submarine d.o.o.,Croatian legal form written in lower case
+V0255,casing,Obiteljski Hoteli D.O.O.,Obiteljski Hoteli d.o.o.,Croatian legal form written in lower case
+V0256,casing,Rudan D.O.O.,Rudan d.o.o.,Croatian legal form written in lower case
+V0257,casing,Entrio Tehnologije D.O.O.,Entrio Tehnologije d.o.o.,Croatian legal form written in lower case
+V0258,casing,Vivat Fina Vina D.O.O.,Vivat Fina Vina d.o.o.,Croatian legal form written in lower case
+V0260,casing,E-Disti D.O.O.,E-Disti d.o.o.,Croatian legal form written in lower case
+V0263,casing,Tiganda J.D.O.O.,Tiganda j.d.o.o.,Croatian legal form written in lower case
+V0265,casing,Blitz - Cinestar D.O.O.,Blitz - Cinestar d.o.o.,Croatian legal form written in lower case
+V0267,mojibake,Super Odrediå¡Te D.O.O.,Super Odredište D.O.O.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0267,casing,Super Odredište D.O.O.,Super Odredište d.o.o.,Croatian legal form written in lower case
+V0268,casing,Pmi Global Operations Center,PMI Global Operations Center,acronym
+V0270,casing,Del Posto D.O.O.,Del Posto d.o.o.,Croatian legal form written in lower case
+V0272,casing,Niva Transport J.D.O.O.,Niva Transport j.d.o.o.,Croatian legal form written in lower case
+V0274,casing,Spar Hrvatska D.O.O.,Spar Hrvatska d.o.o.,Croatian legal form written in lower case
+V0275,casing,Pepe'S Italian And Liquor,Pepe's Italian And Liquor,possessive
+V0276,casing,"Pluralsight, Llc","Pluralsight, LLC",legal form
+V0277,casing,Maniax Melbourne Cbd,Maniax Melbourne CBD,acronym
+V0278,casing,Dnsimple,DNSimple,brand casing
+V0279,casing,Treci Posao D.O.O.,Treci Posao d.o.o.,Croatian legal form written in lower case
+V0281,casing,Formswift,FormSwift,brand casing
+V0284,spacing,National Securities Depository Limited(Nsdl),National Securities Depository Limited (Nsdl),space added before an opening bracket
+V0284,casing,National Securities Depository Limited (Nsdl),National Securities Depository Limited (NSDL),acronym
+V0287,casing,Stillmark Zagreb D.O.O.,Stillmark Zagreb d.o.o.,Croatian legal form written in lower case
+V0288,casing,Lastpass Ireland Limited,LastPass Ireland Limited,brand casing
+V0295,casing,Media Promo Plus D.O.O.,Media Promo Plus d.o.o.,Croatian legal form written in lower case
+V0296,casing,Expert-Ing D.O.O.,Expert-Ing d.o.o.,Croatian legal form written in lower case
+V0298,casing,Djs For U,DJs For U,acronym
+V0300,mojibake,Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Å Tampar,Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Štampar,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0303,casing,Dhl,DHL,acronym
+V0304,casing,Hotel Laguna D.D.,Hotel Laguna d.d.,Croatian legal form written in lower case
+V0311,casing,"Solarwinds, Inc","SolarWinds, Inc",brand casing
+V0312,casing,Xenon Savjetovanje D.O.O.,Xenon Savjetovanje d.o.o.,Croatian legal form written in lower case
+V0314,casing,Notino S.R.O.,Notino s.r.o.,Czech and Slovak legal form written in lower case
+V0319,casing,Monile J.D.O.O.,Monile j.d.o.o.,Croatian legal form written in lower case
+V0320,casing,Puzzle Promotion J.D.O.O.,Puzzle Promotion j.d.o.o.,Croatian legal form written in lower case
+V0321,mojibake,Zagrebaä_x008d_Ki Holding D.O.O.,Zagrebački Holding D.O.O.,UTF-8 text had been read as Windows-1252 and then Title Cased; restored
+V0321,casing,Zagrebački Holding D.O.O.,Zagrebački Holding d.o.o.,Croatian legal form written in lower case
+V0323,casing,Sportkart D.O.O.,Sportkart d.o.o.,Croatian legal form written in lower case
+V0326,casing,Escape Art D.O.O.,Escape Art d.o.o.,Croatian legal form written in lower case
+V0330,casing,Teb Poslovno Savjetovanje D.O.O.,Teb Poslovno Savjetovanje d.o.o.,Croatian legal form written in lower case
+V0330,casing,Teb Poslovno Savjetovanje d.o.o.,TEB Poslovno Savjetovanje d.o.o.,acronym
+V0331,casing,Illunis D.O.O.,Illunis d.o.o.,Croatian legal form written in lower case
+V0333,casing,Australian Taxation Office (Ato),Australian Taxation Office (ATO),acronym
+V0335,casing,Bonus Opinio D.O.O.,Bonus Opinio d.o.o.,Croatian legal form written in lower case
+V0336,casing,Dhl Express (Uk) Ltd,DHL Express (Uk) Ltd,acronym
+V0336,casing,DHL Express (Uk) Ltd,DHL Express (UK) Ltd,acronym
+V0337,casing,Kat'S Kitchen D.O.O.,Kat'S Kitchen d.o.o.,Croatian legal form written in lower case
+V0337,casing,Kat'S Kitchen d.o.o.,Kat's Kitchen d.o.o.,possessive
+V0339,casing,Fortis Trade J.D.O.O.,Fortis Trade j.d.o.o.,Croatian legal form written in lower case
+V0340,casing,Till Trade D.O.O.,Till Trade d.o.o.,Croatian legal form written in lower case
+V0343,casing,Pepco Croatia D.O.O.,Pepco Croatia d.o.o.,Croatian legal form written in lower case
+V0344,casing,Lemia D.O.O.,Lemia d.o.o.,Croatian legal form written in lower case
+V0345,casing,Retriever Llc,Retriever LLC,legal form
+V0348,casing,Hilton Garden Inn - Zagreb City Hotels D.O.O.,Hilton Garden Inn - Zagreb City Hotels d.o.o.,Croatian legal form written in lower case
+V0349,casing,Lider Media D.O.O.,Lider Media d.o.o.,Croatian legal form written in lower case
+V0352,casing,6Sense Insights Inc,6sense Insights Inc,brand casing
+V0353,casing,Ico,ICO,acronym
+V0358,casing,Platinum Office D.O.O.,Platinum Office d.o.o.,Croatian legal form written in lower case
+V0360,casing,New Block D.O.O.,New Block d.o.o.,Croatian legal form written in lower case
+V0365,casing,Shilton Hospitality Llp,Shilton Hospitality LLP,legal form
+V0366,casing,Axosoft Gitkraken,Axosoft GitKraken,brand casing
+V0369,casing,Pan-Pek D.O.O.,Pan-Pek d.o.o.,Croatian legal form written in lower case
+V0371,casing,Fedex Express Uk Transportation Ltd,Fedex Express UK Transportation Ltd,acronym
+V0371,casing,Fedex Express UK Transportation Ltd,FedEx Express UK Transportation Ltd,brand casing
+V0372,casing,Garden City D.O.O.,Garden City d.o.o.,Croatian legal form written in lower case
+V0374,casing,Ekupi D.O.O.,Ekupi d.o.o.,Croatian legal form written in lower case
+V0375,casing,Farmacia - Specijalizirana Prodavaonica D.O.O.,Farmacia - Specijalizirana Prodavaonica d.o.o.,Croatian legal form written in lower case
+V0378,casing,Currys Pc World,Currys PC World,acronym
+V0379,casing,Brodomerkur D.D.,Brodomerkur d.d.,Croatian legal form written in lower case
+V0380,casing,Sport Vision D.O.O.,Sport Vision d.o.o.,Croatian legal form written in lower case
+V0381,casing,Harissa D.O.O.,Harissa d.o.o.,Croatian legal form written in lower case
