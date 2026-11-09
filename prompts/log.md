@@ -35,3 +35,9 @@ Rules
 ```text
 Commit the raw file as "Step 0b: add raw vendor data". Do not add it to .gitignore.
 ```
+
+## Prompt 4 (2026-11-10)
+
+```text
+Read data/raw/vendor_analysis_assessment.xlsx. For every sheet list the columns, row count, data types, blanks, exact and fuzzy duplicate vendor names, currency hints, total 12-month spend, and the spend distribution: top 10 vendors and their share, top 50 share, count and total of vendors under $1,000. Write it to outputs/analysis/00_data_profile.md with the cleaning steps you propose. Do not change the raw file.
+```
