@@ -29,3 +29,9 @@ Rules
 - Commit after each step with a message naming the step.
 - No em dashes anywhere.
 ```
+
+## Prompt 3 (2026-11-10)
+
+```text
+Commit the raw file as "Step 0b: add raw vendor data". Do not add it to .gitignore.
+```
