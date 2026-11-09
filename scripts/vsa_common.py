@@ -285,55 +285,63 @@ def load_vendor_records(path: Path = RAW_PATH) -> list[dict]:
     return out
 
 
-# ---------------------------------------------------------------- entity merge decisions
+# ---------------------------------------------------------------- entity merges and links
+# Policy (decision of 2026-11-10, docs/decisions.md): merge only when it is the
+# same vendor relationship under a changed or variant name (a rename, a
+# spelling variant, the same contract moved between entities). Where entities
+# share a parent or brand but supply different products or contracts, or share
+# a lineage, record a link instead. MERGE_GROUPS and LINK_GROUPS are the source
+# of truth for qa/vendor_groups.csv.
 
-# Rows that are the same vendor (or the same vendor group) under more than one
-# name. Source of truth for qa/vendor_groups.csv. Each entry: canonical vendor
-# name, source rows, relationship, confidence, reason.
 MERGE_GROUPS = [
-    ("Navan", [3, 24], "renamed entity", "high",
-     "TripActions Inc renamed itself Navan Inc in 2023; both rows are the same travel and expense platform"),
-    ("AWS", [14, 103], "same vendor, other legal entity", "high",
-     "Amazon Web Services billed through its LLC and its Inc entity"),
-    ("Apple", [123, 172, 175, 229], "same vendor, other legal entity", "high",
-     "Apple billed through UK retail, Australian, Irish distribution and Americas entities"),
-    ("Amazon (retail)", [203, 291], "same vendor, other legal entity", "high",
-     "Amazon consumer marketplace in the UK and Australia; kept apart from AWS, a different service"),
-    ("Bupa", [47, 71], "same vendor, other legal entity", "high",
-     "two Bupa entities: one tagged Supplier in the source, the other Bupa Australia"),
-    ("TM Forum", [25, 249], "same vendor, spelling variant", "high",
-     "Tmforum and Tm Forum are two spellings of the same association"),
-    ("HR Solution International", [16, 90], "same vendor, other legal entity", "high",
-     "same brand billed through a GmbH and an AG"),
-    ("Acclime", [99, 105], "same vendor, other legal entity", "high",
-     "Acclime billed through its corporate services entity and its US entity"),
-    ("DHL", [303, 336], "same vendor, other legal entity", "high",
-     "DHL billed with and without the DHL Express (UK) entity name"),
-    ("Telef\u00f3nica", [15, 93], "same group, other entity", "high",
-     "two Telef\u00f3nica group entities (Global Services GmbH, Compras Electr\u00f3nicas S.L.)"),
-    ("Allianz Australia", [94, 212], "same vendor, other legal entity", "medium",
-     "Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia"),
-    ("4i", [17, 72], "same group, other entity", "medium",
-     "shared and unusual 4i brand, both advisory or consulting in India; confirm the two firms are related"),
-    ("GRT Hotels & Resorts", [171, 190], "same vendor, other legal entity", "medium",
-     "the Radisson row names itself a unit of GRT Hotels & Resorts"),
-    ("Pluxee India", [54, 128], "renamed entity", "medium",
-     "Sodexo SVC India, the Indian meal-benefits entity, was renamed Pluxee India around the 2024 Sodexo demerger; confirm with Finance"),
+    {"canonical": "Navan", "rows": [3, 24], "status": "merge", "confidence": "high",
+     "relationship": "renamed entity",
+     "reason": "TripActions Inc renamed itself Navan Inc in 2023; both rows are the same travel and expense platform"},
+    {"canonical": "AWS", "rows": [14, 103], "status": "merge", "confidence": "high",
+     "relationship": "same service, entity name variant",
+     "reason": "one AWS relationship, the same cloud service and customer agreement, billed under the Inc. and LLC entity names"},
+    {"canonical": "TM Forum", "rows": [25, 249], "status": "merge", "confidence": "high",
+     "relationship": "spelling variant",
+     "reason": "Tmforum and Tm Forum are two spellings of the same association"},
+    {"canonical": "4i", "rows": [17, 72], "status": "proposed merge", "confidence": "medium",
+     "relationship": "same group, other entity",
+     "reason": "shared and unusual 4i brand, both advisory or consulting in India; to be confirmed or reversed by web verification"},
 ]
 
-# Vendors kept separate but sharing a corporate parent with another vendor in
-# this file. Filled only where the link matters for negotiation or
-# consolidation.
-PARENT_LINKS = [
-    ("Salesforce", [2, 173], "Slack has been a Salesforce company since 2021, so it can be negotiated with the Salesforce renewal"),
-    ("Atlassian", [91, 297], "Trello is an Atlassian product"),
-    ("SolarWinds", [130, 311], "Papertrail is a SolarWinds product"),
-    ("Microsoft", [26, 81, 125], "LinkedIn and npm (through GitHub) are Microsoft companies"),
-    ("ICICI group", [95, 143], "ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers"),
-    ("Amazon", [14, 103, 203, 291], "AWS and the Amazon marketplace share a parent but are different services"),
+LINK_GROUPS = [
+    {"label": "Salesforce", "rows": [2, 173], "type": "shared parent",
+     "reason": "Slack has been a Salesforce company since 2021, so it goes into the same renewal"},
+    {"label": "Atlassian", "rows": [91, 297], "type": "shared parent",
+     "reason": "Trello is an Atlassian product"},
+    {"label": "SolarWinds", "rows": [130, 311], "type": "shared parent",
+     "reason": "Papertrail is a SolarWinds product"},
+    {"label": "Microsoft", "rows": [26, 81, 125], "type": "shared parent",
+     "reason": "LinkedIn and npm (through GitHub) are Microsoft companies"},
+    {"label": "ICICI group", "rows": [95, 143], "type": "shared parent",
+     "reason": "ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers"},
+    {"label": "Amazon", "rows": [14, 103, 203, 291], "type": "shared parent",
+     "reason": "AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases"},
+    {"label": "Apple", "rows": [123, 172, 175, 229], "type": "same brand, separate entities",
+     "reason": "four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases"},
+    {"label": "Bupa", "rows": [47, 71], "type": "same brand, separate entities",
+     "reason": "two Bupa entities with separate insurance contracts, one of them Bupa Australia"},
+    {"label": "HR Solution International", "rows": [16, 90], "type": "same brand, separate entities",
+     "reason": "a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them"},
+    {"label": "Acclime", "rows": [99, 105], "type": "same brand, separate entities",
+     "reason": "Acclime's corporate services entity and its US entity, presumably separate engagements"},
+    {"label": "DHL", "rows": [303, 336], "type": "same brand, separate entities",
+     "reason": "a bare DHL record and DHL Express (UK); the file does not show that they are one account"},
+    {"label": "Telef\u00f3nica", "rows": [15, 93], "type": "same brand, separate entities",
+     "reason": "two Telef\u00f3nica group entities (Global Services GmbH, Compras Electr\u00f3nicas S.L.); what each payment is goes to Finance"},
+    {"label": "Allianz Australia", "rows": [94, 212], "type": "same brand, separate entities",
+     "reason": "Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia: separate state policies (decision of 2026-11-10)"},
+    {"label": "GRT Hotels & Resorts", "rows": [171, 190], "type": "same brand, separate entities",
+     "reason": "two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts"},
+    {"label": "Sodexo and Pluxee", "rows": [54, 128], "type": "same lineage",
+     "reason": "Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10)"},
 ]
 
-# Candidate pairs from the string search that are reviewed and NOT merged.
+# Candidate sets from the string search that are reviewed and neither merged nor linked.
 DISTINCT_VERDICTS = [
     ([30, 86, 186], "different vendors, same type",
      "three different university student centres (Zagreb, Split, Karlovac) offering the same student-work service"),
@@ -350,23 +358,25 @@ DISTINCT_VERDICTS = [
     ([183, 315], "different vendors, same type", "two painting-event sole traders with different owners"),
     ([247, 304], "different vendors, same type", "two different hotels"),
     ([328, 384], "different vendors, same type", "two different health institutions"),
-    ([14, 103, 203, 291], "same parent, different service",
-     "AWS (cloud) and the Amazon marketplace are different services; linked through parent_company only"),
 ]
 
 
-def merge_group_of(row: int):
-    for canonical, rows, relationship, confidence, reason in MERGE_GROUPS:
-        if row in rows:
-            return canonical, rows, relationship, confidence, reason
-    return None
+def merge_group_of(row: int) -> dict | None:
+    return next((g for g in MERGE_GROUPS if row in g["rows"]), None)
+
+
+def link_group_of(row: int) -> dict | None:
+    return next((g for g in LINK_GROUPS if row in g["rows"]), None)
 
 
 def verdict_for(rows: set[int]) -> tuple[str, str]:
     """Verdict for a candidate set of source rows; raises if unreviewed."""
-    for canonical, grp, relationship, confidence, reason in MERGE_GROUPS:
-        if rows <= set(grp):
-            return f"merge into {canonical}", reason
+    for g in MERGE_GROUPS:
+        if rows <= set(g["rows"]):
+            return f"{g['status']} into {g['canonical']}", g["reason"]
+    for g in LINK_GROUPS:
+        if rows <= set(g["rows"]):
+            return f"link: {g['label']} ({g['type']})", g["reason"]
     for grp, verdict, reason in DISTINCT_VERDICTS:
         if rows <= set(grp):
             return verdict, reason

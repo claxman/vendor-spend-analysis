@@ -27,7 +27,7 @@ from openpyxl.utils import get_column_letter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vsa_common import (  # noqa: E402
-    MERGE_GROUPS, PARENT_LINKS, RAW_PATH, ROOT, data_range, load_vendor_records, main_sheet,
+    LINK_GROUPS, MERGE_GROUPS, RAW_PATH, ROOT, data_range, load_vendor_records, main_sheet,
     money, near_duplicate_candidates, pct, rel, sha256, strip_accents, structure_audit, table,
     verdict_for, write_text,
 )
@@ -423,13 +423,13 @@ def name_analysis(recs: list[dict]) -> dict:
             missing.append(rows)
     if missing:
         raise SystemExit(f"near-duplicate candidates without a recorded verdict: {missing}")
-    covered = set()
-    for _, rows, verdict, _ in reviewed:
-        if verdict.startswith("merge"):
-            covered |= rows
-    knowledge = [(c, rows, rel_, conf, reason) for c, rows, rel_, conf, reason in MERGE_GROUPS
-                 if not set(rows) <= covered]
-    return {"cand": cand, "reviewed": reviewed, "knowledge_merges": knowledge}
+    def found_by_search(group_rows: list[int]) -> bool:
+        g = set(group_rows)
+        return any(len(rows) >= 2 and rows <= g for _, rows, _, _ in reviewed)
+
+    return {"cand": cand, "reviewed": reviewed,
+            "knowledge_merges": [g for g in MERGE_GROUPS if not found_by_search(g["rows"])],
+            "knowledge_links": [g for g in LINK_GROUPS if not found_by_search(g["rows"])]}
 
 
 def apply_flags(recs: list[dict]) -> list[dict]:
@@ -644,39 +644,58 @@ def names_section(na: dict, recs_by_row: dict) -> list[str]:
                f"flagged ({len(cand['weak'])} groups). Every candidate has a recorded verdict; the script stops if one does "
                "not.")
     out.append("")
+    out.append("Merge policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor "
+               "relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between "
+               "entities). Where entities share a parent or brand but supply different products or contracts, or share a "
+               "lineage, record a link instead: linked vendors stay separate.")
+    out.append("")
 
     def names(rows):
         return "; ".join(f"{r} {recs_by_row[r]['name_fixed']}" for r in sorted(rows))
 
+    def spend(rows):
+        return sum(recs_by_row[x]["cost"] for x in rows)
+
     rows = [[tier, names(r), verdict, reason] for tier, r, verdict, reason in na["reviewed"]]
     out += table(["Tier", "Rows and names", "Verdict", "Reason"], rows)
     out.append("")
-    out.append("Links that string matching cannot find, from knowledge of the vendors:")
+    out.append("Merges and links that string matching cannot find, from knowledge of the vendors:")
     out.append("")
-    rows = [[names(r), f"merge into {c}", conf, reason] for c, r, _, conf, reason in na["knowledge_merges"]]
-    rows += [[names(r), f"keep separate; parent {p}", "high", reason] for p, r, reason in PARENT_LINKS]
-    out += table(["Rows and names", "Treatment", "Confidence", "Reason"], rows)
+    rows = [[names(g["rows"]), f"{g['status']} into {g['canonical']}", g["reason"]] for g in na["knowledge_merges"]]
+    rows += [[names(g["rows"]), f"link: {g['label']} ({g['type']})", g["reason"]] for g in na["knowledge_links"]]
+    out += table(["Rows and names", "Treatment", "Reason"], rows)
     out.append("")
-    merge_rows = sum(len(r) for _, r, _, _, _ in MERGE_GROUPS)
     n = len(recs_by_row)
-    out.append(f"Result: {len(MERGE_GROUPS)} merge groups covering {merge_rows} rows, so {n} rows become "
-               f"{n - merge_rows + len(MERGE_GROUPS)} vendors. Combined spend of each group:")
+    merged_rows = sum(len(g["rows"]) for g in MERGE_GROUPS)
+    proposed = [g for g in MERGE_GROUPS if g["status"] != "merge"]
+    vendors = n - merged_rows + len(MERGE_GROUPS)
+    vendors_if_reversed = vendors + sum(len(g["rows"]) - 1 for g in proposed)
+    out.append(f"Result: {len(MERGE_GROUPS) - len(proposed)} merges and {len(proposed)} proposed merge cover {merged_rows} "
+               f"rows, so {n} rows become {vendors} vendors ({vendors_if_reversed} if the proposed merge is reversed):")
     out.append("")
-    grp = sorted(((c, rows_, sum(recs_by_row[x]["cost"] for x in rows_), conf) for c, rows_, _, conf, _ in MERGE_GROUPS),
-                 key=lambda t: -t[2])
-    out += table(["Vendor after merge", "Rows", "Combined 12-month cost", "Confidence"],
-                 [[c, ", ".join(map(str, r)), money(t), conf] for c, r, t, conf in grp])
+    out += table(["Vendor after merge", "Rows", "Combined 12-month cost", "Status", "Confidence"],
+                 [[g["canonical"], ", ".join(map(str, g["rows"])), money(spend(g["rows"])), g["status"], g["confidence"]]
+                  for g in sorted(MERGE_GROUPS, key=lambda g: -spend(g["rows"]))])
     out.append("")
-    out.append("- Implication for classification: merged rows are classified once, as one vendor, and the rationale names "
-               "the entity to keep (\"same vendor is paid through more than one entity\"). Parent links do not merge "
-               "vendors; they let a recommendation name the parent agreement (for example Slack inside the Salesforce "
-               "renewal). Same-type vendors that are not merged (student centres, clinics, hotels, corporate secretaries) "
-               "are consolidation questions for the classification step.")
-    navan = sum(recs_by_row[x]["cost"] for x in (3, 24))
-    out.append(f"- Implication for the memo: the vendor count is {n - merge_rows + len(MERGE_GROUPS)}, not {n}. Navan, "
-               f"already second, grows from {money(recs_by_row[3]['cost'])} to {money(navan)}; Telefónica, HR Solution "
-               "and 4i each exceed $80,000 once their entities are combined. Totals by vendor should always use the "
-               "merged view.")
+    out.append(f"{len(LINK_GROUPS)} link groups keep their vendors separate. Their combined spend is shown because a "
+               "negotiation can cover the whole group; it is not added to any one vendor:")
+    out.append("")
+    out += table(["Link group", "Type", "Rows", "Combined 12-month cost"],
+                 [[g["label"], g["type"], ", ".join(map(str, g["rows"])), money(spend(g["rows"]))]
+                  for g in sorted(LINK_GROUPS, key=lambda g: -spend(g["rows"]))])
+    out.append("")
+    out.append("- Implication for classification: merged rows are classified once, as one vendor; the proposed 4i merge is "
+               "treated the same way until web verification confirms or reverses it. Linked vendors are classified one by "
+               "one, and the link lets a recommendation name the shared agreement or brand (Slack inside the Salesforce "
+               "renewal, one Bupa or Apple relationship across countries). Same-type vendors that are neither merged nor "
+               "linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the "
+               "classification step.")
+    link_spend = {g["label"]: spend(g["rows"]) for g in LINK_GROUPS}
+    out.append(f"- Implication for the memo: the vendor count is {vendors} ({vendors_if_reversed} if the 4i merge is "
+               f"reversed), not {n}. Navan, already second, grows from {money(recs_by_row[3]['cost'])} to "
+               f"{money(spend([3, 24]))} across its old and new names. A linked group can be quoted as one figure where "
+               f"one negotiation covers it (Telefónica {money(link_spend['Telefónica'])}, HR Solution International "
+               f"{money(link_spend['HR Solution International'])}), but its vendors stay separate rows.")
     return out
 
 
@@ -725,9 +744,9 @@ def suspicious_section(recs: list[dict], c: dict, flags: list[dict], f: dict) ->
     sf = by_row[2]
     assert sf["name"].startswith("Salesforce")
     merged_cost: dict[str, float] = {}
-    for canonical, rows, *_ in MERGE_GROUPS:
-        merged_cost[canonical] = sum(by_row[x]["cost"] for x in rows)
-    in_group = {x for _, rows, *_ in MERGE_GROUPS for x in rows}
+    for g in MERGE_GROUPS:
+        merged_cost[g["canonical"]] = sum(by_row[x]["cost"] for x in g["rows"])
+    in_group = {x for g in MERGE_GROUPS for x in g["rows"]}
     canon = sorted([v for v in merged_cost.values()] + [r["cost"] for r in recs if r["row"] not in in_group], reverse=True)
     second = canon[1]
     run_sum, k = 0.0, 0
@@ -794,9 +813,11 @@ def suspicious_section(recs: list[dict], c: dict, flags: list[dict], f: dict) ->
          "The vendor count overstates the supplier base; tail spend is a policy question (cards, expenses, Navan), not "
          "a negotiation."),
         ("The same vendor under old and new names",
-         "Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`; Sodexo SVC India and Pluxee India appear side "
-         "by side.",
-         "The vendor master was not cleaned after renames; merge them (section 6) and recommend one entity."),
+         "Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`. Sodexo SVC India and Pluxee India also appear "
+         "side by side; they share a lineage, but on-site catering and meal cards are different contracts, so they are "
+         "linked rather than merged (decision of 2026-11-10).",
+         "The vendor master was not cleaned after the Navan rename; the two rows are merged (section 6) and the "
+         "recommendation names one entity."),
         ("Grid size and dropdown source",
          f"The vendor sheet's grid runs to row {m['max_row']} and the Department dropdown reads `Config` rows 2 to 814, "
          f"although the data ends at row {m['last_row']} and `Config` at row 13.",
@@ -837,8 +858,9 @@ def rollup_sections(c: dict, flags: list[dict], total: float) -> list[str]:
         "Recruitment agencies", "Job boards and recruiting platforms", "Employer of record, payroll and HR outsourcing")}
     out = ["## 9. What this means for classification", ""]
     out += [
-        f"- Classify {c['n']} rows but treat the {len(MERGE_GROUPS)} merge groups as single vendors, so each gets one "
-        "department, one description and one recommendation that names the entity to keep.",
+        f"- Classify {c['n']} rows but treat the {len(MERGE_GROUPS)} merge groups (one of them proposed) as single "
+        "vendors, so each gets one department, one description and one recommendation that names the entity to keep; "
+        f"the {len(LINK_GROUPS)} link groups stay separate vendors whose rationales can name the shared agreement.",
         f"- Set confidence low for the {unk_n} payees whose function the name does not show and for the six individuals; "
         "say so in the description rather than guessing.",
         "- Use the Croatian glossary terms surfaced here (obrt, vl., grad, osiguranje, medicina rada, prijevoz, dostava, "
@@ -865,7 +887,8 @@ def rollup_sections(c: dict, flags: list[dict], total: float) -> list[str]:
 def summary_section(f: dict, c: dict, na: dict, flags: list[dict], recs: list[dict]) -> list[str]:
     total = c["total"]
     by_row = {r["row"]: r for r in recs}
-    merge_rows = sum(len(r) for _, r, *_ in MERGE_GROUPS)
+    merge_rows = sum(len(g["rows"]) for g in MERGE_GROUPS)
+    proposed = sum(1 for g in MERGE_GROUPS if g["status"] != "merge")
     navan = sum(by_row[x]["cost"] for x in (3, 24))
 
     def cat(catname):
@@ -890,9 +913,10 @@ def summary_section(f: dict, c: dict, na: dict, flags: list[dict], recs: list[di
         "modification. Quote whole dollars. Section 3.",
         f"- **First digits conform** to Benford's law ({c['band']}, p = {c['chi2_p']:.2f}). Section 4.",
         f"- **Row order is not a rank.** The sheet is {len(c['runs'])} sorted blocks end to end. Section 5.",
-        f"- **{len(MERGE_GROUPS)} entity merges** ({merge_rows} rows) give {len(recs) - merge_rows + len(MERGE_GROUPS)} "
-        f"vendors; Navan, already second, grows to {money(navan)} across its old and new names. Six parent links "
-        "(Slack under Salesforce, Trello under Atlassian, and others) are kept as links, not merges. Section 6.",
+        f"- **{len(MERGE_GROUPS) - proposed} merges and {proposed} proposed merge** ({merge_rows} rows) give "
+        f"{len(recs) - merge_rows + len(MERGE_GROUPS)} vendors; Navan, already second, grows to {money(navan)} across its "
+        f"old and new names. {len(LINK_GROUPS)} link groups (Slack with Salesforce, Bupa's and Apple's country entities, "
+        "and others) keep their vendors separate. Section 6.",
         f"- **Customer-mandated payees:** Telefónica's two procurement entities and SAP Ariba, {money(cm_t)}. "
         "Non-discretionary; confirm what the Telefónica payments are. Bupa and StarHub carry a Supplier tag and may "
         "also be customers. Sections 7.8 and 8.",
@@ -955,7 +979,8 @@ def main() -> int:
     print(f"wrote {rel(OUT_MD)} ({len(text):,} chars) and {rel(OUT_CSV)} ({len(flags)} flag rows)")
     print(f"ties: {len(c['ties'])} groups / {c['tie_rows']} rows; runs: {[(r['first'], r['last']) for r in c['runs']]}; "
           f"benford: chi2={c['chi2']:.2f} p={c['chi2_p']:.3f} MAD={c['mad']:.4f}")
-    print(f"name candidates reviewed: {len(na['reviewed'])}; knowledge merges: {len(na['knowledge_merges'])}")
+    print(f"name candidates reviewed: {len(na['reviewed'])}; found by knowledge: {len(na['knowledge_merges'])} merges, "
+          f"{len(na['knowledge_links'])} links")
     return 0
 
 

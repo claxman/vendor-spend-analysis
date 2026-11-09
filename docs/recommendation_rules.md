@@ -6,7 +6,7 @@ The context is fixed by the brief: the company has been acquired by a remote-fir
 
 ## Consolidate
 
-Two or more vendors serve the same function, or the same vendor is paid through more than one entity. The cases named in the brief:
+Two or more vendors serve the same function, or the same vendor is paid through more than one entity (merged in `qa/vendor_groups.csv`, or linked there as the same brand through separate entities). The cases named in the brief:
 
 - insurers across countries
 - auditors and accountants across countries
@@ -44,24 +44,41 @@ Essential sole vendors where the lever is price, volume or policy:
 - insurance broker: re-broke under the group programme
 - LinkedIn: seat review
 
-Statutory payees and customer-mandated fees are also Optimize, with the rationale "non-discretionary, excluded from the savings base".
+Statutory payees and customer-mandated fees are also Optimize, with the rationale "non-discretionary, excluded from the savings base". Neither is addressable.
+
+The Telefónica payments (`V0015`, `V0093`) are a question for Finance: fees, rebates or connectivity. Until Finance answers they are classified Sales, Optimize, not addressable, and the rationale says that if they are rebates they belong against revenue rather than in vendor spend (decision of 2026-11-10).
 
 ## Vendors under $1,000
 
 Still classified. Terminate if non-essential; otherwise Optimize with the note "fold into tail-spend policy".
 
-## Order of application (proposed by Claude, to confirm or change)
+## Addressability and savings assumptions
+
+Every vendor carries `is_addressable` (decision of 2026-11-10):
+
+- FALSE for statutory payees (taxes, government and municipal fees, regulators and statutory registrations, statutory workers' compensation and occupational health) and for customer-mandated fees, the Telefónica payments included. They are excluded from the savings base.
+- TRUE for everything else, student labour included.
+
+A savings assumption is the share of addressable spend the savings script counts as saved, written next to the figure it produces (`CLAUDE.md`). Two are fixed now; the rest are set lever by lever in the savings step.
+
+| Spend | `is_addressable` | Savings assumption | Rationale |
+|---|---|---|---|
+| Student labour (cluster Student labour) | TRUE | 0% | workforce cost, set by the hiring plan, not a vendor action |
+| Statutory payees, customer-mandated fees, Telefónica | FALSE | none: outside the savings base | non-discretionary, excluded from the savings base |
+
+## Order of application (approved 2026-11-10)
 
 The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides.
 
-1. Statutory payee or customer-mandated fee: Optimize, "non-discretionary, excluded from the savings base". This comes first so that nothing non-discretionary is terminated or consolidated.
-2. Named in the Optimize list (Salesforce, AWS, Navan, the insurance broker, LinkedIn): Optimize. Where the vendor is paid through two entities, the rationale names the one entity to keep.
-3. Unidentified payee: Terminate until identified.
-4. Under $1,000 in 12-month spend, measured on the merged vendor: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
-5. In a Terminate category: Terminate, stating any condition.
-6. The same vendor paid through more than one entity: Consolidate, naming the entity to keep.
-7. The same function as other vendors: Consolidate, naming the vendor to keep.
-8. Anything else essential: Optimize, naming the lever (price, volume or policy).
+1. Statutory payee, customer-mandated fee or Telefónica payment: Optimize, not addressable, "non-discretionary, excluded from the savings base"; for Telefónica the rationale adds that rebates would belong against revenue. This comes first so that nothing non-discretionary is terminated or consolidated.
+2. Student labour: Optimize, addressable, 0% savings assumption, rationale "workforce cost, set by the hiring plan, not a vendor action". The label is Claude's reading of the decision, which fixed the rationale and the assumption: with no vendor action, Optimize is the only label that fits.
+3. Named in the Optimize list (Salesforce, AWS, Navan, the insurance broker, LinkedIn): Optimize. Where the vendor is paid through two entities, the rationale names the one entity to keep.
+4. Unidentified payee: Terminate until identified.
+5. Under $1,000 in 12-month spend, measured on the merged vendor: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
+6. In a Terminate category: Terminate, stating any condition.
+7. The same vendor paid through more than one entity, whether merged or linked as the same brand: Consolidate, naming the entity to keep.
+8. The same function as other vendors: Consolidate, naming the vendor to keep.
+9. Anything else essential: Optimize, naming the lever (price, volume or policy).
 
 ## Writing the rationale
 

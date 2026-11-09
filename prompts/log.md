@@ -81,3 +81,19 @@ Create docs/clusters.md: every vendor also gets exactly one cost_cluster from th
 
 Then run the cleaning you proposed: stable vendor ids, the mojibake repair table, acronym casing (AWS, BDO, DHL, HP, SS&C, TOG, GPT, JLL, CBRE, NCC, HEP, PwC), legal-form stripping for matching only, and the entity merge map in qa/vendor_groups.csv. Keep original names in one column and cleaned names in another. Never touch the raw file. Commit as "Step 2: taxonomy, rules, hints, clusters and cleaning".
 ```
+
+## Prompt 7 (2026-11-10)
+
+```text
+Decisions:
+
+1. Proposed rules approved, with one principle made explicit in docs/taxonomy.md and docs/clusters.md: department answers "whose budget is this", cost_cluster answers "which lever captures the saving". They can differ. Mason Frank is G&A (recruiting) by department and Salesforce platform by cluster, so its saving rolls into the Salesforce opportunity. Slack is SaaS by department and Salesforce platform by cluster, with the rationale that it is Salesforce-owned and goes into the same renewal.
+
+2. Merge only when it is the same vendor relationship under a changed or variant name (Navan rename, spelling variants, the same contract moved between entities). Where two entities share a parent but supply different products or contracts, record a link, not a merge. So: Sodexo India and Pluxee India become a link (same lineage, but on-site catering and meal cards are different services and contracts); Allianz WA and Allianz Australia Workers' Compensation become a link; the two 4i firms stay a proposed merge to be confirmed or reversed by the web verification in the next step. Update qa/vendor_groups.csv and the cleaning report accordingly.
+
+3. Yes, the memo must also be a Google Doc. outputs/memo.md stays the source of truth; I will create the Doc from it and paste the link and the text into the CEOCFO Recommendations tab.
+
+Two rule changes before classification: student labour is addressable (is_addressable TRUE, cluster Student labour) but carries a 0 percent savings assumption with the rationale "workforce cost, set by the hiring plan, not a vendor action". And treat the Telefónica payments as a question for Finance: fees, rebates or connectivity; classify Sales, Optimize, non-addressable, and say in the rationale that if they are rebates they belong against revenue rather than in vendor spend.
+
+Commit as "Step 2b: rule decisions".
+```

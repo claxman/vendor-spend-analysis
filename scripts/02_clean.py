@@ -6,7 +6,7 @@ Nothing is classified here. The raw workbook is opened read-only and its
 SHA-256 is checked before and after the run.
 
 Inputs:  data/raw/vendor_analysis_assessment.xlsx, docs/*.md, and the merge
-         decisions in scripts/vsa_common.py (MERGE_GROUPS, PARENT_LINKS).
+         decisions in scripts/vsa_common.py (MERGE_GROUPS, LINK_GROUPS).
 Outputs: outputs/vendors_clean.csv            one row per source row; original and clean names, exact cost
          qa/vendor_groups.csv                 the entity merge map, one row per source row
          qa/name_changes.csv                  every change from original to clean name, step by step
@@ -27,7 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vsa_common import (  # noqa: E402
-    CONFIG_SHEET, DISTINCT_VERDICTS, MERGE_GROUPS, PARENT_LINKS, RAW_PATH, ROOT, assert_no_dashes,
+    CONFIG_SHEET, DISTINCT_VERDICTS, LINK_GROUPS, MERGE_GROUPS, RAW_PATH, ROOT, assert_no_dashes,
     load_vendor_records, md_escape, money, normalize_name, open_workbook, pct, rel, repair_mojibake,
     sha256, table, write_text,
 )
@@ -214,7 +214,7 @@ def check_docs(recs_by_id: dict, config_departments: list[str]) -> tuple[list[tu
                    f"{len(covered)} ids ({len(set(covered))} distinct); {len(bad_ids)} unknown ids; {len(bad_names)} "
                    "name mismatches" + (": " + "; ".join(bad_names[:3]) if bad_names else ""),
                    not bad_ids and not bad_names and len(covered) == len(set(covered))))
-    for doc in ("taxonomy.md", "recommendation_rules.md", "vendor_hints.md", "clusters.md"):
+    for doc in ("taxonomy.md", "recommendation_rules.md", "vendor_hints.md", "clusters.md", "decisions.md"):
         text = (DOCS / doc).read_text(encoding="utf-8")
         ok = "—" not in text and "–" not in text
         checks.append((f"docs/{doc} has no em or en dash", "clean" if ok else "dash found", ok))
@@ -248,39 +248,43 @@ def main() -> int:
         r["notes"] = notes + ([NAME_NOTES[r["row"]]] if r["row"] in NAME_NOTES else [])
         all_changes += changes
 
-    # merge map
-    group_of, parent_of, distinct_of = {}, {}, {}
-    for canonical, rows, relationship, confidence, reason in MERGE_GROUPS:
-        lead = max(rows, key=lambda x: by_row[x]["cost"])
-        for x in rows:
+    # merge map and links (policy: docs/decisions.md, 2026-11-10)
+    group_of, link_of, distinct_of = {}, {}, {}
+    for g in MERGE_GROUPS:
+        lead = max(g["rows"], key=lambda x: by_row[x]["cost"])
+        for x in g["rows"]:
             if x in group_of:
                 raise SystemExit(f"row {x} is in two merge groups")
-            group_of[x] = (canonical, f"V{lead:04d}", relationship, confidence, reason)
-    for parent, rows, reason in PARENT_LINKS:
-        for x in rows:
-            parent_of[x] = (parent, reason)
+            group_of[x] = (g, f"V{lead:04d}")
+    for g in LINK_GROUPS:
+        for x in g["rows"]:
+            if x in link_of:
+                raise SystemExit(f"row {x} is in two link groups")
+            link_of[x] = g
     for rows, verdict, reason in DISTINCT_VERDICTS:
         for x in rows:
             distinct_of.setdefault(x, (verdict, reason))
     for r in recs:
         x = r["row"]
+        link = link_of.get(x)
+        r["link_group"] = link["label"] if link else ""
+        r["link_type"] = link["type"] if link else ""
         if x in group_of:
-            canonical, gid, relationship, confidence, reason = group_of[x]
-            r.update(group_id=gid, canonical=canonical, decision="merge", relationship=relationship,
-                     confidence=confidence, reason=reason)
+            g, gid = group_of[x]
+            r.update(group_id=gid, canonical=g["canonical"], decision=g["status"], relationship=g["relationship"],
+                     confidence=g["confidence"], reason=g["reason"])
         else:
             canonical = CANONICAL_OVERRIDES.get(r["clean"], r["clean"])
             if canonical != r["clean"]:
                 used_overrides.add(r["clean"])
-            if x in parent_of:
-                relationship, reason = "separate vendor, shared parent", parent_of[x][1]
+            if link:
+                relationship, reason = f"linked: {link['type']}", link["reason"]
             elif x in distinct_of:
                 relationship, reason = distinct_of[x]
             else:
                 relationship, reason = "single entity", ""
             r.update(group_id=r["vendor_id"], canonical=canonical, decision="keep", relationship=relationship,
                      confidence="", reason=reason)
-        r["parent"] = parent_of.get(x, ("", ""))[0]
     missing_overrides = set(CANONICAL_OVERRIDES) - used_overrides
     if missing_overrides:
         raise SystemExit(f"canonical overrides matched no clean name: {missing_overrides}")
@@ -288,14 +292,14 @@ def main() -> int:
     # write outputs
     clean_csv = to_csv(
         ["vendor_id", "source_row", "vendor_name_raw", "vendor_name_clean", "match_key", "group_id",
-         "canonical_vendor", "parent_company", "cost_usd", "name_notes"],
-        [[r["vendor_id"], r["row"], r["name"], r["clean"], r["key"], r["group_id"], r["canonical"], r["parent"],
+         "canonical_vendor", "link_group", "cost_usd", "name_notes"],
+        [[r["vendor_id"], r["row"], r["name"], r["clean"], r["key"], r["group_id"], r["canonical"], r["link_group"],
           repr(float(r["cost"])), "; ".join(r["notes"])] for r in recs])
     groups_csv = to_csv(
         ["vendor_id", "source_row", "vendor_name_raw", "vendor_name_clean", "match_key", "group_id",
-         "canonical_vendor", "decision", "relationship", "merge_confidence", "parent_company", "reason"],
+         "canonical_vendor", "decision", "relationship", "merge_confidence", "link_group", "link_type", "reason"],
         [[r["vendor_id"], r["row"], r["name"], r["clean"], r["key"], r["group_id"], r["canonical"], r["decision"],
-          r["relationship"], r["confidence"], r["parent"], r["reason"]] for r in recs])
+          r["relationship"], r["confidence"], r["link_group"], r["link_type"], r["reason"]] for r in recs])
     changes_csv = to_csv(["vendor_id", "step", "before", "after", "reason"],
                          [[c["vendor_id"], c["step"], c["before"], c["after"], c["reason"]] for c in all_changes])
     write_text(OUT_CLEAN, clean_csv)
@@ -329,6 +333,12 @@ def main() -> int:
         ("Every cost value round-trips unchanged",
          "all rows", all(float(b["cost_usd"]) == float(r["cost"]) for b, r in zip(back, recs))),
         ("Raw workbook unchanged by the run", f"SHA-256 {after[:16]}...", before == after),
+        ("Each row is in at most one merge group and at most one link group",
+         f"{len(group_of)} merged rows in {len(MERGE_GROUPS)} groups; {len(link_of)} linked rows in {len(LINK_GROUPS)} groups",
+         True),
+        ("Every merge group is a confirmed or a proposed merge",
+         ", ".join(f"{g['canonical']}: {g['status']}" for g in MERGE_GROUPS),
+         all(g["status"] in ("merge", "proposed merge") for g in MERGE_GROUPS)),
     ]
     all_checks = recon + checks
     failed = [c for c in all_checks if not c[2]]
@@ -337,8 +347,10 @@ def main() -> int:
     steps = Counter(c["step"] for c in all_changes)
     rows_by_step = {s: len({c["vendor_id"] for c in all_changes if c["step"] == s}) for s in steps}
     changed_rows = len({c["vendor_id"] for c in all_changes})
-    merge_rows = sum(len(rows) for _, rows, *_ in MERGE_GROUPS)
+    merge_rows = sum(len(g["rows"]) for g in MERGE_GROUPS)
+    proposed = [g for g in MERGE_GROUPS if g["status"] != "merge"]
     n_vendors = len(canon_spend)
+    n_if_reversed = n_vendors + sum(len(g["rows"]) - 1 for g in proposed)
     lines = [
         "# Cleaning report",
         "",
@@ -348,11 +360,13 @@ def main() -> int:
         "Outputs:",
         "",
         f"- `{rel(OUT_CLEAN)}`: one row per source row with `vendor_id`, the original name (`vendor_name_raw`), the "
-        "clean name (`vendor_name_clean`), the matching key, the merge group, the canonical vendor, the parent company, "
+        "clean name (`vendor_name_clean`), the matching key, the merge group, the canonical vendor, the link group, "
         "the exact cost as stored, and notes on the name.",
-        f"- `{rel(OUT_GROUPS)}`: the entity merge map, one row per source row, with decision, relationship, confidence "
-        "and reason.",
+        f"- `{rel(OUT_GROUPS)}`: the entity merge map, one row per source row, with decision (merge, proposed merge or "
+        "keep), relationship, confidence, link group and type, and reason.",
         f"- `{rel(OUT_CHANGES)}`: every change from original to clean name, one line per step.",
+        "",
+        "Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in section 4.",
         "",
         "## 1. Checks",
         "",
@@ -374,8 +388,9 @@ def main() -> int:
         "Services group; PwC and JLL are the canonical names of PricewaterhouseCoopers LLP and Jones Lang LaSalle.",
         "6. **Matching key** (`match_key`): the clean name with accents, legal forms, geography, stop words and the "
         "Supplier tag removed. It is used for matching only and never displayed.",
-        f"7. **Entity merge map.** {len(MERGE_GROUPS)} groups covering {merge_rows} rows; every other row is its own group. "
-        "`group_id` is the vendor_id of the group's largest row.",
+        f"7. **Entity merge map.** {len(MERGE_GROUPS)} merge groups ({len(proposed)} proposed) covering {merge_rows} rows; "
+        "every other row is its own group, and `group_id` is the vendor_id of the group's largest row. "
+        f"{len(LINK_GROUPS)} link groups tie related vendors together without merging them (`link_group`).",
         "",
         "## 3. Name changes",
         "",
@@ -403,21 +418,34 @@ def main() -> int:
     lines += table(["vendor_id", "Before casing", "After casing", "Rules"],
                    [[vid, cs[0]["before"], cs[-1]["after"], ", ".join(dict.fromkeys(c["reason"] for c in cs))]
                     for vid, cs in list(casing_by_row.items())[:15]])
+    def spend(rows):
+        return sum(by_row[x]["cost"] for x in rows)
+
+    def listed(rows):
+        return "; ".join(f"V{x:04d} {by_row[x]['clean']}" for x in rows)
+
     lines += ["", "## 4. Entity merge map", "",
-              f"{len(recs)} rows become {n_vendors} vendors. Merge groups:", ""]
-    grows = []
-    for canonical, rows, relationship, confidence, reason in sorted(
-            MERGE_GROUPS, key=lambda g: -sum(by_row[x]["cost"] for x in g[1])):
-        grows.append([canonical, group_of[rows[0]][1], ", ".join(f"V{x:04d}" for x in rows),
-                      money(sum(by_row[x]["cost"] for x in rows)), relationship, confidence, reason])
-    lines += table(["Canonical vendor", "group_id", "Rows", "12-month cost", "Relationship", "Confidence", "Reason"], grows)
-    lines += ["", "Kept separate, with a shared parent recorded in `parent_company`:", ""]
-    lines += table(["Parent", "Rows", "Why it matters"],
-                   [[p, "; ".join(f"V{x:04d} {by_row[x]['clean']}" for x in rows), reason] for p, rows, reason in PARENT_LINKS])
-    lines += ["", "Reviewed and kept as different vendors (from the near-duplicate search in `01_forensics.md`):", ""]
+              "Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship "
+              "under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). "
+              "Where entities share a parent or brand but supply different products or contracts, or share a lineage, the "
+              "vendors stay separate and are tied together through `link_group`.", "",
+              f"{len(recs)} rows become {n_vendors} vendors ({n_if_reversed} if the proposed merge is reversed).", "",
+              "### Merges", ""]
+    lines += table(["Canonical vendor", "group_id", "Rows", "12-month cost", "Status", "Relationship", "Confidence", "Reason"],
+                   [[g["canonical"], group_of[g["rows"][0]][1], ", ".join(f"V{x:04d}" for x in g["rows"]),
+                     money(spend(g["rows"])), g["status"], g["relationship"], g["confidence"], g["reason"]]
+                    for g in sorted(MERGE_GROUPS, key=lambda g: -spend(g["rows"]))])
+    lines += ["", "### Links", "",
+              "Linked vendors stay separate rows and separate vendors. The combined spend is shown because one negotiation "
+              "can cover the group; it is not added to any one vendor.", ""]
+    lines += table(["Link group", "Type", "Rows", "Combined 12-month cost", "Reason"],
+                   [[g["label"], g["type"], listed(g["rows"]), money(spend(g["rows"])), g["reason"]]
+                    for g in sorted(LINK_GROUPS, key=lambda g: -spend(g["rows"]))])
+    lines += ["", "### Reviewed and kept as different vendors", "",
+              "From the near-duplicate search in `01_forensics.md`, candidates that are neither merged nor linked:", ""]
     lines += table(["Rows", "Verdict", "Reason"],
-                   [["; ".join(f"V{x:04d} {by_row[x]['clean']}" for x in rows), verdict, reason]
-                    for rows, verdict, reason in DISTINCT_VERDICTS if not set(rows) <= set(group_of)])
+                   [[listed(rows), verdict, reason] for rows, verdict, reason in DISTINCT_VERDICTS
+                    if not (set(rows) <= set(group_of) or set(rows) <= set(link_of))])
     top = sorted(canon_spend.items(), key=lambda kv: -kv[1])[:15]
     cum = 0.0
     trows = []
@@ -426,7 +454,8 @@ def main() -> int:
         trows.append([i, canonical, gid, len(canon_rows[(gid, canonical)]), money(spend), pct(spend / raw_total), pct(cum / raw_total)])
     lines += ["", "## 5. Largest vendors after merging", ""]
     lines += table(["Rank", "Canonical vendor", "group_id", "Rows", "12-month cost", "Share", "Cumulative"], trows)
-    lines += ["", f"Total: {money(raw_total)} across {n_vendors} vendors ({len(recs)} rows).", "",
+    lines += ["", f"Total: {money(raw_total)} across {n_vendors} vendors ({len(recs)} rows). Linked vendors are ranked "
+              "separately; see section 4 for link-group totals.", "",
               "## 6. Analyst hint coverage", "",
               f"`docs/vendor_hints.md` maps its hints to {len(hinted)} rows; the other {len(recs) - len(hinted)} rows have "
               "no hint and are classified from their names and general knowledge.", ""]

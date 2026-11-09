@@ -9,7 +9,7 @@ Generated 2026-11-10 by `scripts/01_forensics.py`. The workbook was opened read-
 - **Decimals mean nothing.** No round numbers at all; precision changes block by block with the cost modification. Quote whole dollars. Section 3.
 - **First digits conform** to Benford's law (acceptable conformity, p = 0.18). Section 4.
 - **Row order is not a rank.** The sheet is 3 sorted blocks end to end. Section 5.
-- **14 entity merges** (30 rows) give 370 vendors; Navan, already second, grows to $415,913 across its old and new names. Six parent links (Slack under Salesforce, Trello under Atlassian, and others) are kept as links, not merges. Section 6.
+- **3 merges and 1 proposed merge** (8 rows) give 382 vendors; Navan, already second, grows to $415,913 across its old and new names. 15 link groups (Slack with Salesforce, Bupa's and Apple's country entities, and others) keep their vendors separate. Section 6.
 - **Customer-mandated payees:** Telefónica's two procurement entities and SAP Ariba, $97,400. Non-discretionary; confirm what the Telefónica payments are. Bupa and StarHub carry a Supplier tag and may also be customers. Sections 7.8 and 8.
 - **Savings base:** $121,657 of statutory and customer-mandated spend is excluded. Section 10.
 - **Unidentified payees:** 69 names, $472,522 (6.0% of spend), led by Weking d.o.o. at $144,093. Sections 7.10 and 8.
@@ -142,74 +142,85 @@ Removing 13 rows would make the whole sheet sorted (rows 117, 118, 119, 120, 121
 
 Method: the matching key from `00_data_profile.md` (mojibake repaired, accents stripped, lower case, legal forms, geography, stop words and the Supplier tag removed), searched in three tiers. Tier 1: same key (4 groups). Tier 2: similar spelling, a token subset, or two shared tokens covering half the shorter key (19 pairs). Tier 3: same first token where a pair was not already flagged (9 groups). Every candidate has a recorded verdict; the script stops if one does not.
 
+Merge policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). Where entities share a parent or brand but supply different products or contracts, or share a lineage, record a link instead: linked vendors stay separate.
+
 | Tier | Rows and names | Verdict | Reason |
 |---|---|---|---|
-| 1: same key | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc. | merge into AWS | Amazon Web Services billed through its LLC and its Inc entity |
-| 1: same key | 47 Bupa- Supplier; 71 Bupa Australia | merge into Bupa | two Bupa entities: one tagged Supplier in the source, the other Bupa Australia |
-| 1: same key | 172 Apple Pty Ltd; 229 Apple - Amer | merge into Apple | Apple billed through UK retail, Australian, Irish distribution and Americas entities |
-| 1: same key | 203 Amazon.Co.Uk; 291 Amazon (Aus) | merge into Amazon (retail) | Amazon consumer marketplace in the UK and Australia; kept apart from AWS, a different service |
+| 1: same key | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc. | merge into AWS | one AWS relationship, the same cloud service and customer agreement, billed under the Inc. and LLC entity names |
+| 1: same key | 47 Bupa- Supplier; 71 Bupa Australia | link: Bupa (same brand, separate entities) | two Bupa entities with separate insurance contracts, one of them Bupa Australia |
+| 1: same key | 172 Apple Pty Ltd; 229 Apple - Amer | link: Apple (same brand, separate entities) | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
+| 1: same key | 203 Amazon.Co.Uk; 291 Amazon (Aus) | link: Amazon (shared parent) | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases |
 | 2: token subset | 3 Navan (Tripactions Inc); 24 Navan, Inc | merge into Navan | TripActions Inc renamed itself Navan Inc in 2023; both rows are the same travel and expense platform |
-| 2: token subset | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc.; 203 Amazon.Co.Uk; 291 Amazon (Aus) | same parent, different service | AWS (cloud) and the Amazon marketplace are different services; linked through parent_company only |
-| 2: similar spelling | 16 Hr Solution International Gmbh; 90 Hrsolution International Ag | merge into HR Solution International | same brand billed through a GmbH and an AG |
+| 2: token subset | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc.; 203 Amazon.Co.Uk; 291 Amazon (Aus) | link: Amazon (shared parent) | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases |
+| 2: similar spelling | 16 Hr Solution International Gmbh; 90 Hrsolution International Ag | link: HR Solution International (same brand, separate entities) | a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them |
 | 2: similar spelling | 25 Tmforum; 249 Tm Forum | merge into TM Forum | Tmforum and Tm Forum are two spellings of the same association |
 | 2: token subset | 30 Sveučilište U Zagrebu, Studentski Centar; 86 Studentski Centar - Split | different vendors, same type | three different university student centres (Zagreb, Split, Karlovac) offering the same student-work service |
 | 2: shared tokens | 30 Sveučilište U Zagrebu, Studentski Centar; 186 Studentski Centar Karlovac | different vendors, same type | three different university student centres (Zagreb, Split, Karlovac) offering the same student-work service |
 | 2: token subset | 73 Grad Zagreb, Gradski Ured Za Prostorno Uređenje,..; 139 Grad Split | different vendors | two different cities (Zagreb, Split) |
 | 2: shared tokens | 88 Intertrust Singapore Corporate Services Pte Ltd - Csc; 99 Acclime Corporate Services | different vendors, same type | Intertrust and Acclime both sell corporate secretarial services; only the words Corporate Services are shared |
 | 2: shared tokens | 74 Bijeli Pijesak Obrt Za Poslovno Savjetovanje; 330 Teb Poslovno Savjetovanje D.O.O. | different vendors | unrelated firms whose names both contain poslovno savjetovanje (business consulting) |
-| 2: token subset | 99 Acclime Corporate Services; 105 Acclime Usa, Inc | merge into Acclime | Acclime billed through its corporate services entity and its US entity |
+| 2: token subset | 99 Acclime Corporate Services; 105 Acclime Usa, Inc | link: Acclime (same brand, separate entities) | Acclime's corporate services entity and its US entity, presumably separate engagements |
 | 2: token subset | 86 Studentski Centar - Split; 186 Studentski Centar Karlovac | different vendors, same type | three different university student centres (Zagreb, Split, Karlovac) offering the same student-work service |
-| 2: token subset | 94 Allianz Australia Workers' Compensation (Victoria) Limited; 212 Allianz Wa | merge into Allianz Australia | Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia |
-| 2: token subset | 123 Apple Retail Uk Ltd; 172 Apple Pty Ltd; 229 Apple - Amer | merge into Apple | Apple billed through UK retail, Australian, Irish distribution and Americas entities |
-| 2: token subset | 172 Apple Pty Ltd; 175 Apple Distribution International Ltd; 229 Apple - Amer | merge into Apple | Apple billed through UK retail, Australian, Irish distribution and Americas entities |
-| 2: shared tokens | 171 Grt Hotels And Resorts P Ltd; 190 Radisson Grt - Unit Of Hotels & Resorts Pvt Ltd | merge into GRT Hotels & Resorts | the Radisson row names itself a unit of GRT Hotels & Resorts |
+| 2: token subset | 94 Allianz Australia Workers' Compensation (Victoria) Limited; 212 Allianz Wa | link: Allianz Australia (same brand, separate entities) | Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia: separate state policies (decision of 2026-11-10) |
+| 2: token subset | 123 Apple Retail Uk Ltd; 172 Apple Pty Ltd; 229 Apple - Amer | link: Apple (same brand, separate entities) | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
+| 2: token subset | 172 Apple Pty Ltd; 175 Apple Distribution International Ltd; 229 Apple - Amer | link: Apple (same brand, separate entities) | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
+| 2: shared tokens | 171 Grt Hotels And Resorts P Ltd; 190 Radisson Grt - Unit Of Hotels & Resorts Pvt Ltd | link: GRT Hotels & Resorts (same brand, separate entities) | two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts |
 | 2: shared tokens | 192 Chamiers Recreation Club; 197 P S Recreation Club | different vendors, same type | two different recreation clubs |
-| 2: token subset | 303 Dhl; 336 Dhl Express (Uk) Ltd | merge into DHL | DHL billed with and without the DHL Express (UK) entity name |
+| 2: token subset | 303 Dhl; 336 Dhl Express (Uk) Ltd | link: DHL (same brand, separate entities) | a bare DHL record and DHL Express (UK); the file does not show that they are one account |
 | 2: token subset | 348 Hilton Garden Inn - Zagreb City Hotels D.O.O.; 372 Garden City D.O.O. | different vendors | share only the words Garden and City |
 | 2: shared tokens | 382 Specijalisticka Ordinacija Medicine Rada I Sporta Ina Kardos; 383 Specijalisticka Ordinacija Medicine Rada Helena Blazic | different vendors, same type | two occupational-medicine practices run by different doctors |
-| 3: same first token `telefonica` | 15 Telefonica Global Services Gmbh; 93 Telefónica Compras Electrónicas S.L. | merge into Telefónica | two Telefónica group entities (Global Services GmbH, Compras Electrónicas S.L.) |
-| 3: same first token `4i` | 17 4I Advisory Services; 72 4I Management Consulting Private Limited | merge into 4i | shared and unusual 4i brand, both advisory or consulting in India; confirm the two firms are related |
+| 3: same first token `telefonica` | 15 Telefonica Global Services Gmbh; 93 Telefónica Compras Electrónicas S.L. | link: Telefónica (same brand, separate entities) | two Telefónica group entities (Global Services GmbH, Compras Electrónicas S.L.); what each payment is goes to Finance |
+| 3: same first token `4i` | 17 4I Advisory Services; 72 4I Management Consulting Private Limited | proposed merge into 4i | shared and unusual 4i brand, both advisory or consulting in India; to be confirmed or reversed by web verification |
 | 3: same first token `new` | 46 New Star Networks(Nsn); 360 New Block D.O.O. | different vendors | share only the word New |
 | 3: same first token `hrvatski` | 53 Hrvatski Telekom D.D.; 318 Hrvatski Nezavisnici Izvoznici Softvera | different vendors | share only Hrvatski (Croatian) |
 | 3: same first token `catering` | 82 Catering Muring; 233 Catering Ivić D.O.O. | different vendors, same type | two different caterers |
-| 3: same first token `apple` | 123 Apple Retail Uk Ltd; 172 Apple Pty Ltd; 175 Apple Distribution International Ltd; 229 Apple - Amer | merge into Apple | Apple billed through UK retail, Australian, Irish distribution and Americas entities |
+| 3: same first token `apple` | 123 Apple Retail Uk Ltd; 172 Apple Pty Ltd; 175 Apple Distribution International Ltd; 229 Apple - Amer | link: Apple (same brand, separate entities) | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
 | 3: same first token `paint` | 183 Paint & Fun Vl. Martina Milkova Nikolova; 315 Paint&Wine, Vl. Stevo Dosen | different vendors, same type | two painting-event sole traders with different owners |
 | 3: same first token `hotel` | 247 Hotel Zonar; 304 Hotel Laguna D.D. | different vendors, same type | two different hotels |
 | 3: same first token `ustanova` | 328 Ustanova Za Zdravstvenu Skrb P.P.; 384 Ustanova Za Medicinu Rada I Sporta Dr. Novacki | different vendors, same type | two different health institutions |
 
-Links that string matching cannot find, from knowledge of the vendors:
+Merges and links that string matching cannot find, from knowledge of the vendors:
 
-| Rows and names | Treatment | Confidence | Reason |
+| Rows and names | Treatment | Reason |
+|---|---|---|
+| 2 Salesforce Uk Ltd-Uk; 173 Slack Technologies Limited | link: Salesforce (shared parent) | Slack has been a Salesforce company since 2021, so it goes into the same renewal |
+| 91 Trello; 297 Atlassian Pty Ltd | link: Atlassian (shared parent) | Trello is an Atlassian product |
+| 130 Papertrail Inc; 311 Solarwinds, Inc | link: SolarWinds (shared parent) | Papertrail is a SolarWinds product |
+| 26 Linkedin Ireland Limited; 81 Microsoft Ireland Operations Limited; 125 Npm Inc | link: Microsoft (shared parent) | LinkedIn and npm (through GitHub) are Microsoft companies |
+| 95 Icici Lombard Gic Ltd; 143 Cici Prudential Life Insurance Co. Ltd. | link: ICICI group (shared parent) | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
+| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | link: Sodexo and Pluxee (same lineage) | Pluxee was demerged from Sodexo in 2024; on-site catering and meal cards are different services and contracts (decision of 2026-11-10) |
+
+Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendors (383 if the proposed merge is reversed):
+
+| Vendor after merge | Rows | Combined 12-month cost | Status | Confidence |
+|---|---|---|---|---|
+| Navan | 3, 24 | $415,913 | merge | high |
+| AWS | 14, 103 | $111,552 | merge | high |
+| 4i | 17, 72 | $83,978 | proposed merge | medium |
+| TM Forum | 25, 249 | $58,070 | merge | high |
+
+15 link groups keep their vendors separate. Their combined spend is shown because a negotiation can cover the whole group; it is not added to any one vendor:
+
+| Link group | Type | Rows | Combined 12-month cost |
 |---|---|---|---|
-| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | merge into Pluxee India | medium | Sodexo SVC India, the Indian meal-benefits entity, was renamed Pluxee India around the 2024 Sodexo demerger; confirm with Finance |
-| 2 Salesforce Uk Ltd-Uk; 173 Slack Technologies Limited | keep separate; parent Salesforce | high | Slack has been a Salesforce company since 2021, so it can be negotiated with the Salesforce renewal |
-| 91 Trello; 297 Atlassian Pty Ltd | keep separate; parent Atlassian | high | Trello is an Atlassian product |
-| 130 Papertrail Inc; 311 Solarwinds, Inc | keep separate; parent SolarWinds | high | Papertrail is a SolarWinds product |
-| 26 Linkedin Ireland Limited; 81 Microsoft Ireland Operations Limited; 125 Npm Inc | keep separate; parent Microsoft | high | LinkedIn and npm (through GitHub) are Microsoft companies |
-| 95 Icici Lombard Gic Ltd; 143 Cici Prudential Life Insurance Co. Ltd. | keep separate; parent ICICI group | high | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
-| 14 Amazon Web Services Llc; 103 Amazon Web Services Inc.; 203 Amazon.Co.Uk; 291 Amazon (Aus) | keep separate; parent Amazon | high | AWS and the Amazon marketplace share a parent but are different services |
+| Salesforce | shared parent | 2, 173 | $3,119,215 |
+| Amazon | shared parent | 14, 103, 203, 291 | $112,893 |
+| Telefónica | same brand, separate entities | 15, 93 | $96,037 |
+| HR Solution International | same brand, separate entities | 16, 90 | $87,810 |
+| Microsoft | shared parent | 26, 81, 125 | $68,929 |
+| Bupa | same brand, separate entities | 47, 71 | $35,263 |
+| Sodexo and Pluxee | same lineage | 54, 128 | $21,804 |
+| Acclime | same brand, separate entities | 99, 105 | $10,408 |
+| ICICI group | shared parent | 95, 143 | $9,167 |
+| Apple | same brand, separate entities | 123, 172, 175, 229 | $8,256 |
+| Allianz Australia | same brand, separate entities | 94, 212 | $7,069 |
+| Atlassian | shared parent | 91, 297 | $6,898 |
+| SolarWinds | shared parent | 130, 311 | $4,066 |
+| GRT Hotels & Resorts | same brand, separate entities | 171, 190 | $3,437 |
+| DHL | same brand, separate entities | 303, 336 | $310 |
 
-Result: 14 merge groups covering 30 rows, so 386 rows become 370 vendors. Combined spend of each group:
-
-| Vendor after merge | Rows | Combined 12-month cost | Confidence |
-|---|---|---|---|
-| Navan | 3, 24 | $415,913 | high |
-| AWS | 14, 103 | $111,552 | high |
-| Telefónica | 15, 93 | $96,037 | high |
-| HR Solution International | 16, 90 | $87,810 | high |
-| 4i | 17, 72 | $83,978 | medium |
-| TM Forum | 25, 249 | $58,070 | high |
-| Bupa | 47, 71 | $35,263 | high |
-| Pluxee India | 54, 128 | $21,804 | medium |
-| Acclime | 99, 105 | $10,408 | high |
-| Apple | 123, 172, 175, 229 | $8,256 | high |
-| Allianz Australia | 94, 212 | $7,069 | medium |
-| GRT Hotels & Resorts | 171, 190 | $3,437 | medium |
-| Amazon (retail) | 203, 291 | $1,340 | high |
-| DHL | 303, 336 | $310 | high |
-
-- Implication for classification: merged rows are classified once, as one vendor, and the rationale names the entity to keep ("same vendor is paid through more than one entity"). Parent links do not merge vendors; they let a recommendation name the parent agreement (for example Slack inside the Salesforce renewal). Same-type vendors that are not merged (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
-- Implication for the memo: the vendor count is 370, not 386. Navan, already second, grows from $357,984 to $415,913; Telefónica, HR Solution and 4i each exceed $80,000 once their entities are combined. Totals by vendor should always use the merged view.
+- Implication for classification: merged rows are classified once, as one vendor; the proposed 4i merge is treated the same way until web verification confirms or reverses it. Linked vendors are classified one by one, and the link lets a recommendation name the shared agreement or brand (Slack inside the Salesforce renewal, one Bupa or Apple relationship across countries). Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
+- Implication for the memo: the vendor count is 382 (383 if the 4i merge is reversed), not 386. Navan, already second, grows from $357,984 to $415,913 across its old and new names. A linked group can be quoted as one figure where one negotiation covers it (Telefónica $96,037, HR Solution International $87,810), but its vendors stay separate rows.
 
 ## 7. Payee types
 
@@ -370,7 +381,7 @@ Courts: none found.
 6. **Government payees that point at the group structure.** V0361 Cayman Islands Government ($56) implies a Cayman Islands entity; V0333 Australian Taxation Office (Ato) ($123) is tax paid through accounts payable. Implication: Confirm the legal-entity map with the parent; tax payments are not vendor spend.
 7. **Payees whose purpose is unclear.** V0223 Bb Football Scouting J.D.O.O. ($823) (a football scouting company) and V0162 Pink Ribbon Shop ($2,251) (a shop). Implication: Small, but they are the kind of line a CFO asks about; classify with confidence low.
 8. **Card and expense transactions in an accounts-payable list.** `Uber *Eats` is a card-statement descriptor; 39 retail rows are under $1,000; 25 food and drink payees are paid as vendors; 20 hotels, airlines and transport companies are paid directly rather than through Navan. Implication: The vendor count overstates the supplier base; tail spend is a policy question (cards, expenses, Navan), not a negotiation.
-9. **The same vendor under old and new names.** Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`; Sodexo SVC India and Pluxee India appear side by side. Implication: The vendor master was not cleaned after renames; merge them (section 6) and recommend one entity.
+9. **The same vendor under old and new names.** Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`. Sodexo SVC India and Pluxee India also appear side by side; they share a lineage, but on-site catering and meal cards are different contracts, so they are linked rather than merged (decision of 2026-11-10). Implication: The vendor master was not cleaned after the Navan rename; the two rows are merged (section 6) and the recommendation names one entity.
 10. **Grid size and dropdown source.** The vendor sheet's grid runs to row 814 and the Department dropdown reads `Config` rows 2 to 814, although the data ends at row 387 and `Config` at row 13. Implication: Consistent with a template or an earlier, longer version of the sheet. Nothing in the file shows whether the 386 rows are every vendor paid in the 12 months; the memo should call the total the spend in this file.
 11. **Name damage beyond mojibake.** `Magazin Raunalni Sistemi` has lost the letter č (Računalni, computer); `Cici Prudential` is ICICI Prudential without its first letter; `Mcburneys Charted Accountants` misspells Chartered. Implication: The cleaning step repairs a display name only where the correct form is certain (the č); the others are noted, not rewritten.
 12. **Explained, not suspicious.** Identical amounts (section 2), the precision pattern (section 3) and the row-order breaks (section 5) are all consequences of the cost modification; the first-digit test (section 4) shows nothing unusual. Implication: Mention once in the methodology; nothing for the memo.
@@ -399,7 +410,7 @@ Payees over $5,000 whose function the name does not show:
 
 ## 9. What this means for classification
 
-- Classify 386 rows but treat the 14 merge groups as single vendors, so each gets one department, one description and one recommendation that names the entity to keep.
+- Classify 386 rows but treat the 4 merge groups (one of them proposed) as single vendors, so each gets one department, one description and one recommendation that names the entity to keep; the 15 link groups stay separate vendors whose rationales can name the shared agreement.
 - Set confidence low for the 69 payees whose function the name does not show and for the six individuals; say so in the description rather than guessing.
 - Use the Croatian glossary terms surfaced here (obrt, vl., grad, osiguranje, medicina rada, prijevoz, dostava, ugostiteljstvo, savjetovanje, udruga) so Croatian descriptions are translations.
 - Statutory, government and customer-mandated payees take Optimize with the non-discretionary rationale.

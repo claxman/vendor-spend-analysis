@@ -2,7 +2,9 @@
 
 The only departments allowed are the 12 values in the workbook's `Config` sheet, spelled exactly as there and listed here in the same order. The workbook's Department column (B2:B387) is a dropdown validated against `Config!$A$2:$A814` with the error alert on, so any other spelling would be rejected in the workbook. `scripts/02_clean.py` checks that the table below and `Config` agree, character for character.
 
-A department says which function owns the spend and would own the renewal decision. It is independent of the cost cluster (`docs/clusters.md`), which groups spend for savings roll-ups. Recommendations follow `docs/recommendation_rules.md`; analyst knowledge about specific vendors is in `docs/vendor_hints.md`.
+A department answers one question: whose budget is this? The cost cluster (`docs/clusters.md`) answers another: which lever captures the saving? The two can differ (decision of 2026-11-10, `docs/decisions.md`). Mason Frank is G&A by department, as a recruiting agency, and Salesforce platform by cluster, so its saving rolls into the Salesforce opportunity. Slack is SaaS by department and Salesforce platform by cluster, because it is Salesforce-owned and goes into the same renewal.
+
+Recommendations follow `docs/recommendation_rules.md`; analyst knowledge about specific vendors is in `docs/vendor_hints.md`.
 
 ## Departments
 
@@ -38,13 +40,13 @@ These are the rules as given (prompt 6 in `prompts/log.md`).
 11. Marketing holds agencies, media, PR, events, sponsorships, industry memberships (TM Forum), swag and print, stock assets.
 12. Support holds support tooling and telephony for support lines.
 
-## Tie-breaks (proposed by Claude, to confirm or change)
+## Tie-breaks (approved 2026-11-10)
 
 These settle cases the rules above leave open, without overriding any of them. Each names the vendors it decides; the defaults change only with evidence, and the classification states which way it went.
 
 | # | Situation | Proposed department | Vendors it decides |
 |---|---|---|---|
-| T1 | A vendor specialised in one ecosystem but doing a generic job | What the vendor does, not whose ecosystem it serves: a Salesforce-specialist recruiter is a recruiting agency (rule 7) | Mason Frank: G&A |
+| T1 | A vendor specialised in one ecosystem but doing a generic job | What the vendor does, not whose ecosystem it serves: a Salesforce-specialist recruiter is a recruiting agency (rule 7) | Mason Frank: G&A (its cost cluster is Salesforce platform, `docs/clusters.md` C1) |
 | T2 | A Salesforce partner that may be a subcontractor on customer projects | Sales by default (rule 1); Professional Services only with evidence that its work is delivered to customers (rule 3) | Cloudcrossing |
 | T3 | Outsourced development that may be customer-project subcontracting | Engineering by default (rule 9); Professional Services with evidence (rule 3) | Infosys, Shree Info System Solutions, Crayond Digital, Orionw, Trending Technology Services |
 | T4 | Food and drink | Groceries and catering for the office: Facilities (rule 8). Restaurants, team meals and food delivery: G&A, travel and entertainment (rule 7) | Konzum, Catering Muring, City Pantry: Facilities; Tattu, Gaucho, Uber Eats, Wolt: G&A |
