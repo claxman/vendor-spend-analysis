@@ -12,17 +12,22 @@ Defaults:
 """
 from __future__ import annotations
 
-import hashlib
 import re
 import sys
-import unicodedata
 from collections import Counter, defaultdict
 from datetime import date, datetime
-from difflib import SequenceMatcher
 from pathlib import Path
 
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from vsa_common import (  # noqa: E402  shared with the later steps
+    CROATIAN_FORM_TOKENS, EM_DASH, EXCEL_ESCAPE, FUZZY_RATIO, GEO_TOKENS, LEGAL_TOKENS,
+    MOJIBAKE_MARKER, data_range, group_label, group_total, is_blank, is_number, main_sheet,
+    md_escape, money, near_duplicate_candidates, pct, repair_mojibake, sha256, strip_accents,
+    structure_audit, table, write_text,
+)
 
 RAW_DEFAULT = Path("data/raw/vendor_analysis_assessment.xlsx")
 OUT_DEFAULT = Path("outputs/analysis/00_data_profile.md")
@@ -31,30 +36,7 @@ MAIN_SHEET = "Vendor Analysis Assessment"
 CONFIG_SHEET = "Config"
 NAME_COL, DEPT_COL, COST_COL, DESC_COL, SUGG_COL = 0, 1, 2, 3, 4
 SMALL_VENDOR_THRESHOLD = 1000.0
-FUZZY_RATIO = 0.85
 MAX_LIST_ROWS = 60
-EM_DASH = "\u2014"
-
-# Tokens removed before comparing vendor names. Legal forms and geography do
-# not identify a vendor: "Acme Ltd" and "Acme Inc" are one vendor family for
-# consolidation purposes even if they are separate legal entities.
-LEGAL_TOKENS = {
-    "ltd", "limited", "llc", "inc", "incorporated", "corp", "corporation",
-    "co", "company", "plc", "gmbh", "ag", "sa", "sas", "sarl", "srl", "bv",
-    "bvba", "nv", "doo", "jdoo", "dd", "sro", "sl", "pc", "pp", "vl", "obrt",
-    "pvt", "private", "pte", "pty", "llp", "lp", "kft", "oy", "ab", "as",
-    "aps", "ltda", "spa", "kk", "spzoo",
-}
-GEO_TOKENS = {
-    "uk", "usa", "us", "gb", "eu", "ireland", "india", "europe", "emea",
-    "america", "amer", "international", "intl", "global", "croatia",
-    "hrvatska", "australia", "australian", "aus", "singapore", "sg", "nsw",
-    "wa", "victoria", "london", "zagreb", "split", "melbourne", "chennai",
-    "greece", "greec",
-}
-STOP_TOKENS = {"the", "and", "of", "a", "za", "i", "u"}
-NOISE_TOKENS = {"supplier", "com"}
-CROATIAN_FORM_TOKENS = {"doo", "jdoo", "dd", "obrt"}
 PLACEHOLDER_NAMES = {"(blank)", "blank", "n/a", "na", "none", "unknown", "null", "-", "tbd"}
 
 CURRENCY_PATTERN = re.compile(
@@ -78,19 +60,10 @@ OBSERVED_CARD_MERCHANTS = [
 ]
 
 
+
 # ---------------------------------------------------------------- helpers
-
-def sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def is_blank(v) -> bool:
-    return v is None or (isinstance(v, str) and v.strip() == "")
-
+# Shared helpers (money, tables, mojibake repair, matching key) live in
+# scripts/vsa_common.py so every step uses the same definitions.
 
 def type_name(v) -> str:
     if is_blank(v):
@@ -108,30 +81,6 @@ def type_name(v) -> str:
     return type(v).__name__
 
 
-def is_number(v) -> bool:
-    return isinstance(v, (int, float)) and not isinstance(v, bool)
-
-
-def money(x: float) -> str:
-    sign = "-" if x < 0 else ""
-    return f"{sign}${abs(x):,.0f}"
-
-
-def pct(x: float) -> str:
-    return f"{100 * x:.1f}%"
-
-
-def md_escape(s) -> str:
-    return str(s).replace("|", "\\|").replace("\n", " ")
-
-
-def table(headers: list[str], rows: list[list]) -> list[str]:
-    out = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
-    for r in rows:
-        out.append("| " + " | ".join(md_escape(c) for c in r) + " |")
-    return out
-
-
 def decimals_of(x: float) -> int:
     if isinstance(x, int) or float(x).is_integer():
         return 0
@@ -139,73 +88,6 @@ def decimals_of(x: float) -> int:
     if "e" in text or "E" in text:
         return 15
     return len(text.split(".")[1])
-
-
-# ---------------------------------------------------------------- text repair
-
-LEAD_FIX = {"\u00e3": "\u00c3", "\u00e4": "\u00c4", "\u00e5": "\u00c5"}  # a-tilde, a-umlaut, a-ring
-CASE_FLIP = {"\u0161": "\u0160", "\u0153": "\u0152", "\u017e": "\u017d"}  # s-caron, oe, z-caron
-MOJIBAKE_MARKER = re.compile(r"[\u00c0-\u00c5\u00e0-\u00e5\u0080-\u009f]|_x00[0-9a-f]{2}_", re.IGNORECASE)
-EXCEL_ESCAPE = re.compile(r"_x([0-9A-Fa-f]{4})_")
-
-
-def _cp1252_bytes(t: str) -> bytes:
-    out = bytearray()
-    for ch in t:
-        o = ord(ch)
-        if 0x80 <= o <= 0x9F:  # undefined cp1252 slots survive as raw bytes
-            out.append(o)
-        else:
-            out += ch.encode("cp1252")
-    return bytes(out)
-
-
-def repair_mojibake(s: str) -> tuple[str, bool]:
-    """Undo UTF-8 text that was decoded as cp1252 and then Title Cased.
-
-    Title casing turned lead bytes C3/C4/C5 into lower-case a-tilde/a-umlaut/
-    a-ring when they fell mid-word, so those are restored before re-encoding.
-    Excel's _x008d_ escapes stand for bytes cp1252 cannot show.
-    """
-    if not MOJIBAKE_MARKER.search(s):
-        return s, False
-    base = EXCEL_ESCAPE.sub(lambda m: chr(int(m.group(1), 16)), s)
-    v2 = "".join(LEAD_FIX.get(ch, ch) for ch in base)
-    variants = [
-        base,
-        v2,
-        "".join(CASE_FLIP.get(ch, ch) for ch in v2),
-        v2.replace("\u00c5 ", "\u00c5\u00a0"),
-    ]
-    for v in variants:
-        try:
-            fixed = _cp1252_bytes(v).decode("utf-8")
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            continue
-        if fixed != s:
-            fixed = re.sub(r"(?<=[^\W\d_])([^\W\d_])", lambda m: m.group(1).lower(), fixed)
-            return fixed, True
-    return s, False
-
-
-TRANSLIT = {"\u0111": "d", "\u0110": "D", "\u00df": "ss", "\u0142": "l", "\u0141": "L",
-            "\u00f8": "o", "\u00d8": "O", "\u00e6": "ae", "\u00c6": "AE"}
-
-
-def strip_accents(s: str) -> str:
-    s = "".join(TRANSLIT.get(ch, ch) for ch in s)
-    return "".join(ch for ch in unicodedata.normalize("NFKD", s) if not unicodedata.combining(ch))
-
-
-def normalize_name(name: str) -> str:
-    s = strip_accents(repair_mojibake(name)[0]).lower()
-    s = s.replace("&", " and ")
-    s = re.sub(r"\ba/s\b", " as ", s)
-    s = re.sub(r"\b((?:[a-z]\.){2,})", lambda m: m.group(1).replace(".", ""), s)  # d.o.o. -> doo
-    s = re.sub(r"\bsp\.?\s*z\s*o\.?\s*o\b\.?", " spzoo ", s)
-    s = re.sub(r"[^a-z0-9 ]+", " ", s)
-    drop = LEGAL_TOKENS | GEO_TOKENS | STOP_TOKENS | NOISE_TOKENS
-    return " ".join(t for t in s.split() if t not in drop)
 
 
 # ---------------------------------------------------------------- generic sheet profile
@@ -314,17 +196,6 @@ def load_vendor_rows(ws, last: int) -> list[dict]:
     return rows
 
 
-def group_label(recs: list[dict]) -> str:
-    return "; ".join(
-        f"`{r['name']}` (row {r['row']}, {money(float(r['cost'])) if is_number(r['cost']) else 'cost n/a'})"
-        for r in recs
-    )
-
-
-def group_total(recs: list[dict]) -> float:
-    return sum(float(r["cost"]) for r in recs if is_number(r["cost"]))
-
-
 def analyze_main(ws, p: dict) -> dict:
     recs = load_vendor_rows(ws, p["last_data_row"])
     named = [r for r in recs if not is_blank(r["name"])]
@@ -378,55 +249,9 @@ def analyze_main(ws, p: dict) -> dict:
     casefold_dups = {k: v for k, v in casefold.items()
                      if len(v) > 1 and len({str(x["name"]) for x in v}) > 1}
 
-    norm: dict[str, list[dict]] = defaultdict(list)
-    for r in named:
-        r["key"] = normalize_name(str(r["name"]))
-        norm[r["key"]].append(r)
-    norm_dups = {k: v for k, v in norm.items()
-                 if k and len(v) > 1 and len({str(x["name"]) for x in v}) > 1}
-    empty_key = norm.get("", [])
-
-    keys = sorted(k for k in norm if k)
-    tokens = {k: set(k.split()) for k in keys}
-    near, flagged_pairs = [], set()
-    for i, a in enumerate(keys):
-        ta = tokens[a]
-        for b in keys[i + 1:]:
-            tb = tokens[b]
-            shared = ta & tb
-            smaller = min(len(ta), len(tb))
-            subset = (ta <= tb or tb <= ta) and min(len(a), len(b)) >= 3
-            shared_tokens = len(shared) >= 2 and len(shared) / smaller >= 0.5
-            sm = SequenceMatcher(None, a, b)
-            similar = (sm.real_quick_ratio() >= FUZZY_RATIO and sm.quick_ratio() >= FUZZY_RATIO
-                       and sm.ratio() >= FUZZY_RATIO)
-            if similar:
-                rule = "similar spelling"
-            elif subset:
-                rule = "token subset"
-            elif shared_tokens:
-                rule = "shared tokens"
-            else:
-                continue
-            near.append({"a": a, "b": b, "ratio": sm.ratio(), "rule": rule})
-            flagged_pairs.add(frozenset((a, b)))
-    near.sort(key=lambda d: (-(group_total(norm[d["a"]]) + group_total(norm[d["b"]]))))
-
-    first: dict[str, set[str]] = defaultdict(set)
-    for k in keys:
-        t = k.split()[0]
-        if len(t) >= 2:
-            first[t].add(k)
-    weak = {}
-    for t, ks in first.items():
-        if len(ks) < 2:
-            continue
-        ks_sorted = sorted(ks)
-        unflagged = any(frozenset((x, y)) not in flagged_pairs
-                        for i, x in enumerate(ks_sorted) for y in ks_sorted[i + 1:])
-        if unflagged:
-            weak[t] = ks_sorted
-    weak_sorted = sorted(weak.items(), key=lambda kv: -sum(group_total(norm[k]) for k in kv[1]))
+    cand = near_duplicate_candidates(named)  # same tiers as before, now shared with later steps
+    norm, norm_dups, empty_key = cand["norm"], cand["norm_dups"], cand["empty_key"]
+    near, weak_sorted = cand["near"], cand["weak"]
 
     cost_formats = Counter(r["cost_format"] for r in numeric)
     fractional = [r for r in numeric if not float(r["cost"]).is_integer()]
@@ -668,7 +493,8 @@ def render_main(a: dict, p: dict) -> list[str]:
                   if a["raw_only_hits"] else ""))
     out.append("- Legal-form and geography tokens in vendor names (where the vendor is incorporated, which hints at "
                "the original billing currency but does not prove it): "
-               + (", ".join(f"`{k}` ({v})" for k, v in a["entity_tokens"].most_common()) or "none"))
+               + (", ".join(f"`{k}` ({v})" for k, v in sorted(a["entity_tokens"].items(), key=lambda kv: (-kv[1], kv[0])))
+                  or "none"))
     out.append(f"- Rows with a Croatian legal form (D.O.O., J.D.O.O., D.D., Obrt): {a['croatian_rows']} of {len(a['named'])}")
 
     out += ["", "### Total 12-month spend and distribution", ""]
@@ -822,6 +648,95 @@ def cleaning_steps(a: dict, p: dict, departments: list[str]) -> list[str]:
     return out
 
 
+# ---------------------------------------------------------------- structure addendum
+
+def structure_addendum(f: dict) -> list[str]:
+    """Re-verification of the separately run structure audit (prompt 6)."""
+    sheets = f["sheets"]
+    m = main_sheet(f)
+    n = len(sheets)
+    visible = sum(1 for s in sheets if s["state"] == "visible" and s["raw_state"] == "visible")
+    hid_rows = sum(len(s["hidden_rows"]) for s in sheets)
+    hid_cols = sum(len(s["hidden_cols"]) for s in sheets)
+    zero_rows = sum(len(s["zero_height_rows"]) for s in sheets)
+    zero_cols = sum(len(s["zero_width_cols"]) for s in sheets)
+    outline = sum(len(s["outline_rows"]) + len(s["outline_cols"]) for s in sheets)
+    notes = sum(s["comments"] for s in sheets)
+    cf = sum(s["cf_rules"] for s in sheets)
+    raw_cf = sum(s["raw_cf"] for s in sheets)
+    dvs = [(s["title"], d) for s in sheets for d in s["dvs"]]
+    raw_x14_dv = sum(s["raw_x14_dv"] for s in sheets)
+    dv_cols = {get_column_letter(c) for c in m["dv_cols"]}
+    other_cols = [get_column_letter(c) for c in range(1, m["max_col"] + 1) if get_column_letter(c) not in dv_cols]
+    builtin = "; ".join(f"`{d['name']}` = `{d['ref']}`" for d in f["builtin_names"]) or "none"
+    dv_text = "; ".join(f"`{t}` {d['sqref']}: type `{d['type']}`, source `{d['formula1']}`, "
+                        f"blanks {'allowed' if d['allow_blank'] else 'rejected'}, error alert {'on' if d['error_alert'] else 'off'}"
+                        for t, d in dvs)
+    dv_ok = (len(dvs) == 1 and dvs[0][1]["sqref"] == "B2:B387" and dvs[0][1]["type"] == "list"
+             and dvs[0][1]["formula1"].replace("$", "") == "Config!A2:A814" and raw_x14_dv == 0)
+
+    def status(ok: bool, note: bool = False) -> str:
+        return ("Confirmed, with note" if note else "Confirmed") if ok else "DIFFERS"
+
+    rows = [
+        ["No hidden sheets",
+         f"{visible} of {n} sheets visible in openpyxl and in workbook.xml; none hidden or very hidden",
+         status(visible == n)],
+        ["No hidden rows or columns",
+         f"{hid_rows} hidden rows, {hid_cols} hidden columns, {zero_rows} zero-height rows, {zero_cols} zero-width "
+         f"columns, {outline} outline-grouped rows or columns, across all {n} sheets",
+         status(hid_rows == hid_cols == zero_rows == zero_cols == outline == 0)],
+        ["No comments",
+         f"{notes} cell notes; comment parts in the package: {len(f['comment_parts'])}; the persons part used by threaded "
+         f"comments {'exists but lists ' + str(f['persons_listed']) + ' people' if f['persons_part'] else 'is absent'}",
+         status(notes == 0 and not f["comment_parts"] and f["persons_listed"] == 0)],
+        ["No defined names",
+         f"{len(f['user_defined_names'])} user-defined names (openpyxl lists {len(f['openpyxl_names'])}); the XML holds "
+         f"{len(f['builtin_names'])} hidden built-in name: {builtin}, which Excel and Google Sheets create "
+         f"automatically for an AutoFilter",
+         status(not f["user_defined_names"], note=bool(f["builtin_names"]))],
+        ["No conditional formats",
+         f"{cf} rules in openpyxl; {raw_cf} conditionalFormatting elements in the sheet XML, including the x14 extension list",
+         status(cf == 0 and raw_cf == 0)],
+        ["No content beyond A1:E387",
+         f"last value at row {m['last_row']}, column {get_column_letter(m['last_col'])}; the grid runs to "
+         f"{m['dims'].split(':')[1]} and rows {m['last_row'] + 1} to {m['max_row']} ({m['styled_beyond_rows']:,} cells) and "
+         f"columns {get_column_letter(m['last_col'] + 1)} to {get_column_letter(m['max_col'])} ({m['styled_beyond_cols']:,} cells) "
+         f"hold styling only; {sum(s['formulas'] for s in sheets)} formulas anywhere",
+         status(data_range(m) == "A1:E387")],
+        ["Only validation: Department dropdown on B2:B387 referencing Config!A2:A814",
+         f"{len(dvs)} rule in the workbook: {dv_text}; {raw_x14_dv} x14 extension rules",
+         status(dv_ok)],
+        ["Column E is free text",
+         f"no validation covers column E; the only covered column is {', '.join(sorted(dv_cols)) or 'none'} "
+         f"(no rule on {', '.join(other_cols)})",
+         status("E" not in dv_cols)],
+    ]
+    hyperlinks = [(s["title"], c, t) for s in sheets for c, t in s["hyperlinks"]]
+    out = [
+        "## Addendum: workbook structure re-verification",
+        "",
+        f"Added {date.today().isoformat()}. A structure audit was run separately; each of its findings is re-checked "
+        "here with openpyxl. Three things openpyxl does not surface were read from the raw package XML: built-in "
+        "defined names, extension-list (x14) validation and conditional formats, and threaded comments. Code: "
+        "`structure_audit()` in `scripts/vsa_common.py`. The wider forensic checks are in `01_forensics.md`.",
+        "",
+    ]
+    out += table(["Finding of the separate audit", "Re-verified result", "Status"], rows)
+    out += [
+        "",
+        "Notes:",
+        "",
+        f"- AutoFilter on `{m['autofilter']}` with {m['filter_columns']} filter criteria and "
+        f"{'a' if m['sort_state'] else 'no'} saved sort state, so no row is filtered out of view.",
+        "- Hyperlinks: " + ("; ".join(f"`{t}`!{c} links to {u}" for t, c, u in hyperlinks) if hyperlinks else "none")
+        + ". The target is the cell's own text, so this is most likely an automatic link rather than added content.",
+        "- The dropdown source runs to row 814 although `Config` holds values only in A1:A13, so rows 14 to 814 of the "
+        "source are empty and the only non-blank choices are the 12 departments.",
+    ]
+    return out
+
+
 # ---------------------------------------------------------------- main
 
 def main(argv: list[str]) -> int:
@@ -887,12 +802,11 @@ def main(argv: list[str]) -> int:
     lines += cleaning_steps(a, profiles[MAIN_SHEET], departments)
     lines.append("")
 
+    lines += structure_addendum(structure_audit(raw))
+    lines.append("")
+
     text = "\n".join(lines)
-    if EM_DASH in text:
-        bad = [ln for ln in lines if EM_DASH in ln][:3]
-        raise SystemExit("Output contains an em dash; refusing to write. First offending lines: " + " || ".join(bad))
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(text, encoding="utf-8")
+    write_text(out_path, text)  # refuses to write if an em or en dash slipped in
 
     print(f"wrote {out_path} ({len(text):,} chars, {len(lines)} lines)")
     print(f"vendor rows: {len(a['named'])}; numeric costs: {a['n']}; total spend: {money(a['total'])}")

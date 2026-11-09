@@ -149,7 +149,7 @@ Method: repair mojibake, strip accents, lower-case, replace `&` with `and`, coll
 - Cost cells stored as text (would need parsing): 0
 - Costs with a fractional part: 386 of 386; most decimal digits seen: 15. Invoice totals are rarely this precise, which is consistent with the values having been converted from other currencies or scaled (the brief says costs were modified). No FX rate, original currency or invoice date column exists, so the conversion cannot be checked or reversed.
 - Currency symbols or ISO codes inside text cells (name, department, description, suggestions), checked after mojibake repair: none. Before repair row 129 `Oâ€™Donnell Salzano Lawyers` showed a stray currency sign that is encoding damage, not a currency.
-- Legal-form and geography tokens in vendor names (where the vendor is incorporated, which hints at the original billing currency but does not prove it): `doo` (82), `ltd` (52), `limited` (41), `inc` (26), `private` (12), `uk` (11), `llc` (9), `llp` (8), `jdoo` (7), `pty` (6), `co` (5), `international` (5), `ireland` (5), `obrt` (5), `zagreb` (5), `croatia` (5), `dd` (4), `india` (4), `split` (4), `london` (4), `gmbh` (3), `global` (3), `pte` (3), `ag` (3), `hrvatska` (3), `australian` (3), `singapore` (2), `company` (2), `pvt` (2), `nsw` (2), `australia` (2), `sro` (2), `vl` (2), `pc` (2), `melbourne` (2), `bvba` (1), `lp` (1), `greec` (1), `aps` (1), `sg` (1), `corporation` (1), `sl` (1), `victoria` (1), `usa` (1), `chennai` (1), `wa` (1), `amer` (1), `aus` (1), `pp` (1), `oy` (1)
+- Legal-form and geography tokens in vendor names (where the vendor is incorporated, which hints at the original billing currency but does not prove it): `doo` (82), `ltd` (52), `limited` (41), `inc` (26), `private` (12), `uk` (11), `llc` (9), `llp` (8), `jdoo` (7), `pty` (6), `co` (5), `croatia` (5), `international` (5), `ireland` (5), `obrt` (5), `zagreb` (5), `dd` (4), `india` (4), `london` (4), `split` (4), `ag` (3), `australian` (3), `global` (3), `gmbh` (3), `hrvatska` (3), `pte` (3), `australia` (2), `company` (2), `melbourne` (2), `nsw` (2), `pc` (2), `pvt` (2), `singapore` (2), `sro` (2), `vl` (2), `amer` (1), `aps` (1), `aus` (1), `bvba` (1), `chennai` (1), `corporation` (1), `greec` (1), `lp` (1), `oy` (1), `pp` (1), `sg` (1), `sl` (1), `usa` (1), `victoria` (1), `wa` (1)
 - Rows with a Croatian legal form (D.O.O., J.D.O.O., D.D., Obrt): 98 of 386
 
 ### Total 12-month spend and distribution
@@ -296,3 +296,24 @@ Non-blank cells, verbatim:
 11. **Treat the long tail as a batch, not individually.** 178 rows (46.1% of rows) are under $1,000 and together total $55,354 (0.7% of spend). Every row still gets a department, description and recommendation, but classify them in batches and do not let them drive the memo. Any savings claimed on them must be the computed sum, not an estimate.
 12. **Create the taxonomy from the workbook's own list.** Write `docs/taxonomy.md` with the 12 `Config` departments verbatim, a one-line definition each, inclusion examples from this vendor list, and a precedence rule for overlaps (for example: a tool used by one team goes to that team, a company-wide tool goes to `SaaS`; outside counsel goes to `Legal`, not `Professional Services`; rent and coworking go to `Facilities`, not `G&A`). Classification cannot start before this file exists.
 13. **Automate the QA checks.** A `qa/check_outputs.py` script that asserts: 386 rows in and out; total spend equals the raw total to the cent; every department is in `docs/taxonomy.md`; every recommendation is one of Terminate, Consolidate, Optimize with a one-sentence rationale; no banned phrase appears in any description; no em dash appears in any output file; every savings figure in the memo matches a value in `outputs/analysis/`.
+
+## Addendum: workbook structure re-verification
+
+Added 2026-11-10. A structure audit was run separately; each of its findings is re-checked here with openpyxl. Three things openpyxl does not surface were read from the raw package XML: built-in defined names, extension-list (x14) validation and conditional formats, and threaded comments. Code: `structure_audit()` in `scripts/vsa_common.py`. The wider forensic checks are in `01_forensics.md`.
+
+| Finding of the separate audit | Re-verified result | Status |
+|---|---|---|
+| No hidden sheets | 5 of 5 sheets visible in openpyxl and in workbook.xml; none hidden or very hidden | Confirmed |
+| No hidden rows or columns | 0 hidden rows, 0 hidden columns, 0 zero-height rows, 0 zero-width columns, 0 outline-grouped rows or columns, across all 5 sheets | Confirmed |
+| No comments | 0 cell notes; comment parts in the package: 0; the persons part used by threaded comments exists but lists 0 people | Confirmed |
+| No defined names | 0 user-defined names (openpyxl lists 0); the XML holds 1 hidden built-in name: `_xlnm._FilterDatabase` = `'Vendor Analysis Assessment'!$A$1:$O$387`, which Excel and Google Sheets create automatically for an AutoFilter | Confirmed, with note |
+| No conditional formats | 0 rules in openpyxl; 0 conditionalFormatting elements in the sheet XML, including the x14 extension list | Confirmed |
+| No content beyond A1:E387 | last value at row 387, column E; the grid runs to O814 and rows 388 to 814 (6,405 cells) and columns F to O (3,870 cells) hold styling only; 0 formulas anywhere | Confirmed |
+| Only validation: Department dropdown on B2:B387 referencing Config!A2:A814 | 1 rule in the workbook: `Vendor Analysis Assessment` B2:B387: type `list`, source `Config!$A$2:$A814`, blanks allowed, error alert on; 0 x14 extension rules | Confirmed |
+| Column E is free text | no validation covers column E; the only covered column is B (no rule on A, C, D, E, F, G, H, I, J, K, L, M, N, O) | Confirmed |
+
+Notes:
+
+- AutoFilter on `$A$1:$O$387` with 0 filter criteria and no saved sort state, so no row is filtered out of view.
+- Hyperlinks: `Vendor Analysis Assessment`!A203 links to http://amazon.co.uk. The target is the cell's own text, so this is most likely an automatic link rather than added content.
+- The dropdown source runs to row 814 although `Config` holds values only in A1:A13, so rows 14 to 814 of the source are empty and the only non-blank choices are the 12 departments.
