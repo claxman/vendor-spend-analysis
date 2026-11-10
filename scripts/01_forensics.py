@@ -670,8 +670,14 @@ def names_section(na: dict, recs_by_row: dict) -> list[str]:
     proposed = [g for g in MERGE_GROUPS if g["status"] != "merge"]
     vendors = n - merged_rows + len(MERGE_GROUPS)
     vendors_if_reversed = vendors + sum(len(g["rows"]) - 1 for g in proposed)
-    out.append(f"Result: {len(MERGE_GROUPS) - len(proposed)} merges and {len(proposed)} proposed merge cover {merged_rows} "
-               f"rows, so {n} rows become {vendors} vendors ({vendors_if_reversed} if the proposed merge is reversed):")
+    if proposed:
+        out.append(f"Result: {len(MERGE_GROUPS) - len(proposed)} merges and {len(proposed)} proposed merge cover "
+                   f"{merged_rows} rows, so {n} rows become {vendors} vendors ({vendors_if_reversed} if the proposed merge "
+                   "is reversed):")
+    else:
+        out.append(f"Result: {len(MERGE_GROUPS)} merges cover {merged_rows} rows, so {n} rows become {vendors} vendors. "
+                   "The 4i merge and the Sodexo SVC India rename to Pluxee India were settled by web verification in "
+                   "step 3 (`docs/decisions.md`):")
     out.append("")
     out += table(["Vendor after merge", "Rows", "Combined 12-month cost", "Status", "Confidence"],
                  [[g["canonical"], ", ".join(map(str, g["rows"])), money(spend(g["rows"])), g["status"], g["confidence"]]
@@ -687,15 +693,17 @@ def names_section(na: dict, recs_by_row: dict) -> list[str]:
     out.append(f"- Implication for classification: the sheet is filled per row, so all {n} rows get their own department, "
                "description and recommendation (`docs/decisions.md`, steps 2c and 2d). Merges and links serve only "
                "ranking and savings roll-ups. The rows of a merge group, and of a link group of the same kind of service, "
-               "carry one recommendation (Slack inside the Salesforce renewal, one Bupa relationship across countries); "
-               "the proposed 4i merge counts as a group until web verification confirms or reverses it. Link groups whose "
-               "rows are different services (Amazon, Microsoft, and Sodexo and Pluxee while linked) take a recommendation "
-               "per row. Every grouped row's rationale names its group. Same-type vendors that are neither merged nor "
-               "linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the "
-               "classification step.")
+               "carry one recommendation (Slack inside the Salesforce renewal, one Bupa relationship across countries)"
+               + ("; a proposed merge counts as a group until web verification confirms or reverses it" if proposed else "")
+               + ". Link groups whose rows are different services ("
+               + " and ".join(g["label"] for g in LINK_GROUPS if g["recommendation"] != "shared")
+               + ") take a recommendation per row. Every grouped row's rationale names its group. Same-type vendors that "
+               "are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation "
+               "questions for the classification step.")
     link_spend = {g["label"]: spend(g["rows"]) for g in LINK_GROUPS}
-    out.append(f"- Implication for the memo: the vendor count is {vendors} ({vendors_if_reversed} if the 4i merge is "
-               f"reversed), not {n}. Navan, already second, grows from {money(recs_by_row[3]['cost'])} to "
+    out.append(f"- Implication for the memo: the vendor count is {vendors}"
+               + (f" ({vendors_if_reversed} if the proposed merge is reversed)" if proposed else "")
+               + f", not {n}. Navan, already second, grows from {money(recs_by_row[3]['cost'])} to "
                f"{money(spend([3, 24]))} across its old and new names. A linked group can be quoted as one figure where "
                f"one negotiation covers it (Telefónica {money(link_spend['Telefónica'])}, HR Solution International "
                f"{money(link_spend['HR Solution International'])}), but its vendors stay separate rows.")
@@ -817,10 +825,10 @@ def suspicious_section(recs: list[dict], c: dict, flags: list[dict], f: dict) ->
          "a negotiation."),
         ("The same vendor under old and new names",
          "Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`. Sodexo SVC India and Pluxee India also appear "
-         "side by side; they share a lineage, but on-site catering and meal cards are different contracts, so they are "
-         "linked rather than merged (decision of 2026-11-10).",
-         "The vendor master was not cleaned after the Navan rename; the two rows are merged (section 6) and the "
-         "recommendation names one entity."),
+         "side by side; web verification in step 3 showed that Sodexo SVC India is Pluxee India's former legal name, "
+         "the meal-card business renamed in 2024, so they are one relationship as well.",
+         "The vendor master was not cleaned after either rename; each pair is merged (section 6) and its recommendation "
+         "names one entity."),
         ("Grid size and dropdown source",
          f"The vendor sheet's grid runs to row {m['max_row']} and the Department dropdown reads `Config` rows 2 to 814, "
          f"although the data ends at row {m['last_row']} and `Config` at row 13.",
@@ -862,7 +870,9 @@ def rollup_sections(c: dict, flags: list[dict], total: float) -> list[str]:
     out = ["## 9. What this means for classification", ""]
     out += [
         f"- Classify all {c['n']} rows, each with its own department, description and recommendation. Rows in one of the "
-        f"{len(MERGE_GROUPS)} merge groups (one of them proposed) or one of the "
+        f"{len(MERGE_GROUPS)} merge groups"
+        + (f" ({sum(1 for g in MERGE_GROUPS if g['status'] != 'merge')} of them proposed)"
+           if any(g["status"] != "merge" for g in MERGE_GROUPS) else "") + " or one of the "
         f"{sum(1 for g in LINK_GROUPS if g['recommendation'] == 'shared')} link groups marked shared carry the same "
         f"recommendation; the {sum(1 for g in LINK_GROUPS if g['recommendation'] != 'shared')} link groups of different "
         "services take one per row; every grouped row's rationale names its group. Merges and links otherwise serve only "
@@ -919,7 +929,8 @@ def summary_section(f: dict, c: dict, na: dict, flags: list[dict], recs: list[di
         "modification. Quote whole dollars. Section 3.",
         f"- **First digits conform** to Benford's law ({c['band']}, p = {c['chi2_p']:.2f}). Section 4.",
         f"- **Row order is not a rank.** The sheet is {len(c['runs'])} sorted blocks end to end. Section 5.",
-        f"- **{len(MERGE_GROUPS) - proposed} merges and {proposed} proposed merge** ({merge_rows} rows) give "
+        f"- **{len(MERGE_GROUPS) - proposed} merges"
+        + (f" and {proposed} proposed merge" if proposed else "") + f"** ({merge_rows} rows) give "
         f"{len(recs) - merge_rows + len(MERGE_GROUPS)} vendors; Navan, already second, grows to {money(navan)} across its "
         f"old and new names. {len(LINK_GROUPS)} link groups (Slack with Salesforce, Bupa's and Apple's country entities, "
         "and others) keep their vendors separate. Section 6.",

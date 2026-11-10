@@ -20,8 +20,8 @@ Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in secti
 | Total cost after cleaning equals the raw total exactly | $7,887,360.40 = $7,887,360.40 | yes |
 | Every cost value round-trips unchanged | all rows | yes |
 | Raw workbook unchanged by the run | SHA-256 5473deb2fcb040a8... | yes |
-| Each row is in at most one merge group and at most one link group | 8 merged rows in 4 groups; 35 linked rows in 15 groups | yes |
-| Every merge group is a confirmed or a proposed merge | Navan: merge, AWS: merge, TM Forum: merge, 4i: proposed merge | yes |
+| Each row is in at most one merge group and at most one link group | 10 merged rows in 5 groups; 33 linked rows in 14 groups | yes |
+| Every merge group is a confirmed or a proposed merge | Navan: merge, AWS: merge, TM Forum: merge, 4i: merge, Pluxee: merge | yes |
 | docs/taxonomy.md departments equal Config A2:A13, same spelling and order | 12 listed: Engineering, Facilities, G&A, Legal, M&A, Marketing, SaaS, Product, Professional Services, Sales, Support, Finance | yes |
 | docs/clusters.md holds exactly the 18 clusters of prompt 6, in order | 18 listed | yes |
 | docs/recommendation_rules.md has a section for each of Terminate, Consolidate, Optimize | Terminate, Consolidate, Optimize | yes |
@@ -42,7 +42,7 @@ Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in secti
 4. **Tags and truncation marks** moved out of the display name and into `name_notes`.
 5. **Casing.** The source Title Cased every name, so acronyms, legal forms and brands are restored: the acronyms named in prompt 6 (BDO, DHL, HP, SS&C, TOG, GPT, CBRE, NCC, HEP, plus PricewaterhouseCoopers and LaSalle), other acronyms in the names, legal forms (LLP, LLC, GmbH; d.o.o. and d.d. in lower case as written in Croatia), brand casing (HubSpot, LinkedIn, DocuSign) and possessives (Kat's). AWS is the canonical name of the merged Amazon Web Services group; PwC and JLL are the canonical names of PricewaterhouseCoopers LLP and Jones Lang LaSalle.
 6. **Matching key** (`match_key`): the clean name with accents, legal forms, geography, stop words and the Supplier tag removed. It is used for matching only and never displayed.
-7. **Entity merge map.** 4 merge groups (1 proposed) covering 8 rows; every other row is its own group, and `group_id` is the vendor_id of the group's largest row. 15 link groups tie related vendors together without merging them (`link_group`). Both serve only ranking and savings roll-ups: every row is still classified on its own. The rows of a merge group, and of a link group marked shared, carry one recommendation; link groups marked per row (shared parent or lineage, different services) take one per row; every grouped row's rationale names its group (steps 2c and 2d).
+7. **Entity merge map.** 5 merge groups covering 10 rows; every other row is its own group, and `group_id` is the vendor_id of the group's largest row. 14 link groups tie related vendors together without merging them (`link_group`). Both serve only ranking and savings roll-ups: every row is still classified on its own. The rows of a merge group, and of a link group marked shared, carry one recommendation; link groups marked per row (shared parent or lineage, different services) take one per row; every grouped row's rationale names its group (steps 2c and 2d).
 
 ## 3. Name changes
 
@@ -118,7 +118,7 @@ Casing changes (205 rule applications on 183 rows) are listed in full in `qa/nam
 
 Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). Where entities share a parent or brand but supply different products or contracts, or share a lineage, the vendors stay separate and are tied together through `link_group`. Whatever the grouping, the sheet is filled per row: all rows get their own department, description and recommendation. The rows of a merge group, and of a link group whose recommendation is shared, carry one recommendation; link groups whose rows are different services take one per row; every grouped row's rationale names its group (steps 2c and 2d).
 
-386 rows become 382 vendors (383 if the proposed merge is reversed).
+386 rows become 381 vendors. The 4i merge and the Sodexo SVC India rename to Pluxee India were settled by web verification in step 3 (`docs/decisions.md`).
 
 ### Merges
 
@@ -126,8 +126,9 @@ Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the 
 |---|---|---|---|---|---|---|---|
 | Navan | V0003 | V0003, V0024 | $415,913 | merge | renamed entity | high | TripActions Inc renamed itself Navan Inc in 2023; both rows are the same travel and expense platform |
 | AWS | V0014 | V0014, V0103 | $111,552 | merge | same service, entity name variant | high | one AWS relationship, the same cloud service and customer agreement, billed under the Inc. and LLC entity names |
-| 4i | V0017 | V0017, V0072 | $83,978 | proposed merge | same group, other entity | medium | shared and unusual 4i brand, both advisory or consulting in India; to be confirmed or reversed by web verification |
+| 4i | V0017 | V0017, V0072 | $83,978 | merge | same firm, two entities | medium | confirmed by web verification (step 3): 4i Advisory Services and 4i Management Consulting Private Limited, Bangalore, share partners and a Koramangala office, so one advisory relationship billed through two entities; a link instead if Finance shows two separate engagements |
 | TM Forum | V0025 | V0025, V0249 | $58,070 | merge | spelling variant | high | Tmforum and Tm Forum are two spellings of the same association |
+| Pluxee | V0054 | V0054, V0128 | $21,804 | merge | renamed entity | high | web verification (step 3): Sodexo SVC India Private Limited is the former legal name of Pluxee India Private Limited, renamed in May 2024, the meal-card and benefits business rather than catering, so the two rows are one relationship (decision of step 2c) |
 
 ### Links
 
@@ -141,7 +142,6 @@ Linked vendors stay separate rows and separate vendors. The combined spend is sh
 | HR Solution International | same brand, separate entities | shared | V0016 HR Solution International GmbH; V0090 Hrsolution International AG | $87,810 | a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them |
 | Microsoft | shared parent | per row | V0026 LinkedIn Ireland Limited; V0081 Microsoft Ireland Operations Limited; V0125 npm Inc | $68,929 | LinkedIn, Microsoft 365 and npm (through GitHub) are Microsoft companies with different services, so each row takes its own recommendation (decision of step 2d) |
 | Bupa | same brand, separate entities | shared | V0047 Bupa; V0071 Bupa Australia | $35,263 | two Bupa entities with separate insurance contracts, one of them Bupa Australia |
-| Sodexo and Pluxee | same lineage | per row | V0054 Sodexo SVC India Private Limited; V0128 Pluxee India Private Limited | $21,804 | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link; while linked, each row takes its own recommendation (decisions of steps 2c and 2d) |
 | Acclime | same brand, separate entities | shared | V0099 Acclime Corporate Services; V0105 Acclime USA, Inc | $10,408 | Acclime's corporate services entity and its US entity, presumably separate engagements |
 | ICICI group | shared parent | shared | V0095 ICICI Lombard GIC Ltd; V0143 Cici Prudential Life Insurance Co. Ltd. | $9,167 | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
 | Apple | same brand, separate entities | shared | V0123 Apple Retail UK Ltd; V0172 Apple Pty Ltd; V0175 Apple Distribution International Ltd; V0229 Apple - AMER | $8,256 | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
@@ -191,7 +191,7 @@ From the near-duplicate search in `01_forensics.md`, candidates that are neither
 | 14 | Telefonica Global Services GmbH | V0015 | 1 | $89,880 | 1.1% | 70.3% |
 | 15 | 4i | V0017 | 2 | $83,978 | 1.1% | 71.3% |
 
-Total: $7,887,360 across 382 vendors (386 rows). Linked vendors are ranked separately; see section 4 for link-group totals.
+Total: $7,887,360 across 381 vendors (386 rows). Linked vendors are ranked separately; see section 4 for link-group totals.
 
 ## 6. Analyst hint coverage
 

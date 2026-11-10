@@ -323,9 +323,12 @@ MERGE_GROUPS = [
     {"canonical": "TM Forum", "rows": [25, 249], "status": "merge", "confidence": "high",
      "relationship": "spelling variant", "names": ["TM Forum", "TMForum"],
      "reason": "Tmforum and Tm Forum are two spellings of the same association"},
-    {"canonical": "4i", "rows": [17, 72], "status": "proposed merge", "confidence": "medium",
-     "relationship": "same group, other entity", "names": ["4i"],
-     "reason": "shared and unusual 4i brand, both advisory or consulting in India; to be confirmed or reversed by web verification"},
+    {"canonical": "4i", "rows": [17, 72], "status": "merge", "confidence": "medium",
+     "relationship": "same firm, two entities", "names": ["4i"],
+     "reason": "confirmed by web verification (step 3): 4i Advisory Services and 4i Management Consulting Private Limited, Bangalore, share partners and a Koramangala office, so one advisory relationship billed through two entities; a link instead if Finance shows two separate engagements"},
+    {"canonical": "Pluxee", "rows": [54, 128], "status": "merge", "confidence": "high",
+     "relationship": "renamed entity", "names": ["Pluxee"],
+     "reason": "web verification (step 3): Sodexo SVC India Private Limited is the former legal name of Pluxee India Private Limited, renamed in May 2024, the meal-card and benefits business rather than catering, so the two rows are one relationship (decision of step 2c)"},
 ]
 
 LINK_GROUPS = [
@@ -371,9 +374,6 @@ LINK_GROUPS = [
     {"label": "GRT Hotels & Resorts", "rows": [171, 190], "type": "same brand, separate entities", "recommendation": "shared",
      "names": ["GRT"],
      "reason": "two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts"},
-    {"label": "Sodexo and Pluxee", "rows": [54, 128], "type": "same lineage", "recommendation": "per row",
-     "names": [["Sodexo", "Pluxee"]],
-     "reason": "same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link; while linked, each row takes its own recommendation (decisions of steps 2c and 2d)"},
 ]
 
 # Candidate sets from the string search that are reviewed and neither merged nor linked.

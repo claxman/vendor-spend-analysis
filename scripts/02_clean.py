@@ -381,7 +381,8 @@ def main() -> int:
         "Services group; PwC and JLL are the canonical names of PricewaterhouseCoopers LLP and Jones Lang LaSalle.",
         "6. **Matching key** (`match_key`): the clean name with accents, legal forms, geography, stop words and the "
         "Supplier tag removed. It is used for matching only and never displayed.",
-        f"7. **Entity merge map.** {len(MERGE_GROUPS)} merge groups ({len(proposed)} proposed) covering {merge_rows} rows; "
+        f"7. **Entity merge map.** {len(MERGE_GROUPS)} merge groups"
+        + (f" ({len(proposed)} proposed)" if proposed else "") + f" covering {merge_rows} rows; "
         "every other row is its own group, and `group_id` is the vendor_id of the group's largest row. "
         f"{len(LINK_GROUPS)} link groups tie related vendors together without merging them (`link_group`). Both serve "
         "only ranking and savings roll-ups: every row is still classified on its own. The rows of a merge group, and of "
@@ -429,7 +430,10 @@ def main() -> int:
               "group, and of a link group whose recommendation is shared, carry one recommendation; link groups whose "
               "rows are different services take one per row; every grouped row's rationale names its group (steps 2c "
               "and 2d).", "",
-              f"{len(recs)} rows become {n_vendors} vendors ({n_if_reversed} if the proposed merge is reversed).", "",
+              f"{len(recs)} rows become {n_vendors} vendors"
+              + (f" ({n_if_reversed} if the proposed merge is reversed)." if proposed else
+                 ". The 4i merge and the Sodexo SVC India rename to Pluxee India were settled by web verification in "
+                 "step 3 (`docs/decisions.md`)."), "",
               "### Merges", ""]
     lines += table(["Canonical vendor", "group_id", "Rows", "12-month cost", "Status", "Relationship", "Confidence", "Reason"],
                    [[g["canonical"], group_of[g["rows"][0]][1], ", ".join(f"V{x:04d}" for x in g["rows"]),

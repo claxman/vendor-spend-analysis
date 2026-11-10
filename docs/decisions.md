@@ -2,6 +2,21 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: classification with web verification (prompt 15, step 3)
+
+### 1. The two pending verifications are settled
+
+- **Sodexo and Pluxee become a merge.** The Bloomberg LEI record lists Sodexo SVC India Private Limited as the former legal name of Pluxee India Private Limited, changed on 20 May 2024. Pluxee India describes itself as formerly Sodexo Benefits & Rewards Services, an employee benefits and meal-card provider. Under the rule of step 2c this is a rename, so `V0054` and `V0128` are one relationship. Hint 36's "office catering" does not fit `V0054`, and its rationale says so.
+- **The 4i merge is confirmed.** 4i Management Consulting Private Limited (Bangalore, incorporated 2018) lists directors who are partners of 4i Advisory Services, and both firms sit in Koramangala, Bangalore: one advisory practice billing through two entities. Confidence stays medium because the contracts are not visible; if Finance shows two separate engagements, the rows become a link.
+- Implemented in `scripts/vsa_common.py` (merge groups 4i and Pluxee; the Sodexo and Pluxee link removed), `qa/vendor_groups.csv`, `outputs/vendors_clean.csv`, the forensics and cleaning reports (5 merges, 381 vendors, 14 link groups), `qa/check_outputs.py` (the per-row links are Amazon and Microsoft; a planted error for a split Pluxee merge, 44 in all), `docs/recommendation_rules.md` and the notes in `docs/vendor_hints.md`. The lookups are in `qa/verification_log.csv`.
+
+### 2. How the verification was run
+
+- Every vendor was searched on the web by its cleaned name, with the country from the legal form where it helped. Helper agents did the searching, 20 vendors each, and recorded what each source established; the classification was then written batch by batch against the docs.
+- `qa/verification_log.csv` holds one row per lookup, failed ones included: `vendor_id`, `query`, `url_found`, `established`.
+- A vendor that repeated searches could not establish has `verified` FALSE, confidence low, a description ending "confirm with Finance" (the form of hint 77), and a one-line reason in `qa/verification_exceptions.csv`.
+- For personal names, the searches looked only for a business trading under the name; no personal details were recorded.
+
 ## 2026-11-10: remaining decision tags (prompt 14, step 2f)
 
 ### 1. The four points raised after step 2e are approved
@@ -114,7 +129,7 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 
 | Check | Rule |
 |---|---|
-| S1 to S6 | group definitions and the merge map agree; the per-row links are exactly Amazon, Microsoft, and Sodexo and Pluxee; the rows fixed by decisions are the vendors the decisions name; the taxonomy and cluster lists load; every savings assumption carries `none` or registered decision names, and the four named vendor actions carry `none` |
+| S1 to S6 | group definitions and the merge map agree; the per-row links are exactly Amazon and Microsoft (Sodexo and Pluxee became a merge in step 3); the rows fixed by decisions are the vendors the decisions name; the taxonomy and cluster lists load; every savings assumption carries `none` or registered decision names, and the four named vendor actions carry `none` |
 | C1, C2 | the 16 columns of the classification spec are present; exactly one row per source row (386), no duplicates |
 | C3 to C6 | departments, clusters and recommendations take allowed values; `is_addressable`, `is_recurring` and `verified` are TRUE or FALSE; confidence is high, medium or low |
 | C7 to C9 | one-line descriptions without the banned phrases; one-sentence rationales; no em or en dashes |

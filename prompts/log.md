@@ -141,3 +141,15 @@ Batch format for classification: one CSV per batch of 40 vendors in outputs/batc
 ```text
 Approved on all four. Add depends_on names for the other three: group_payroll (employer-of-record and payroll outsourcing), group_systems (HR and finance systems migrating to the parent's HRIS and ERP), group_legal (law firm panel consolidation). Every assumption in docs/savings_assumptions.md that is not purely a vendor action now carries a tag; the ones that are purely vendor actions (Salesforce licence audit, AWS savings plans, Navan policy, insurance re-broke) carry none. Commit as "Step 2f: remaining decision tags". Then stop; the next prompt starts classification.
 ```
+
+## Prompt 15 (2026-11-10)
+
+```text
+Read CLAUDE.md, every file in docs/ and outputs/vendors_clean.csv before classifying.
+
+Classify every vendor in batches of 40 in original sheet order (vendor_id ascending), using docs/taxonomy.md, docs/recommendation_rules.md, docs/vendor_hints.md, docs/clusters.md and docs/decisions.md. For every vendor, run a web search on the cleaned vendor name (add the country from the legal form or address where useful) and base the description and department on what the vendor's own site or a reliable directory says; record the URL in source_url and set verified TRUE. Only if repeated searches find nothing usable, set verified FALSE, use the "confirm with Finance" form from the hints, and add the vendor_id with a one-line reason to qa/verification_exceptions.csv. Log every lookup, including failed ones, to qa/verification_log.csv with vendor_id, query used, URL found, and what it established. If a search contradicts a hint, follow the search and note it in the rationale. Resolve the two pending verifications: the 4i merge, and Sodexo versus Pluxee.
+
+Each batch is outputs/batches/batch_NN.csv with exactly the 16 columns in order: vendor_id, vendor_name_original, vendor_name_clean, spend_12m, department (Config values only), sub_function, description (one line, 5 to 25 words, specific, what the vendor does and for which team, no banned phrases), recommendation (Terminate, Consolidate or Optimize exactly, following the group rules in decisions.md), rationale (one sentence; for Consolidate name the retained vendor or group function; for grouped rows name the group), risk_note (required for every Terminate and Consolidate: one clause naming the main risk of acting; empty for Optimize), cost_cluster, is_addressable, is_recurring, confidence (high, medium, low), verified, source_url.
+
+Print a three-line summary per batch, commit after every two batches so nothing is lost, and work through all ten batches without stopping. Commit the last as "Step 3: classification with web verification".
+```

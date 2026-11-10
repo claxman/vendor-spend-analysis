@@ -9,7 +9,7 @@ Generated 2026-11-10 by `scripts/01_forensics.py`. The workbook was opened read-
 - **Decimals mean nothing.** No round numbers at all; precision changes block by block with the cost modification. Quote whole dollars. Section 3.
 - **First digits conform** to Benford's law (acceptable conformity, p = 0.18). Section 4.
 - **Row order is not a rank.** The sheet is 3 sorted blocks end to end. Section 5.
-- **3 merges and 1 proposed merge** (8 rows) give 382 vendors; Navan, already second, grows to $415,913 across its old and new names. 15 link groups (Slack with Salesforce, Bupa's and Apple's country entities, and others) keep their vendors separate. Section 6.
+- **5 merges** (10 rows) give 381 vendors; Navan, already second, grows to $415,913 across its old and new names. 14 link groups (Slack with Salesforce, Bupa's and Apple's country entities, and others) keep their vendors separate. Section 6.
 - **Customer-mandated payees:** Telefónica's two procurement entities and SAP Ariba, $97,400. Non-discretionary; confirm what the Telefónica payments are. Bupa and StarHub carry a Supplier tag and may also be customers. Sections 7.8 and 8.
 - **Savings base:** $121,657 of statutory and customer-mandated spend is excluded. Section 10.
 - **Unidentified payees:** 69 names, $472,522 (6.0% of spend), led by Weking d.o.o. at $144,093. Sections 7.10 and 8.
@@ -170,7 +170,7 @@ Merge policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it i
 | 2: token subset | 348 Hilton Garden Inn - Zagreb City Hotels D.O.O.; 372 Garden City D.O.O. | different vendors | share only the words Garden and City |
 | 2: shared tokens | 382 Specijalisticka Ordinacija Medicine Rada I Sporta Ina Kardos; 383 Specijalisticka Ordinacija Medicine Rada Helena Blazic | different vendors, same type | two occupational-medicine practices run by different doctors |
 | 3: same first token `telefonica` | 15 Telefonica Global Services Gmbh; 93 Telefónica Compras Electrónicas S.L. | link: Telefónica (same brand, separate entities) | two Telefónica group entities (Global Services GmbH, Compras Electrónicas S.L.); what each payment is goes to Finance |
-| 3: same first token `4i` | 17 4I Advisory Services; 72 4I Management Consulting Private Limited | proposed merge into 4i | shared and unusual 4i brand, both advisory or consulting in India; to be confirmed or reversed by web verification |
+| 3: same first token `4i` | 17 4I Advisory Services; 72 4I Management Consulting Private Limited | merge into 4i | confirmed by web verification (step 3): 4i Advisory Services and 4i Management Consulting Private Limited, Bangalore, share partners and a Koramangala office, so one advisory relationship billed through two entities; a link instead if Finance shows two separate engagements |
 | 3: same first token `new` | 46 New Star Networks(Nsn); 360 New Block D.O.O. | different vendors | share only the word New |
 | 3: same first token `hrvatski` | 53 Hrvatski Telekom D.D.; 318 Hrvatski Nezavisnici Izvoznici Softvera | different vendors | share only Hrvatski (Croatian) |
 | 3: same first token `catering` | 82 Catering Muring; 233 Catering Ivić D.O.O. | different vendors, same type | two different caterers |
@@ -183,23 +183,24 @@ Merges and links that string matching cannot find, from knowledge of the vendors
 
 | Rows and names | Treatment | Reason |
 |---|---|---|
+| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | merge into Pluxee | web verification (step 3): Sodexo SVC India Private Limited is the former legal name of Pluxee India Private Limited, renamed in May 2024, the meal-card and benefits business rather than catering, so the two rows are one relationship (decision of step 2c) |
 | 2 Salesforce Uk Ltd-Uk; 173 Slack Technologies Limited | link: Salesforce (shared parent) | Slack has been a Salesforce company since 2021, so it goes into the same renewal and shares its recommendation |
 | 91 Trello; 297 Atlassian Pty Ltd | link: Atlassian (shared parent) | Trello is an Atlassian product; both are work-management tools |
 | 130 Papertrail Inc; 311 Solarwinds, Inc | link: SolarWinds (shared parent) | Papertrail is a SolarWinds product; both are monitoring tools |
 | 26 Linkedin Ireland Limited; 81 Microsoft Ireland Operations Limited; 125 Npm Inc | link: Microsoft (shared parent) | LinkedIn, Microsoft 365 and npm (through GitHub) are Microsoft companies with different services, so each row takes its own recommendation (decision of step 2d) |
 | 95 Icici Lombard Gic Ltd; 143 Cici Prudential Life Insurance Co. Ltd. | link: ICICI group (shared parent) | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
-| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | link: Sodexo and Pluxee (same lineage) | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link; while linked, each row takes its own recommendation (decisions of steps 2c and 2d) |
 
-Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendors (383 if the proposed merge is reversed):
+Result: 5 merges cover 10 rows, so 386 rows become 381 vendors. The 4i merge and the Sodexo SVC India rename to Pluxee India were settled by web verification in step 3 (`docs/decisions.md`):
 
 | Vendor after merge | Rows | Combined 12-month cost | Status | Confidence |
 |---|---|---|---|---|
 | Navan | 3, 24 | $415,913 | merge | high |
 | AWS | 14, 103 | $111,552 | merge | high |
-| 4i | 17, 72 | $83,978 | proposed merge | medium |
+| 4i | 17, 72 | $83,978 | merge | medium |
 | TM Forum | 25, 249 | $58,070 | merge | high |
+| Pluxee | 54, 128 | $21,804 | merge | high |
 
-15 link groups keep their vendors separate. Their combined spend is shown because a negotiation can cover the whole group; it is not added to any one vendor:
+14 link groups keep their vendors separate. Their combined spend is shown because a negotiation can cover the whole group; it is not added to any one vendor:
 
 | Link group | Type | Recommendation | Rows | Combined 12-month cost |
 |---|---|---|---|---|
@@ -209,7 +210,6 @@ Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendo
 | HR Solution International | same brand, separate entities | shared | 16, 90 | $87,810 |
 | Microsoft | shared parent | per row | 26, 81, 125 | $68,929 |
 | Bupa | same brand, separate entities | shared | 47, 71 | $35,263 |
-| Sodexo and Pluxee | same lineage | per row | 54, 128 | $21,804 |
 | Acclime | same brand, separate entities | shared | 99, 105 | $10,408 |
 | ICICI group | shared parent | shared | 95, 143 | $9,167 |
 | Apple | same brand, separate entities | shared | 123, 172, 175, 229 | $8,256 |
@@ -219,8 +219,8 @@ Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendo
 | GRT Hotels & Resorts | same brand, separate entities | shared | 171, 190 | $3,437 |
 | DHL | same brand, separate entities | shared | 303, 336 | $310 |
 
-- Implication for classification: the sheet is filled per row, so all 386 rows get their own department, description and recommendation (`docs/decisions.md`, steps 2c and 2d). Merges and links serve only ranking and savings roll-ups. The rows of a merge group, and of a link group of the same kind of service, carry one recommendation (Slack inside the Salesforce renewal, one Bupa relationship across countries); the proposed 4i merge counts as a group until web verification confirms or reverses it. Link groups whose rows are different services (Amazon, Microsoft, and Sodexo and Pluxee while linked) take a recommendation per row. Every grouped row's rationale names its group. Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
-- Implication for the memo: the vendor count is 382 (383 if the 4i merge is reversed), not 386. Navan, already second, grows from $357,984 to $415,913 across its old and new names. A linked group can be quoted as one figure where one negotiation covers it (Telefónica $96,037, HR Solution International $87,810), but its vendors stay separate rows.
+- Implication for classification: the sheet is filled per row, so all 386 rows get their own department, description and recommendation (`docs/decisions.md`, steps 2c and 2d). Merges and links serve only ranking and savings roll-ups. The rows of a merge group, and of a link group of the same kind of service, carry one recommendation (Slack inside the Salesforce renewal, one Bupa relationship across countries). Link groups whose rows are different services (Microsoft and Amazon) take a recommendation per row. Every grouped row's rationale names its group. Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
+- Implication for the memo: the vendor count is 381, not 386. Navan, already second, grows from $357,984 to $415,913 across its old and new names. A linked group can be quoted as one figure where one negotiation covers it (Telefónica $96,037, HR Solution International $87,810), but its vendors stay separate rows.
 
 ## 7. Payee types
 
@@ -381,7 +381,7 @@ Courts: none found.
 6. **Government payees that point at the group structure.** V0361 Cayman Islands Government ($56) implies a Cayman Islands entity; V0333 Australian Taxation Office (Ato) ($123) is tax paid through accounts payable. Implication: Confirm the legal-entity map with the parent; tax payments are not vendor spend.
 7. **Payees whose purpose is unclear.** V0223 Bb Football Scouting J.D.O.O. ($823) (a football scouting company) and V0162 Pink Ribbon Shop ($2,251) (a shop). Implication: Small, but they are the kind of line a CFO asks about; classify with confidence low.
 8. **Card and expense transactions in an accounts-payable list.** `Uber *Eats` is a card-statement descriptor; 39 retail rows are under $1,000; 25 food and drink payees are paid as vendors; 20 hotels, airlines and transport companies are paid directly rather than through Navan. Implication: The vendor count overstates the supplier base; tail spend is a policy question (cards, expenses, Navan), not a negotiation.
-9. **The same vendor under old and new names.** Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`. Sodexo SVC India and Pluxee India also appear side by side; they share a lineage, but on-site catering and meal cards are different contracts, so they are linked rather than merged (decision of 2026-11-10). Implication: The vendor master was not cleaned after the Navan rename; the two rows are merged (section 6) and the recommendation names one entity.
+9. **The same vendor under old and new names.** Navan is paid as `Navan (Tripactions Inc)` and `Navan, Inc`. Sodexo SVC India and Pluxee India also appear side by side; web verification in step 3 showed that Sodexo SVC India is Pluxee India's former legal name, the meal-card business renamed in 2024, so they are one relationship as well. Implication: The vendor master was not cleaned after either rename; each pair is merged (section 6) and its recommendation names one entity.
 10. **Grid size and dropdown source.** The vendor sheet's grid runs to row 814 and the Department dropdown reads `Config` rows 2 to 814, although the data ends at row 387 and `Config` at row 13. Implication: Consistent with a template or an earlier, longer version of the sheet. Nothing in the file shows whether the 386 rows are every vendor paid in the 12 months; the memo should call the total the spend in this file.
 11. **Name damage beyond mojibake.** `Magazin Raunalni Sistemi` has lost the letter č (Računalni, computer); `Cici Prudential` is ICICI Prudential without its first letter; `Mcburneys Charted Accountants` misspells Chartered. Implication: The cleaning step repairs a display name only where the correct form is certain (the č); the others are noted, not rewritten.
 12. **Explained, not suspicious.** Identical amounts (section 2), the precision pattern (section 3) and the row-order breaks (section 5) are all consequences of the cost modification; the first-digit test (section 4) shows nothing unusual. Implication: Mention once in the methodology; nothing for the memo.
@@ -410,7 +410,7 @@ Payees over $5,000 whose function the name does not show:
 
 ## 9. What this means for classification
 
-- Classify all 386 rows, each with its own department, description and recommendation. Rows in one of the 4 merge groups (one of them proposed) or one of the 12 link groups marked shared carry the same recommendation; the 3 link groups of different services take one per row; every grouped row's rationale names its group. Merges and links otherwise serve only ranking and savings roll-ups.
+- Classify all 386 rows, each with its own department, description and recommendation. Rows in one of the 5 merge groups or one of the 12 link groups marked shared carry the same recommendation; the 2 link groups of different services take one per row; every grouped row's rationale names its group. Merges and links otherwise serve only ranking and savings roll-ups.
 - Set confidence low for the 69 payees whose function the name does not show and for the six individuals; say so in the description rather than guessing.
 - Use the Croatian glossary terms surfaced here (obrt, vl., grad, osiguranje, medicina rada, prijevoz, dostava, ugostiteljstvo, savjetovanje, udruga) so Croatian descriptions are translations.
 - Statutory, government and customer-mandated payees take Optimize with the non-discretionary rationale.

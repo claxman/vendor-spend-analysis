@@ -86,9 +86,9 @@ The memo presents the Top 3 as decisions with their value, not as facts about th
 
 The sheet is filled per row (step 2c): all 386 rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups. Which rows share a recommendation (step 2d):
 
-- One recommendation per merge group, the same vendor relationship: Navan, AWS, TM Forum, and 4i while the merge is proposed.
+- One recommendation per merge group, the same vendor relationship: Navan, AWS, TM Forum, 4i and Pluxee. The web verification of step 3 confirmed the 4i merge and found Sodexo SVC India to be Pluxee India's former name.
 - One recommendation per link group whose products are the same kind of service: the same-brand groups (Apple, Bupa, HR Solution International, Acclime, DHL, Telefónica, Allianz Australia, GRT Hotels & Resorts) and the shared-parent groups Salesforce with Slack, Atlassian with Trello, SolarWinds with Papertrail, and the two ICICI insurers. These are marked `shared` in the `link_recommendation` column of `qa/vendor_groups.csv`.
-- A recommendation per row for shared-parent or same-lineage links whose rows are different services: Amazon (AWS and the two marketplaces), Microsoft (Microsoft 365, LinkedIn and npm), and Sodexo and Pluxee while the link stands. These are marked `per row`.
+- A recommendation per row for shared-parent or same-lineage links whose rows are different services: Amazon (AWS and the two marketplaces) and Microsoft (Microsoft 365, LinkedIn and npm). These are marked `per row`.
 - In every case each grouped row's rationale names its group, for example "one of two Navan entities" or "part of the Microsoft group". Where the row's own name already contains the group's name, the rationale also shows the grouping in words such as "both", "group" or "entities".
 - Size tests such as the under-$1,000 rule use the group total for a group that shares a recommendation, and the row otherwise.
 

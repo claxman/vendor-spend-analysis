@@ -72,7 +72,7 @@ GROUP_CUES = ["group", "both", "two", "three", "four", "entities", "entity", "to
               "across", "other"]
 ABBREVIATIONS = ["j.d.o.o.", "d.o.o.", "d.d.", "s.r.o.", "inc.", "ltd.", "co.", "s.l.", "p.c.", "p.p.", "dr.", "pte.",
                  "pty.", "e.g.", "i.e.", "vs.", "no.", "vl.", "mr.", "ms.", "st.", "u.s.", "u.k."]
-PER_ROW_LINKS = {"Amazon", "Microsoft", "Sodexo and Pluxee"}  # docs/decisions.md, step 2d
+PER_ROW_LINKS = {"Amazon", "Microsoft"}  # docs/decisions.md, step 2d; Sodexo and Pluxee became a merge in step 3
 VENDOR_ID = re.compile(r"\bV\d{4}\b")
 # Step 2e: employee hardware (the four Apple entities, Magazin Računalni Sistemi, Sniper Systems, HP, E-Disti,
 # Currys) is Consolidate into group IT procurement; BDO, Bisley Law and Grant Thornton stay in the recurring base.
@@ -254,7 +254,7 @@ def structural_checks(res: Results, clean: list[dict]) -> None:
 
     scopes_ok = all(g["status"] in ("shared", "per row") for g in gs if g["kind"] == "link")
     per_row = {g["name"] for g in gs if g["kind"] == "link" and not g["shared"]}
-    res.add("S1", "Link groups are marked shared or per row; per row exactly for Amazon, Microsoft, Sodexo and Pluxee",
+    res.add("S1", "Link groups are marked shared or per row; per row exactly for Amazon and Microsoft",
             scopes_ok and per_row == PER_ROW_LINKS, f"per row: {', '.join(sorted(per_row))}")
 
     unknown = [i for g in gs for i in g["ids"] if i not in ids]
@@ -532,7 +532,8 @@ def then(*steps):
 MUTATIONS = [
     ("AWS merge rows split between two recommendations", set_field("V0103", "recommendation", "Consolidate"), "C11"),
     ("Bupa link rows disagree", set_field("V0071", "recommendation", "Consolidate"), "C11"),
-    ("Proposed 4i merge split", set_field("V0072", "recommendation", "Terminate"), "C11"),
+    ("4i merge split", set_field("V0072", "recommendation", "Terminate"), "C11"),
+    ("Pluxee merge split (Sodexo SVC India renamed)", set_field("V0054", "recommendation", "Terminate"), "C11"),
     ("Rationale does not name its group", set_field("V0071", "rationale", "Synthetic rationale for one insurer."), "C12"),
     ("Group named only through the row's own name", set_field("V0047", "rationale", "Bupa keeps the policy."), "C12"),
     ("Per-row link rationale does not name its group",
