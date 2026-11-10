@@ -16,6 +16,27 @@ Decisions taken during the analysis, newest first. Each records what was decided
 - `qa/verification_log.csv` holds one row per lookup, failed ones included: `vendor_id`, `query`, `url_found`, `established`.
 - A vendor that repeated searches could not establish has `verified` FALSE, confidence low, a description ending "confirm with Finance" (the form of hint 77), and a one-line reason in `qa/verification_exceptions.csv`.
 - For personal names, the searches looked only for a business trading under the name; no personal details were recorded.
+- The session allows 200 web searches shared by all agents, refilling at about 100 an hour. An agent whose search was refused stopped, wrote rows only for the vendors it had finished, and the rest were searched in a later run. Refused searches never ran, so they are not in the log. No vendor was marked unverified without being searched.
+- Pages that addressed text to AI assistants appeared twice in search results; they were ignored and never used as sources.
+
+### 3. Interpretations applied in the classification
+
+- **`is_recurring`** is TRUE when the kind of spend repeats year on year: subscriptions and licences, rent, insurance, retained advisers, regular purchases such as hardware, couriers, and travel, including city hotels used for business stays. It is FALSE for one-off spend: deal costs, the data room and sponsor fees, team outings, restaurant meals and gifts bought for an occasion, office moves, resort or venue bookings for offsites, and one-off legal matters.
+- **Unverified rows** (`verified` FALSE) follow the "confirm with Finance" form of hint 77. Where neither the name nor a hint shows the function, the row is an unidentified payee: G&A (T12), cluster Unidentified and individual payees unless hint 77 points to contractors (C12), and Terminate until identified. Where the name or a hint does show the function (a law firm, a caterer, a payroll firm, a tax adviser), the row follows the rule for that function and stays unverified.
+- **Hints the searches overturned**, each noted in its rationale: Cloudcrossing (`V0006`, a Salesforce document app, not a consulting partner), Big Frontier (`V0020`, leadership development, not marketing), Veniture (`V0032`, an Atlassian partner), Shree Info System Solutions (`V0048`, a hardware distributor, so consolidated into group IT procurement like the named hardware vendors), Sodexo SVC India (`V0054`, Pluxee's former name), Plus Your Business (`V0056`, a HubSpot consultancy), Smart Group Services (`V0058`, a consultancy at an HR brand's address), TP Prime (`V0067`, accounting), Ramiro (`V0075`, HR training), Omonia (`V0083`) and Akton (`V0141`, telecoms), Mosaic Concept (`V0096`) and Nefron (`V0038`, event organisers by registry), Limes Plus (`V0097`, office supplies), Caboodle (`V0211`, an employee benefits platform), and trendig (`V0213`, training). Weking (`V0009`) points to a Salesforce consultancy, with low confidence.
+- **Retained vendors and group functions** named in Consolidate rationales: WeWork for coworking (already the Singapore provider; Common Desk is now part of WeWork), JLL for property advice, Hrvatski Telekom for Croatian telecoms, New Star Networks for UK telecoms, Google Workspace through CTS as the one productivity suite, Veniture as the channel for the Atlassian estate, Workato for integration, Cognism for contact data, Infosys for outsourced development, Carrington for PR, 4imprint for promotional products, UPS through Rhea for couriers, CSC for corporate secretarial work, Navan for hotels and travel paid directly, and Salesforce for HubSpot and Yoxel. The group functions named are the group auditor, the group insurance programme, the group law firm panel, the parent's HRIS and ERP, group IT procurement and the group's development programmes.
+- **Croatian sole traders**: the business register's page is cited even where its URL carries the owner's name, because that name is part of the registered business name; nothing else about the owner is recorded. One log URL about an unrelated sole trader was withheld.
+- **Points for Finance** that surfaced in the research: small UK employment-law payments that may be contributions to departing employees' settlement-agreement advice (`V0230`, `V0231`, `V0241`); Pixsy (`V0237`), which may be a copyright claim settlement rather than a service; FastSpring (`V0198`), fees on the company's sales or a software purchase; the billing country of T-Mobile (`V0140`); Clime India (`V0181`), possibly Acclime India; and N S Shastri And Co (`V0164`), whose name is shared with the founding partner of the 4i practice.
+
+### 4. Result
+
+All 386 rows are classified in ten batches, merged into `outputs/vendors_classified.csv` in sheet order, and every check passes (M1 to M7, S1 to S6, C1 to C18; `qa/validation_report.md`). The figures below come from that report.
+
+- Verification: 305 rows verified on the web (97.5% of spend); 81 not verified (2.5% of spend), each listed with its reason. Every vendor had at least one web search except the unnamed payee (`V0325`), which has no name to search; `qa/verification_log.csv` holds 1,065 lookups.
+- Recommendations: 125 Optimize (60.9% of spend), 107 Consolidate (30.1%), 154 Terminate (9.0%). Terminate is mostly tail spend: food, events, gifts, retail purchases and unidentified payees.
+- Confidence: 177 high (70.9% of spend), 108 medium, 101 low (6.9% of spend).
+
+## 2026-11-10: remaining decision tags (prompt 14, step 2f)
 
 ## 2026-11-10: remaining decision tags (prompt 14, step 2f)
 
