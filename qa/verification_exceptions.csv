@@ -2,3 +2,18 @@ vendor_id,reason
 V0018,Companies House lists Bisley Law Limited as a non-trading company and no website or SRA record describes its services
 V0065,no company named Pingo d.o.o. was found in Croatian registries or elsewhere after three searches
 V0074,no registry entry or other source was found for the sole trader after three searches
+V0082,two searches found no business named Catering Muring
+V0092,"a directory snippet places a sole trader of this name in Split, but no readable source shows its activity"
+V0106,no company named Centar za sigurnost d.o.o. was found in Croatian registries after two searches
+V0107,no company named Profi Bar d.o.o. was found after two searches
+V0111,no company or business name was found in search results or in four ABN register records
+V0116,no company named Orionw LLC was found after two searches
+V0127,individual payee (a sole proprietorship) with no business record to verify against after two searches
+V0129,two searches found no law firm named O'Donnell Salzano
+V0137,no company named Orcola d.o.o. was found in Croatian registries or elsewhere after two searches
+V0147,"court and land registry notices tie the company to an underground garage in Split, but no source states its activity"
+V0148,the name matches many unrelated businesses and no legal form or location narrows it down
+V0149,no business named IT London was found after two searches
+V0151,no LLP of this name was found in UK or Indian registries after two searches
+V0157,no entity named My Foodiverse LLP was found in UK or Indian registries after two searches
+V0160,individual payee; no business record to verify against
