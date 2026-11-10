@@ -2,6 +2,12 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: sheet order (prompt 12, step 2d-fix3)
+
+- `outputs/vendors_classified.csv` is written in the original sheet row order, `vendor_id` ascending (`V0002` to `V0387`), because its Department, Description and Suggestions columns are pasted straight into the Google Sheet and must line up row for row with the source.
+- `merge_validate.py`, the script that merges the classification batches, sorts to that order before writing, whatever order the batches came in. It is written in the classification step; this records the requirement it has to meet.
+- C18 matches `vendor_name_original` and `vendor_name_clean` to `outputs/vendors_clean.csv` by `vendor_id`, no longer by position, and also confirms the order. In the self-test, a shuffled file and two swapped rows each fail C18 alone, with no name mismatches reported, which shows the names are matched by id and the order is checked separately.
+
 ## 2026-11-10: group recommendation rule (prompt 9, step 2d)
 
 ### 1. Which rows share a recommendation
@@ -32,9 +38,9 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names row for row.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order.
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, clean and then with 35 planted errors, and shows each error caught.
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, clean and then with 36 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
@@ -49,7 +55,7 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 | C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
 | C16 | `risk_note` is non-empty for every Terminate and Consolidate row |
 | C17 | every row has `verified` TRUE, except rows with `verified` FALSE listed under "Verification exceptions" in `qa/validation_report.md`; a FALSE row not listed there fails, and a listed `vendor_id` that is not FALSE in the file fails |
-| C18 | `vendor_name_original` and `vendor_name_clean` match `outputs/vendors_clean.csv` row for row: same order, same `vendor_id`, identical names |
+| C18 | `vendor_name_original` and `vendor_name_clean` match `outputs/vendors_clean.csv` by `vendor_id`, and the rows are in the original sheet order, `vendor_id` ascending |
 
 Columns of `outputs/vendors_classified.csv`, as in the classification spec: `vendor_id`, `vendor_name_original`, `vendor_name_clean`, `spend_12m`, `department`, `sub_function`, `description`, `recommendation`, `rationale`, `risk_note`, `cost_cluster`, `is_addressable`, `is_recurring`, `confidence`, `verified`, `source_url`. `spend_12m` replaces the earlier `cost_usd`. Other columns may be added.
 

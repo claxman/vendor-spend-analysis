@@ -8,7 +8,8 @@ Where each rule comes from:
   docs/decisions.md             per-row deliverable (step 2c), group recommendation rule (step 2d), the
                                 outcomes fixed for named rows (steps 2b to 2d), the columns of the
                                 classification spec and the risk-note check (step 2d-fix), the verification
-                                exceptions and the name check (step 2d-fix2)
+                                exceptions (step 2d-fix2), and names matched by vendor_id with the rows in the
+                                original sheet order (step 2d-fix3)
   scripts/vsa_common.py         the merge and link groups, their recommendation scope and the names a
                                 rationale may use for each group
 
@@ -28,6 +29,7 @@ from __future__ import annotations
 import copy
 import csv
 import math
+import random
 import re
 import sys
 from collections import defaultdict
@@ -338,15 +340,21 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
             + f"; not verified and not listed: {sample(unlisted) or 'none'}; listed but not FALSE in the file: "
               f"{sample(wrongly_listed) or 'none'}; format problems: {sample(problems) or 'none'}")
 
-    mismatched = []
-    for line, (r, c) in enumerate(zip(rows, clean), start=1):
-        if (r["vendor_id"], r["vendor_name_original"], r["vendor_name_clean"]) != (
-                c["vendor_id"], c["vendor_name_raw"], c["vendor_name_clean"]):
-            mismatched.append(f"row {line}: {r['vendor_id']}")
-    if len(rows) != len(clean):
-        mismatched.append(f"{len(rows)} rows against {len(clean)}")
-    res.add("C18", f"vendor_name_original and vendor_name_clean match {rel(CLEAN)} row for row", not mismatched,
-            f"mismatches: {sample(mismatched) or 'none'}")
+    # Names are matched by vendor_id (unknown ids are C2's job). The order must be the original sheet order,
+    # vendor_id ascending, because the sheet columns are pasted straight from this file.
+    clean_by_id = {c["vendor_id"]: c for c in clean}
+    name_bad = [r["vendor_id"] for r in rows if r["vendor_id"] in clean_by_id
+                and (r["vendor_name_original"], r["vendor_name_clean"])
+                != (clean_by_id[r["vendor_id"]]["vendor_name_raw"], clean_by_id[r["vendor_id"]]["vendor_name_clean"])]
+    order_bad = []
+    for line in range(1, len(rows)):
+        prev, cur = rows[line - 1]["vendor_id"], rows[line]["vendor_id"]
+        if not (VENDOR_ID.fullmatch(prev) and VENDOR_ID.fullmatch(cur) and int(cur[1:]) > int(prev[1:])):
+            order_bad.append(f"data row {line + 1} holds {cur} after {prev}")
+    res.add("C18", f"vendor_name_original and vendor_name_clean match {rel(CLEAN)} by vendor_id, and the rows are in "
+                   "the original sheet order (vendor_id ascending)", not name_bad and not order_bad,
+            f"name mismatches: {sample(name_bad) or 'none'}; out of order at {len(order_bad)} positions"
+            + (f", first: {order_bad[0]}" if order_bad else ""))
 
 
 # ---------------------------------------------------------------- self-test
@@ -430,6 +438,13 @@ def swap_rows(a: int, b: int):
     return mutate
 
 
+def shuffle_rows(seed: int):
+    def mutate(rows, report):
+        random.Random(seed).shuffle(rows)
+        return rows, report
+    return mutate
+
+
 def rename_column(old: str, new: str):
     def mutate(rows, report):
         return [{(new if k == old else k): v for k, v in r.items()} for r in rows], report
@@ -498,11 +513,13 @@ MUTATIONS = [
      edit_report("- V0009: Croatian company whose function no public source confirms.",
                  "- V0009 and V0160: Croatian company whose function no public source confirms."), "C17"),
     ("Validation report missing while rows are FALSE", lambda rows, report: (rows, None), "C17"),
-    # C18: names row for row
+    # C18: names matched by vendor_id; rows in the original sheet order. An optional fourth element is text
+    # the expected check's detail must contain: here it proves the names still match by vendor_id.
     ("vendor_name_original repaired instead of verbatim",
      set_field("V0030", "vendor_name_original", "Sveučilište U Zagrebu, Studentski Centar"), "C18"),
     ("vendor_name_clean edited", set_field("V0004", "vendor_name_clean", "BDO"), "C18"),
-    ("Rows out of the source order", swap_rows(0, 1), "C18"),
+    ("Two rows swapped", swap_rows(0, 1), "C18", "name mismatches: none"),
+    ("Shuffled file, every name still right for its vendor_id", shuffle_rows(2026), "C18", "name mismatches: none"),
 ]
 
 
@@ -519,14 +536,16 @@ def self_test(clean: list[dict]) -> bool:
     if not clean_ok:
         res.show()
     all_ok = clean_ok and sorted(listed) == SYNTHETIC_UNVERIFIED and not problems
-    for title, mutate, expected in MUTATIONS:
+    for title, mutate, expected, *must in MUTATIONS:
         rows, report = mutate(copy.deepcopy(base_rows), base_report)
         res = Results()
         classification_checks(res, rows, clean, report)
-        caught = expected in res.failed()
+        detail = next((d for cid, _, _, d in res.items if cid == expected), "")
+        caught = expected in res.failed() and all(m in detail for m in must)
         all_ok &= caught
         print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
-              f" (checks failing: {', '.join(res.failed()) or 'none'})")
+              f" (checks failing: {', '.join(res.failed()) or 'none'}"
+              + "".join(f"; {expected} reports {m!r}" for m in must) + ")")
     print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus {len(MUTATIONS)} planted errors")
     return all_ok
 
