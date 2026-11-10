@@ -276,7 +276,7 @@ Non-blank cells, verbatim:
 - `Department`, `1-line Description` and `Suggestions` are empty on every row: these three columns are the deliverable, to be produced as `outputs/vendors_classified.csv`.
 - Costs are hard-coded values (no formulas), all numeric, labelled USD in the header and formatted as whole dollars in Excel while carrying up to 15 decimals underneath. Sums must use the underlying values, not the displayed ones.
 - The sheet is sorted by cost, largest first, apart from 2 adjacent pair(s) out of order, so row number is only an approximate spend rank.
-- `Config` lists 12 departments: `Engineering`, `Facilities`, `G&A`, `Legal`, `M&A`, `Marketing`, `SaaS`, `Product`, `Professional Services`, `Sales`, `Support`, `Finance`. `docs/taxonomy.md`, which CLAUDE.md names as the only allowed source of departments, does not exist yet.
+- `Config` lists 12 departments: `Engineering`, `Facilities`, `G&A`, `Legal`, `M&A`, `Marketing`, `SaaS`, `Product`, `Professional Services`, `Sales`, `Support`, `Finance`. `docs/taxonomy.md` exists.
 - Several `Config` entries are spend categories rather than departments (`SaaS`, `Professional Services`) and others overlap (`G&A` with `Finance`, `Legal`, `Facilities`). The taxonomy needs a precedence rule before classification starts.
 - Data validation rules in the workbook: B2:B387: type=list, formula=Config!$A$2:$A814. The Department column is a dropdown over the `Config` list, so department values must match `Config` character for character.
 - The template sheets ask for three opportunities (`Opportunity`, `Explanation`), a methodology note, and a memo of at most one page delivered as a Google Doc link. CLAUDE.md specifies `outputs/memo.md`; whether a Google Doc is also required is a question for the user.

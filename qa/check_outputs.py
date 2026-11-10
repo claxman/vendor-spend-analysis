@@ -11,8 +11,9 @@ Where each rule comes from:
                                 outcomes fixed for named rows (steps 2b to 2e), the columns of the
                                 classification spec and the risk-note check (step 2d-fix), the verification
                                 exceptions (step 2d-fix2), names matched by vendor_id with the rows in the
-                                original sheet order (step 2d-fix3), and the hardware rule and the advisers
-                                kept in the recurring base (step 2e)
+                                original sheet order (step 2d-fix3), the hardware rule and the advisers
+                                kept in the recurring base (step 2e), and the platform reclassification with
+                                the one Optimize row allowed a risk note (step 3b)
   scripts/vsa_common.py         the merge and link groups, their recommendation scope and the names a
                                 rationale may use for each group
 
@@ -78,6 +79,10 @@ VENDOR_ID = re.compile(r"\bV\d{4}\b")
 # Currys) is Consolidate into group IT procurement; BDO, Bisley Law and Grant Thornton stay in the recurring base.
 HARDWARE_IDS = ["V0066", "V0123", "V0131", "V0167", "V0172", "V0175", "V0229", "V0260", "V0378"]
 RECURRING_ADVISER_IDS = ["V0004", "V0018", "V0029"]
+# Optimize rows carry no risk note, except where a recorded decision allows one (step 3b).
+OPTIMIZE_RISK_NOTE_EXCEPTIONS = {
+    "V0002": "step 3b: the product depends on the Salesforce platform, so the lever is commercial terms, never exit",
+}
 # True lists every item in a check's detail instead of the first few; scripts/merge_validate.py sets it so that
 # qa/validation_report.md shows every failure in full.
 FULL_DETAIL = False
@@ -99,18 +104,38 @@ DECISION_EXPECTATIONS = [
     (["V0030", "V0086", "V0186"], "is_addressable", "TRUE", "step 2b: student labour"),
     (["V0030", "V0086", "V0186"], "cost_cluster", "Student labour", "step 2b: student labour"),
     (["V0034"], "department", "G&A", "step 2b: Mason Frank"),
-    (["V0034"], "cost_cluster", "Salesforce platform", "step 2b: Mason Frank"),
+    (["V0034"], "cost_cluster", "Recruiting and HR outsourcing",
+     "step 3b: Mason Frank, whose lever is ending the agency, not the Salesforce contract"),
     (["V0173"], "department", "SaaS", "step 2b: Slack"),
     (["V0173"], "cost_cluster", "Salesforce platform", "step 2b: Slack"),
     (HARDWARE_IDS, "recommendation", "Consolidate", "step 2e: employee hardware, into group IT procurement"),
     (RECURRING_ADVISER_IDS, "is_recurring", "TRUE",
      "step 2e: advisers whose spend may include sale-related work stay in the recurring base"),
+    (["V0002"], "department", "Engineering", "step 3b: Salesforce is the product platform"),
+    (["V0002", "V0006"], "recommendation", "Optimize", "step 3b: commercial terms for the platform and PDF Butler"),
+    (["V0002", "V0006"], "cost_cluster", "Salesforce platform", "step 3b: Salesforce platform"),
+    (["V0006"], "department", "Product", "step 3b: PDF Butler, a component of the product"),
+    (["V0009"], "department", "Engineering", "step 3b: Weking, outsourced engineering"),
+    (["V0009"], "cost_cluster", "Outsourced engineering and contractors", "step 3b: Weking"),
+    (["V0009", "V0018"], "recommendation", "Consolidate",
+     "step 3b: Weking into the group's engineering sourcing model; Bisley Law stays Consolidate"),
+    (["V0009"], "confidence", "low", "step 3b: Weking stays low confidence"),
+    (["V0284"], "is_addressable", "FALSE", "step 3b: NSDL, as in the forensic exclusion"),
+    (["V0284"], "cost_cluster", "Statutory and government", "step 3b: NSDL"),
 ]
-# Phrases a rationale must contain: (vendor_ids, phrases, source).
-RATIONALE_EXPECTATIONS = [
-    (["V0015", "V0093"], ["rebate", "revenue"], "step 2b: Telefónica rebates would belong against revenue"),
-    (["V0030", "V0086", "V0186"], ["hiring plan"], "step 2b: student labour rationale"),
-    (HARDWARE_IDS, ["group it procurement"], "step 2e: hardware rationale names group IT procurement"),
+# Phrases a field must contain: (vendor_ids, column, phrases, source).
+WORDING_EXPECTATIONS = [
+    (["V0015", "V0093"], "rationale", ["rebate", "revenue"], "step 2b: Telefónica rebates would belong against revenue"),
+    (["V0030", "V0086", "V0186"], "rationale", ["hiring plan"], "step 2b: student labour rationale"),
+    (HARDWARE_IDS, "rationale", ["group it procurement"], "step 2e: hardware rationale names group IT procurement"),
+    (["V0002"], "rationale", ["change of control"], "step 3b: renegotiate the platform agreement at change of control"),
+    (["V0002"], "risk_note", ["never exit"], "step 3b: the product depends on the platform"),
+    (["V0006"], "rationale", ["oem"], "step 3b: PDF Butler, OEM or volume pricing"),
+    (["V0006"], "description", ["confirm oem terms with finance"], "step 3b: PDF Butler, OEM terms"),
+    (["V0009"], "rationale", ["engineering sourcing model"], "step 3b: Weking, the group's engineering sourcing model"),
+    (["V0009"], "risk_note", ["product knowledge"], "step 3b: Weking, product knowledge transferred first"),
+    (["V0009"], "description", ["confirm with finance"], "step 3b: Weking keeps \"confirm with Finance\""),
+    (["V0018"], "risk_note", ["companies house", "non-trading"], "step 3b: Bisley Law control finding"),
 ]
 # Each fixed row's clean name must contain this, so a mistyped id cannot test the wrong vendor.
 EXPECTED_NAMES = {"V0014": "Amazon Web Services", "V0103": "Amazon Web Services", "V0203": "Amazon",
@@ -119,7 +144,9 @@ EXPECTED_NAMES = {"V0014": "Amazon Web Services", "V0103": "Amazon Web Services"
                   "V0086": "Studentski Centar", "V0186": "Studentski Centar", "V0034": "Mason Frank",
                   "V0173": "Slack", "V0066": "Racunalni Sistemi", "V0123": "Apple", "V0131": "Sniper Systems",
                   "V0167": "HP", "V0172": "Apple", "V0175": "Apple", "V0229": "Apple", "V0260": "E-Disti",
-                  "V0378": "Currys", "V0004": "BDO", "V0018": "Bisley Law", "V0029": "Grant Thornton"}
+                  "V0378": "Currys", "V0004": "BDO", "V0018": "Bisley Law", "V0029": "Grant Thornton",
+                  "V0002": "Salesforce", "V0006": "Cloudcrossing", "V0009": "Weking",
+                  "V0284": "National Securities Depository"}
 
 
 # ---------------------------------------------------------------- helpers
@@ -375,11 +402,12 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
     res.add("C13", "Outcomes fixed by recorded decisions", not bad, f"bad: {sample(bad, 2) or 'none'}")
 
     bad = []
-    for vids, phrases, source in RATIONALE_EXPECTATIONS:
+    for vids, col, phrases, source in WORDING_EXPECTATIONS:
         for vid in vids:
-            if vid in by_id and not all(p in plain(by_id[vid]["rationale"]) for p in phrases):
-                bad.append(f"{vid} lacks {' and '.join(phrases)} ({source})")
-    res.add("C14", "Rationale wording fixed by recorded decisions", not bad, f"bad: {sample(bad, 2) or 'none'}")
+            if vid in by_id and not all(p in plain(by_id[vid][col]) for p in phrases):
+                bad.append(f"{vid} {col} lacks {' and '.join(phrases)} ({source})")
+    res.add("C14", "Rationale, risk-note and description wording fixed by recorded decisions", not bad,
+            f"bad: {sample(bad, 2) or 'none'}")
 
     bad = [r["vendor_id"] for r in rows if r["is_addressable"] == "FALSE"
            and not ("non-discretionary" in plain(r["rationale"]) and "savings base" in plain(r["rationale"]))]
@@ -387,7 +415,11 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
             f"bad: {sample(bad) or 'none'}")
 
     bad = [r["vendor_id"] for r in rows if r["recommendation"] in NEEDS_RISK_NOTE and not r["risk_note"].strip()]
-    res.add("C16", "Every Terminate and Consolidate row has a risk_note", not bad, f"missing: {sample(bad) or 'none'}")
+    extra = [r["vendor_id"] for r in rows if r["recommendation"] == "Optimize" and r["risk_note"].strip()
+             and r["vendor_id"] not in OPTIMIZE_RISK_NOTE_EXCEPTIONS]
+    res.add("C16", "Every Terminate and Consolidate row has a risk_note; Optimize rows have none, except "
+                   f"{', '.join(sorted(OPTIMIZE_RISK_NOTE_EXCEPTIONS))} (step 3b)", not bad and not extra,
+            f"missing: {sample(bad) or 'none'}; on Optimize rows: {sample(extra) or 'none'}")
 
     listed, problems = verification_exceptions(validation_text)
     false_rows = {r["vendor_id"] for r in rows if r["verified"] == "FALSE"}
@@ -473,6 +505,15 @@ def synthetic(clean: list[dict]) -> list[dict]:
     for r in rows:
         if r["recommendation"] in NEEDS_RISK_NOTE:
             r["risk_note"] = "Synthetic risk note for the QA self-test"
+    for vids, col, phrases, _ in WORDING_EXPECTATIONS:
+        for vid in vids:
+            text = by_id[vid][col]
+            if not all(p in plain(text) for p in phrases):
+                added = ", ".join(phrases)
+                by_id[vid][col] = text.rstrip(".") + f", with {added}." if col == "rationale" else f"{text} {added}".strip()
+    for r in rows:
+        if r["is_addressable"] == "FALSE" and "non-discretionary" not in plain(r["rationale"]):
+            r["rationale"] = r["rationale"].rstrip(".") + ": non-discretionary, excluded from the savings base."
     for vid in SYNTHETIC_UNVERIFIED:
         by_id[vid]["verified"] = "FALSE"
         by_id[vid]["source_url"] = ""
@@ -563,6 +604,17 @@ MUTATIONS = [
     ("Spend column under the old name cost_usd", rename_column("spend_12m", "cost_usd"), "C1"),
     ("Terminate row without a risk_note", set_field("V0203", "risk_note", ""), "C16"),
     ("Consolidate row without a risk_note", set_field("V0081", "risk_note", " "), "C16"),
+    ("Optimize row with a risk note and no recorded exception",
+     set_field("V0005", "risk_note", "Synthetic risk note on an Optimize row"), "C16"),
+    # Step 3b: the platform reclassification
+    ("Salesforce back in Sales as the sales team's CRM", set_field("V0002", "department", "Sales"), "C13"),
+    ("Mason Frank back in the Salesforce platform cluster", set_field("V0034", "cost_cluster", "Salesforce platform"),
+     "C13"),
+    ("NSDL back in the savings base", set_field("V0284", "is_addressable", "TRUE"), "C13"),
+    ("Bisley Law risk note without the control finding",
+     set_field("V0018", "risk_note", "open legal matters must move first"), "C14"),
+    ("Weking description without confirm with Finance",
+     set_field("V0009", "description", "Zagreb Salesforce consultancy supplying developers"), "C14"),
     # C17: verification exceptions
     ("Unverified row not listed", set_field("V0010", "verified", "FALSE"), "C17"),
     ("Listed row is TRUE in the file", set_field("V0009", "verified", "TRUE"), "C17"),

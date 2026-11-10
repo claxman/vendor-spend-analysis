@@ -2,6 +2,81 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: platform reclassification (prompt 16, step 3b)
+
+### 1. Salesforce is the product platform, not the sales team's CRM
+
+- The evidence is in the ledger. Salesforce UK Ltd (`V0002`) is 39.5% of all third-party spend, which no company pays for sales seats. Around it sit Salesforce-native vendors: a document-generation app at $209K (Cloudcrossing's PDF Butler, `V0006`), a PSA on the Salesforce platform (Kimble, `V0027`), a Salesforce consultancy supplying developers (Weking, `V0009`), a Salesforce-specialist recruiter (Mason Frank, `V0034`) and a Salesforce email-sync tool (Yoxel, `V0170`). And the company sells to telecoms, where Salesforce-native products are common.
+- The Salesforce spend is therefore platform and ISV licence cost for a product built on Salesforce, with a smaller internal CRM component. Finance question 2 stays open for the split between the two.
+- `docs/taxonomy.md`: rule 1 is amended. Salesforce platform licences, and Salesforce-ecosystem vendors that supply product engineering or embedded product components, go to Engineering, or to Product for an embedded component; only internal-CRM tooling goes to Sales. The departments table, rules 9 and 10 and tie-breaks T1 and T2 follow. Kimble stays in Professional Services as PSA software, and Yoxel stays in Sales as internal-CRM tooling.
+- `docs/clusters.md`: Salesforce platform (cluster 1) describes Salesforce as platform and ISV licences plus internal CRM seats, and Salesforce-specialist services go to the cluster of the lever that captures their saving (C1). NSDL moves to Statutory and government (cluster 16 and C8).
+
+### 2. Rows reclassified
+
+Every other column rule is kept.
+
+| Row | Changed | Kept |
+|---|---|---|
+| Salesforce UK Ltd (`V0002`) | Engineering. Description: Salesforce platform and ISV licences for the company's Salesforce-native product, plus internal CRM seats; the largest single cost. Rationale: renegotiate the platform agreement at change of control (co-term with the parent's Salesforce relationship, multi-year commitment, true-down of internal seats audited separately from platform licences), with Slack in the same Salesforce group renewal | Optimize; cluster Salesforce platform; one recommendation with Slack (`V0173`) in the Salesforce link group |
+| Weking d.o.o. (`V0009`) | Engineering; cluster Outsourced engineering and contractors; Consolidate into the group's engineering sourcing model; risk note: product knowledge held by the consultancy's developers must be transferred first | Confidence low; `verified` TRUE on its website. The description now ends "confirm with Finance" (hint 77); before this step it said only that the legal entity is unconfirmed |
+| Cloudcrossing BVBA (`V0006`) | Product. Description: a Salesforce-native document generation app that at this spend is most likely embedded in or delivered with the product, not internal sales tooling; confirm OEM terms with Finance. Rationale: renegotiate OEM or volume pricing within the platform review | Optimize; cluster Salesforce platform; confidence medium |
+| Mason Frank International Ltd (`V0034`) | Cluster Recruiting and HR outsourcing, as its lever is ending the agency, not the Salesforce contract; the rationale counts its saving in the recruiting agencies lever | Terminate; G&A |
+| NSDL (`V0284`) | `is_addressable` FALSE; cluster Statutory and government; the rationale ends "non-discretionary, excluded from the savings base" | Optimize; Finance |
+
+- With NSDL, the 17 rows outside the savings base total $121,657, the forensic exclusion in section 10 of `outputs/analysis/01_forensics.md`.
+- **Exception:** `V0002` is the one Optimize row with a risk note, "the product depends on this platform, so the lever is commercial terms, never exit". Every other Optimize row keeps an empty risk note, and C16 now checks both.
+
+### 3. Bisley Law is a control finding for Finance
+
+- Companies House lists Bisley Law Ltd (`V0018`, $67,414) as non-trading, and no website or SRA record describes its services. Finance must confirm which entity invoiced and for what before any payment continues. It is question 7 below.
+- The row stays Consolidate; its risk note now carries the finding.
+- Question 8 asks for the PDF Butler OEM terms that the `V0006` description refers to Finance.
+
+### 4. URLs that name a person are withheld
+
+- In `outputs/vendors_classified.csv`, the batch CSVs and `qa/verification_log.csv` (columns `query` and `url_found`), every URL whose address carries a private individual's name is replaced by the directory's root domain and a note. This supersedes the step 3 practice of citing a sole trader's register page whose address carries the owner's name.
+- "URL withheld: names the owner": Croatian sole-trader (obrt) register pages whose address carries the owner's name after "vl." (vlasnik, owner): `V0038`, `V0240`, `V0243`.
+- "URL withheld: names an individual": addresses that carry a person's name without showing that person to be the vendor's owner. These are register pages of health practices or institutions named after a doctor (`V0328`, `V0382`, `V0384`) and adviser or author profile pages (`V0017`, `V0079`, `V0153`).
+- The source URL changes on `V0038`, `V0153`, `V0240`, `V0243` and `V0384`, which stay `verified` TRUE because the withheld page is still the evidence; the other four ids change only in the log. The log entry for `V0092` was already withheld in step 3.
+- `V0024` (Navan, Inc) cited `https://navan.com/llm-info`, a page Navan publishes for AI tools. Its source is now the Navan rebrand press release already used for `V0003`; the log keeps the original lookup.
+
+### 5. Housekeeping
+
+- The step 2f heading appeared twice; the duplicate is removed.
+- `scripts/00_data_profile.py` is re-run, so `outputs/analysis/00_data_profile.md` matches its script again. The only line that changes is the one on `docs/taxonomy.md`, which the committed profile still described as not yet written.
+
+### 6. Where it is implemented
+
+- `outputs/batches/batch_01.csv`, `batch_04.csv`, `batch_06.csv`, `batch_07.csv`, `batch_08.csv` and `batch_10.csv`, merged by `scripts/merge_validate.py` into `outputs/vendors_classified.csv` and `qa/validation_report.md`; `qa/verification_log.csv`; `docs/taxonomy.md`, `docs/clusters.md` and this file.
+- `qa/check_outputs.py`: C13 expects the outcomes above, and Mason Frank's expected cluster changes from Salesforce platform to Recruiting and HR outsourcing. C14 also checks wording in risk notes and descriptions (`V0002`, `V0006`, `V0009`, `V0018`). C16 also fails an Optimize row with a risk note, except `V0002`. S4 confirms the four new ids. Six planted errors are added, 50 in all.
+- All 31 checks pass, and both self-tests pass, with 50 and 16 planted errors.
+
+### 7. Result
+
+From `qa/validation_report.md`:
+
+| Department | Vendors | Spend | Share of spend |
+|---|---|---|---|
+| Engineering | 24 | $3,519,830 | 44.6% |
+| G&A | 207 | $1,563,892 | 19.8% |
+| Facilities | 51 | $973,386 | 12.3% |
+| Finance | 24 | $645,242 | 8.2% |
+| M&A | 4 | $226,932 | 2.9% |
+| Product | 3 | $212,824 | 2.7% |
+| Marketing | 24 | $201,520 | 2.6% |
+| Legal | 24 | $197,752 | 2.5% |
+| SaaS | 14 | $151,092 | 1.9% |
+| Sales | 8 | $138,344 | 1.8% |
+| Professional Services | 2 | $56,367 | 0.7% |
+| Support | 1 | $178 | 0.0% |
+
+Sales falls from 45.7% of spend to 1.8%, and Engineering rises from 3.3% to 44.6%. Recommendations: 124 Optimize, 108 Consolidate, 154 Terminate.
+
+### 8. Left for the savings step
+
+- The Salesforce levers. The licence audit, a vendor action tagged `none`, becomes the true-down of internal seats, audited separately from the platform licences. The savings step also settles whether co-terming with the parent's Salesforce relationship needs a `depends_on` tag, and how much of the spend the CRM-instance lever (`parent_crm_instance`) can reach now that most of it is platform licences.
+- Weking's Consolidate depends on the group's engineering sourcing model, which is not one of the nine registered decisions.
+
 ## 2026-11-10: classification with web verification (prompt 15, step 3)
 
 ### 1. The two pending verifications are settled
@@ -25,7 +100,7 @@ Decisions taken during the analysis, newest first. Each records what was decided
 - **Unverified rows** (`verified` FALSE) follow the "confirm with Finance" form of hint 77. Where neither the name nor a hint shows the function, the row is an unidentified payee: G&A (T12), cluster Unidentified and individual payees unless hint 77 points to contractors (C12), and Terminate until identified. Where the name or a hint does show the function (a law firm, a caterer, a payroll firm, a tax adviser), the row follows the rule for that function and stays unverified.
 - **Hints the searches overturned**, each noted in its rationale: Cloudcrossing (`V0006`, a Salesforce document app, not a consulting partner), Big Frontier (`V0020`, leadership development, not marketing), Veniture (`V0032`, an Atlassian partner), Shree Info System Solutions (`V0048`, a hardware distributor, so consolidated into group IT procurement like the named hardware vendors), Sodexo SVC India (`V0054`, Pluxee's former name), Plus Your Business (`V0056`, a HubSpot consultancy), Smart Group Services (`V0058`, a consultancy at an HR brand's address), TP Prime (`V0067`, accounting), Ramiro (`V0075`, HR training), Omonia (`V0083`) and Akton (`V0141`, telecoms), Mosaic Concept (`V0096`) and Nefron (`V0038`, event organisers by registry), Limes Plus (`V0097`, office supplies), Caboodle (`V0211`, an employee benefits platform), and trendig (`V0213`, training). Weking (`V0009`) points to a Salesforce consultancy, with low confidence.
 - **Retained vendors and group functions** named in Consolidate rationales: WeWork for coworking (already the Singapore provider; Common Desk is now part of WeWork), JLL for property advice, Hrvatski Telekom for Croatian telecoms, New Star Networks for UK telecoms, Google Workspace through CTS as the one productivity suite, Veniture as the channel for the Atlassian estate, Workato for integration, Cognism for contact data, Infosys for outsourced development, Carrington for PR, 4imprint for promotional products, UPS through Rhea for couriers, CSC for corporate secretarial work, Navan for hotels and travel paid directly, and Salesforce for HubSpot and Yoxel. The group functions named are the group auditor, the group insurance programme, the group law firm panel, the parent's HRIS and ERP, group IT procurement and the group's development programmes.
-- **Croatian sole traders**: the business register's page is cited even where its URL carries the owner's name, because that name is part of the registered business name; nothing else about the owner is recorded. One log URL about an unrelated sole trader was withheld.
+- **Croatian sole traders**: the business register's page is cited even where its URL carries the owner's name, because that name is part of the registered business name; nothing else about the owner is recorded. One log URL about an unrelated sole trader was withheld. Superseded in step 3b: such URLs are now withheld.
 - **Points for Finance** that surfaced in the research: small UK employment-law payments that may be contributions to departing employees' settlement-agreement advice (`V0230`, `V0231`, `V0241`); Pixsy (`V0237`), which may be a copyright claim settlement rather than a service; FastSpring (`V0198`), fees on the company's sales or a software purchase; the billing country of T-Mobile (`V0140`); Clime India (`V0181`), possibly Acclime India; and N S Shastri And Co (`V0164`), whose name is shared with the founding partner of the 4i practice.
 
 ### 4. Result
@@ -35,8 +110,6 @@ All 386 rows are classified in ten batches, merged into `outputs/vendors_classif
 - Verification: 305 rows verified on the web (97.5% of spend); 81 not verified (2.5% of spend), each listed with its reason. Every vendor had at least one web search except the unnamed payee (`V0325`), which has no name to search; `qa/verification_log.csv` holds 1,065 lookups.
 - Recommendations: 125 Optimize (60.9% of spend), 107 Consolidate (30.1%), 154 Terminate (9.0%). Terminate is mostly tail spend: food, events, gifts, retail purchases and unidentified payees.
 - Confidence: 177 high (70.9% of spend), 108 medium, 101 low (6.9% of spend).
-
-## 2026-11-10: remaining decision tags (prompt 14, step 2f)
 
 ## 2026-11-10: remaining decision tags (prompt 14, step 2f)
 
@@ -144,9 +217,9 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`. Extended in step 2f (prompt 14): S6 checks the `depends_on` tags.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`. Extended in step 2f (prompt 14): S6 checks the `depends_on` tags. Extended in step 3b (prompt 16): C13 and C14 cover the platform reclassification, C14 also reads risk notes and descriptions, and C16 fails an Optimize row with a risk note, except `V0002`.
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, and S6 on the savings register, clean and then with 43 planted errors, and shows each error caught.
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, and S6 on the savings register, clean and then with 50 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
@@ -157,9 +230,9 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 | C10 | total `spend_12m` equals the clean file's total exactly |
 | C11 | the rows of each merge group and of each shared link group carry one recommendation |
 | C12 | every grouped row's rationale names its group, per-row links included; where the row's own name already contains the group's name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
-| C13, C14 | the outcomes and rationale wording fixed by decisions (steps 2b to 2e) |
+| C13, C14 | the outcomes, and the wording of rationales, risk notes and descriptions, fixed by decisions (steps 2b to 3b) |
 | C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
-| C16 | `risk_note` is non-empty for every Terminate and Consolidate row |
+| C16 | `risk_note` is non-empty for every Terminate and Consolidate row, and empty for every Optimize row except `V0002` (step 3b) |
 | C17 | every row has `verified` TRUE, except rows with `verified` FALSE listed under "Verification exceptions" in `qa/validation_report.md`; a FALSE row not listed there fails, and a listed `vendor_id` that is not FALSE in the file fails |
 | C18 | `vendor_name_original` and `vendor_name_clean` match `outputs/vendors_clean.csv` by `vendor_id`, and the rows are in the original sheet order, `vendor_id` ascending |
 
@@ -270,8 +343,10 @@ Questions the file cannot answer, collected from `outputs/analysis/01_forensics.
 | # | Question | Vendors | Why it matters |
 |---|---|---|---|
 | 1 | Are the Telefónica payments fees, rebates or connectivity? | `V0015`, `V0093` | Rebates belong against revenue; connectivity would be telecom spend |
-| 2 | What does the Salesforce contract cover: staff CRM licences, platform or OEM fees tied to the product, or a prepayment? | `V0002` | 39.5% of spend; the lever depends on the answer |
+| 2 | What does the Salesforce contract cover: staff CRM licences, platform or OEM fees tied to the product, or a prepayment? | `V0002` | 39.5% of spend. Step 3b treats it as platform and ISV licences for the product plus internal CRM seats; the split between the two sets the seat true-down |
 | 3 | What do the Croatian companies of unknown function supply, starting with Weking d.o.o.? | `V0009` and the 12 others listed in `docs/vendor_hints.md` | $309,614 that cannot yet be described or recommended with confidence |
 | 4 | What was the City of Zagreb spatial-planning payment for? | `V0073` | $11,637, probably one-off |
 | 5 | Which group entity does the Cayman Islands Government payment relate to? | `V0361` | The legal-entity map behind the payee list |
 | 6 | How much of the BDO, Bisley Law and Grant Thornton spend was sale-related work? | `V0004`, `V0018`, `V0029` | They stay in the recurring base (step 2e); the sale-related share would come out of it |
+| 7 | Control finding: which entity invoiced as Bisley Law Ltd, and for what? Companies House lists the entity as non-trading, and no website or SRA record describes its services | `V0018` | $67,414; no payment should continue until Finance confirms the entity and the work (step 3b) |
+| 8 | Is PDF Butler licensed on OEM terms, embedded in or delivered with the product? | `V0006` | $208,675; OEM or volume pricing is renegotiated within the platform review (step 3b) |

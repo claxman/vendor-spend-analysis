@@ -16,7 +16,7 @@ Written by `scripts/merge_validate.py`, which merged the batch files in `outputs
 | Total `spend_12m` | $7,887,360 (source total $7,887,360) |
 | `verified` TRUE | 305 vendors, $7,687,092 (97.5% of spend) |
 | `verified` FALSE | 81 vendors, $200,268 (2.5% of spend) |
-| `is_addressable` TRUE | 370 vendors, $7,765,985 (98.5% of spend) |
+| `is_addressable` TRUE | 369 vendors, $7,765,704 (98.5% of spend) |
 | `is_recurring` TRUE | 270 vendors, $7,556,683 (95.8% of spend) |
 | Confidence low | 101 vendors, $543,894 (6.9% of spend) |
 
@@ -39,16 +39,16 @@ Rows per batch:
 
 | Department | Vendors | Share of vendors | Spend | Share of spend |
 |---|---|---|---|---|
-| Engineering | 22 | 5.7% | $258,511 | 3.3% |
+| Engineering | 24 | 6.2% | $3,519,830 | 44.6% |
 | Facilities | 51 | 13.2% | $973,386 | 12.3% |
 | G&A | 207 | 53.6% | $1,563,892 | 19.8% |
 | Legal | 24 | 6.2% | $197,752 | 2.5% |
 | M&A | 4 | 1.0% | $226,932 | 2.9% |
 | Marketing | 24 | 6.2% | $201,520 | 2.6% |
 | SaaS | 14 | 3.6% | $151,092 | 1.9% |
-| Product | 2 | 0.5% | $4,149 | 0.1% |
+| Product | 3 | 0.8% | $212,824 | 2.7% |
 | Professional Services | 2 | 0.5% | $56,367 | 0.7% |
-| Sales | 11 | 2.8% | $3,608,338 | 45.7% |
+| Sales | 8 | 2.1% | $138,344 | 1.8% |
 | Support | 1 | 0.3% | $178 | 0.0% |
 | Finance | 24 | 6.2% | $645,242 | 8.2% |
 | Total | 386 | 100.0% | $7,887,360 | 100.0% |
@@ -58,30 +58,30 @@ Rows per batch:
 | Recommendation | Vendors | Share of vendors | Spend | Share of spend |
 |---|---|---|---|---|
 | Terminate | 154 | 39.9% | $707,786 | 9.0% |
-| Consolidate | 107 | 27.7% | $2,375,601 | 30.1% |
-| Optimize | 125 | 32.4% | $4,803,973 | 60.9% |
+| Consolidate | 108 | 28.0% | $2,519,694 | 31.9% |
+| Optimize | 124 | 32.1% | $4,659,880 | 59.1% |
 | Total | 386 | 100.0% | $7,887,360 | 100.0% |
 
 ## Distribution by cost cluster
 
 | Cost cluster | Vendors | Share of vendors | Spend | Share of spend |
 |---|---|---|---|---|
-| Salesforce platform | 7 | 1.8% | $3,565,000 | 45.2% |
+| Salesforce platform | 5 | 1.3% | $3,382,759 | 42.9% |
 | Office footprint | 10 | 2.6% | $837,043 | 10.6% |
 | Office running costs | 44 | 11.4% | $71,130 | 0.9% |
 | Travel and entertainment | 49 | 12.7% | $464,995 | 5.9% |
 | Team events, perks and wellness | 37 | 9.6% | $81,157 | 1.0% |
-| Audit, tax, accounting and corporate services | 25 | 6.5% | $590,955 | 7.5% |
+| Audit, tax, accounting and corporate services | 24 | 6.2% | $590,674 | 7.5% |
 | M&A and transaction costs | 4 | 1.0% | $226,932 | 2.9% |
 | Legal | 19 | 4.9% | $179,798 | 2.3% |
 | Insurance and benefits | 25 | 6.5% | $428,012 | 5.4% |
-| Recruiting and HR outsourcing | 17 | 4.4% | $365,987 | 4.6% |
+| Recruiting and HR outsourcing | 18 | 4.7% | $404,135 | 5.1% |
 | Cloud, telecom and IT | 30 | 7.8% | $238,201 | 3.0% |
-| Outsourced engineering and contractors | 7 | 1.8% | $102,064 | 1.3% |
+| Outsourced engineering and contractors | 8 | 2.1% | $246,157 | 3.1% |
 | Software subscriptions (non-Salesforce) | 39 | 10.1% | $377,257 | 4.8% |
 | Marketing agencies, media and memberships | 25 | 6.5% | $141,008 | 1.8% |
 | Customer-mandated platform fees | 3 | 0.8% | $97,400 | 1.2% |
-| Statutory and government | 5 | 1.3% | $15,365 | 0.2% |
+| Statutory and government | 6 | 1.6% | $15,646 | 0.2% |
 | Student labour | 3 | 0.8% | $54,117 | 0.7% |
 | Unidentified and individual payees | 37 | 9.6% | $50,939 | 0.6% |
 | Total | 386 | 100.0% | $7,887,360 | 100.0% |
@@ -101,7 +101,7 @@ Rows per batch:
 
 | vendor_id | Vendor | Spend | Department | Recommendation | Description |
 |---|---|---|---|---|---|
-| V0009 | Weking d.o.o. | $144,093 | Sales | Optimize | Zagreb Salesforce and CloudSense consultancy supplying consultants and developers, per its website; the legal entity is unconfirmed |
+| V0009 | Weking d.o.o. | $144,093 | Engineering | Consolidate | Zagreb Salesforce and CloudSense consultancy supplying consultants and developers, per its website, most likely to product engineering; entity unconfirmed, confirm with Finance |
 | V0015 | Telefonica Global Services GmbH | $89,880 | Sales | Optimize | Global procurement company of the Telefónica group in Munich, a customer's buying arm; what these payments cover is for Finance |
 | V0018 | Bisley Law Ltd | $67,414 | Legal | Consolidate | UK company named as a law practice; Companies House lists it as non-trading and no source shows its work, confirm with Finance |
 | V0038 | Nefron - Obrt Za Poslovne Usluge | $30,614 | G&A | Terminate | Podstrana sole trader registered to organise meetings and trade fairs; what it supplied the company is not shown, confirm with Finance |
@@ -321,9 +321,9 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | C11 | PASS | Rows of each merge group and each shared link group carry one recommendation |
 | C12 | PASS | Every grouped row's rationale names its group (per-row links included) |
 | C13 | PASS | Outcomes fixed by recorded decisions |
-| C14 | PASS | Rationale wording fixed by recorded decisions |
+| C14 | PASS | Rationale, risk-note and description wording fixed by recorded decisions |
 | C15 | PASS | Rows outside the savings base say "non-discretionary, excluded from the savings base" |
-| C16 | PASS | Every Terminate and Consolidate row has a risk_note |
+| C16 | PASS | Every Terminate and Consolidate row has a risk_note; Optimize rows have none, except V0002 (step 3b) |
 | C17 | PASS | Every row is verified TRUE, or FALSE and listed with a reason under "Verification exceptions" in qa/validation_report.md; every listed id is FALSE in the file |
 | C18 | PASS | vendor_name_original and vendor_name_clean match outputs/vendors_clean.csv by vendor_id, and the rows are in the original sheet order (vendor_id ascending) |
 

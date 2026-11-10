@@ -153,3 +153,38 @@ Each batch is outputs/batches/batch_NN.csv with exactly the 16 columns in order:
 
 Print a three-line summary per batch, commit after every two batches so nothing is lost, and work through all ten batches without stopping. Commit the last as "Step 3: classification with web verification".
 ```
+
+## Message during prompt 15 (2026-11-10)
+
+Note: a nudge sent while step 3 was running, not an instruction.
+
+```text
+why can't you do it now?
+```
+
+## Prompt 16 (2026-11-10)
+
+Note: two sentences in the first paragraph concern a local working file kept outside the repository and are left out here, marked [two sentences omitted].
+
+```text
+Append this prompt to prompts/log.md as prompt 16, and log the unlogged message "why can't you do it now?" (sent during step 3) in its place in the sequence with a one-line note that it was a nudge, not an instruction. [two sentences omitted]
+
+Then make these changes and record each one in docs/decisions.md under a new heading "2026-11-10: platform reclassification (prompt 16, step 3b)":
+
+1. Salesforce is the product platform, not the sales team's CRM. Evidence from the ledger: one vendor is 39.5% of all third-party spend, which no company pays for sales seats; around it sit Salesforce-native vendors (a document-generation app at $209K, a PSA on the Salesforce platform, a Salesforce consultancy supplying developers, a Salesforce-specialist recruiter, a Salesforce email-sync tool); and the company sells to telecoms, where Salesforce-native products are common. Treat the Salesforce spend as platform and ISV licence cost for a product built on Salesforce, with a smaller internal CRM component. Update docs/taxonomy.md: Salesforce platform licences and Salesforce-ecosystem vendors that supply product engineering or embedded product components go to Engineering (or Product for an embedded component); only internal-CRM tooling goes to Sales.
+
+2. Reclassify, keeping every other column rule:
+   - V0002 Salesforce UK Ltd: department Engineering. Description: Salesforce platform and ISV licences for the company's Salesforce-native product, plus internal CRM seats; the largest single cost. Recommendation Optimize. Rationale: renegotiate the platform agreement at change of control (co-term with the parent's Salesforce relationship, multi-year commitment, true-down of internal seats audited separately from platform licences). Risk note is allowed on Optimize here as an exception recorded in decisions.md: the product depends on this platform, so the lever is commercial terms, never exit.
+   - V0009 Weking d.o.o.: department Engineering, cost_cluster "Outsourced engineering and contractors", recommendation Consolidate into the group's engineering sourcing model, risk note: product knowledge held by the consultancy's developers must be transferred first. Keep confidence low and "confirm with Finance".
+   - V0006 Cloudcrossing BVBA (PDF Butler): department Product, description stating it is a Salesforce-native document generation app and that at this spend it is most likely embedded in or delivered with the product rather than used by internal sales; confirm OEM terms with Finance. Recommendation Optimize: renegotiate OEM or volume pricing within the platform review. Cluster stays Salesforce platform.
+   - Mason Frank: cost_cluster "Recruiting and HR outsourcing" (its lever is agency termination, not the Salesforce contract). Recommendation stays.
+   - NSDL (V0284): is_addressable FALSE, cost_cluster "Statutory and government", rationale "non-discretionary, excluded from the savings base", so the classification matches the forensic exclusion.
+
+3. Bisley Law (V0018, $67,414): add to the Finance questions in docs/decisions.md as a control finding: Companies House lists the entity as non-trading and no website or SRA record describes its services; Finance must confirm which entity invoiced and for what before any payment continues. Keep the row Consolidate; add that finding to its risk note.
+
+4. Privacy: in outputs/vendors_classified.csv, the batch CSVs and qa/verification_log.csv, replace every URL that contains a private individual's name (sole-trader register pages and similar) with the directory's root domain and the note "URL withheld: names the owner", and list the affected vendor_ids in docs/decisions.md. Replace the V0024 source_url with the Navan rebrand press release already used for V0003.
+
+5. Fix the repeated heading at docs/decisions.md lines 39 and 41. Re-run scripts/00_data_profile.py so the committed profile matches its script, and check the diff is only the taxonomy line.
+
+Re-run scripts/merge_validate.py and both self-tests; everything must pass. Print the new department distribution by spend. Commit as "Step 3b: platform reclassification and housekeeping" and push.
+```

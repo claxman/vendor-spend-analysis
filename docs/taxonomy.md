@@ -2,7 +2,7 @@
 
 The only departments allowed are the 12 values in the workbook's `Config` sheet, spelled exactly as there and listed here in the same order. The workbook's Department column (B2:B387) is a dropdown validated against `Config!$A$2:$A814` with the error alert on, so any other spelling would be rejected in the workbook. `scripts/02_clean.py` checks that the table below and `Config` agree, character for character.
 
-A department answers one question: whose budget is this? The cost cluster (`docs/clusters.md`) answers another: which lever captures the saving? The two can differ (decision of 2026-11-10, `docs/decisions.md`). Mason Frank is G&A by department, as a recruiting agency, and Salesforce platform by cluster, so its saving rolls into the Salesforce opportunity. Slack is SaaS by department and Salesforce platform by cluster, because it is Salesforce-owned and goes into the same renewal.
+A department answers one question: whose budget is this? The cost cluster (`docs/clusters.md`) answers another: which lever captures the saving? The two can differ (decision of 2026-11-10, `docs/decisions.md`). Slack is SaaS by department and Salesforce platform by cluster, because it is Salesforce-owned and goes into the same renewal. Cloudcrossing's PDF Butler is Product by department, as a component embedded in or delivered with the product, and Salesforce platform by cluster (step 3b). Mason Frank is G&A by department, as a recruiting agency, and from step 3b Recruiting and HR outsourcing by cluster, because its lever is ending the agency, not the Salesforce contract.
 
 Recommendations follow `docs/recommendation_rules.md`; analyst knowledge about specific vendors is in `docs/vendor_hints.md`.
 
@@ -10,24 +10,24 @@ Recommendations follow `docs/recommendation_rules.md`; analyst knowledge about s
 
 | # | Department | Holds |
 |---|---|---|
-| 1 | Engineering | Cloud hosting and domains, developer tools, monitoring, outsourced development and IT services, software escrow, Croatian sole-trader or d.o.o. contractors whose names suggest technical work, student labour contracts. |
+| 1 | Engineering | Cloud hosting and domains, developer tools, monitoring, outsourced development and IT services, software escrow, Croatian sole-trader or d.o.o. contractors whose names suggest technical work, student labour contracts; the Salesforce platform and ISV licences of the company's Salesforce-native product, and Salesforce-ecosystem vendors that supply product engineering (step 3b). |
 | 2 | Facilities | Leases and coworking, property services, utilities, telecom and internet lines, parking, security, cleaning, waste, storage, movers, office supplies, furniture, office groceries and catering. |
 | 3 | G&A | HR (recruiting agencies, LinkedIn, job boards, payroll and employer-of-record providers, HR software); insurance and benefits (insurers, brokers, meal cards, gym, cycle-to-work, novated leasing, wellness, occupational health); travel and entertainment (Navan, airlines, hotels, restaurants, team events, gifts); training; employee IT equipment; couriers and postage; government and statutory payments; individual and unidentified payees; consumer retail purchases. |
 | 4 | Legal | Law firms, notaries, IP, immigration services, data-protection registration, corporate secretarial and registered-agent services. |
 | 5 | M&A | Deal advisers, data rooms, sponsor and transaction fees. |
 | 6 | Marketing | Agencies, media, PR, events, sponsorships, industry memberships (TM Forum), swag and print, stock assets; marketing software (HubSpot, Uberflip, Semrush). |
 | 7 | SaaS | Cross-functional subscriptions with no single owning function: Google Workspace and its reseller, Microsoft 365, Slack, GoTo, Trello, Atlassian, Smartsheet, Zapier, Workato, DocuSign, LastPass, Formswift, Adobe. |
-| 8 | Product | Product management and design software (Aha!, Figma). |
+| 8 | Product | Product management and design software (Aha!, Figma); components embedded in or delivered with the product, such as a Salesforce-native app (step 3b). |
 | 9 | Professional Services | The company's own services-delivery department, not external advisers: PSA software (Kimble), customer training and certification delivery, subcontractors on customer projects. |
-| 10 | Sales | Salesforce and its partners and integrations; customer-mandated procurement platform fees (Telefónica Global Services, Telefónica Compras Electrónicas, SAP Ariba). |
+| 10 | Sales | Of the Salesforce ecosystem, only internal-CRM tooling, such as the add-ons and integrations the sales team uses (step 3b); customer-mandated procurement platform fees (Telefónica Global Services, Telefónica Compras Electrónicas, SAP Ariba). |
 | 11 | Support | Support tooling and telephony for support lines. |
 | 12 | Finance | Audit, tax, accounting, R&D tax credit advisers, finance systems (Sage, Planful), payment processing, bank fees, share registry and depository services. |
 
 ## Assignment rules
 
-These are the rules as given (prompt 6 in `prompts/log.md`).
+These are the rules as given (prompt 6 in `prompts/log.md`), with rule 1 amended in step 3b (prompt 16) and rules 9 and 10 following it.
 
-1. Function-specific software goes to the function that uses it: Salesforce and its partners and integrations to Sales; HubSpot, Uberflip, Semrush to Marketing; Aha!, Figma to Product; Sage, Planful to Finance; Peakon, Performancepro to G&A as HR software; Kimble to Professional Services.
+1. Function-specific software goes to the function that uses it: HubSpot, Uberflip, Semrush to Marketing; Aha!, Figma to Product; Sage, Planful to Finance; Peakon, Performancepro to G&A as HR software; Kimble to Professional Services. Salesforce (amended in step 3b): the Salesforce platform licences, and Salesforce-ecosystem vendors that supply product engineering or embedded product components, go to Engineering, or to Product for an embedded component; only internal-CRM tooling goes to Sales.
 2. SaaS holds cross-functional subscriptions with no single owning function: Google Workspace and its reseller, Microsoft 365, Slack, GoTo, Trello, Atlassian, Smartsheet, Zapier, Workato, DocuSign, LastPass, Formswift, Adobe.
 3. Professional Services means the company's own services-delivery department, not external advisers: PSA software, customer training and certification delivery, subcontractors on customer projects. External advisers go to Finance, Legal, M&A or G&A by what they do.
 4. Finance: audit, tax, accounting, R&D tax credit advisers, finance systems, payment processing, bank fees, share registry and depository services.
@@ -35,8 +35,8 @@ These are the rules as given (prompt 6 in `prompts/log.md`).
 6. Legal: law firms, notaries, IP, immigration services, data-protection registration, corporate secretarial and registered-agent services.
 7. G&A: HR (recruiting agencies, LinkedIn, job boards, payroll and employer-of-record providers, HR software), insurance and benefits (insurers, brokers, meal cards, gym, cycle-to-work, novated leasing, wellness, occupational health), travel and entertainment (Navan, airlines, hotels, restaurants, team events, gifts), training, employee IT equipment, couriers and postage, government and statutory payments, individual and unidentified payees, consumer retail purchases.
 8. Facilities: leases and coworking, property services, utilities, telecom and internet lines, parking, security, cleaning, waste, storage, movers, office supplies, furniture, office groceries and catering.
-9. Engineering: cloud hosting and domains, developer tools, monitoring, outsourced development and IT services, software escrow, Croatian sole-trader or d.o.o. contractors whose names suggest technical work, student labour contracts.
-10. Sales also holds customer-mandated procurement platform fees (Telefónica Global Services, Telefónica Compras Electrónicas, SAP Ariba).
+9. Engineering: cloud hosting and domains, developer tools, monitoring, outsourced development and IT services, software escrow, Croatian sole-trader or d.o.o. contractors whose names suggest technical work, student labour contracts; from step 3b also the Salesforce platform licences and the Salesforce-ecosystem vendors that supply product engineering (rule 1).
+10. Sales also holds customer-mandated procurement platform fees (Telefónica Global Services, Telefónica Compras Electrónicas, SAP Ariba). Of the Salesforce ecosystem it holds only internal-CRM tooling (rule 1, step 3b).
 11. Marketing holds agencies, media, PR, events, sponsorships, industry memberships (TM Forum), swag and print, stock assets.
 12. Support holds support tooling and telephony for support lines.
 
@@ -46,8 +46,8 @@ These settle cases the rules above leave open, without overriding any of them. E
 
 | # | Situation | Proposed department | Vendors it decides |
 |---|---|---|---|
-| T1 | A vendor specialised in one ecosystem but doing a generic job | What the vendor does, not whose ecosystem it serves: a Salesforce-specialist recruiter is a recruiting agency (rule 7) | Mason Frank: G&A (its cost cluster is Salesforce platform, `docs/clusters.md` C1) |
-| T2 | A Salesforce partner that may be a subcontractor on customer projects | Sales by default (rule 1); Professional Services only with evidence that its work is delivered to customers (rule 3) | Cloudcrossing |
+| T1 | A vendor specialised in one ecosystem but doing a generic job | What the vendor does, not whose ecosystem it serves: a Salesforce-specialist recruiter is a recruiting agency (rule 7) | Mason Frank: G&A (its cost cluster is Recruiting and HR outsourcing from step 3b, `docs/clusters.md` C1) |
+| T2 | A Salesforce-ecosystem vendor | By what it supplies (rule 1, amended in step 3b): product engineering to Engineering, a component embedded in or delivered with the product to Product, internal-CRM tooling to Sales; Professional Services only with evidence that its work is delivered to customers (rule 3) | Cloudcrossing (PDF Butler): Product; Weking: Engineering; Yoxel: Sales; Kimble stays in Professional Services as PSA software (rule 1) |
 | T3 | Outsourced development that may be customer-project subcontracting | Engineering by default (rule 9); Professional Services with evidence (rule 3) | Infosys, Shree Info System Solutions, Crayond Digital, Orionw, Trending Technology Services |
 | T4 | Food and drink | Groceries and catering for the office: Facilities (rule 8). Restaurants, team meals and food delivery: G&A, travel and entertainment (rule 7) | Konzum, Catering Muring, City Pantry: Facilities; Tattu, Gaucho, Uber Eats, Wolt: G&A |
 | T5 | Telephony and messaging | Lines and mobile plans: Facilities (rule 8). Numbers used for support lines: Support (rule 12). Messaging APIs used by the product: Engineering | Avoxi: Support; Click Send: Engineering |
