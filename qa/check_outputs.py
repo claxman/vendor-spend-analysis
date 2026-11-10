@@ -5,6 +5,8 @@ Where each rule comes from:
   CLAUDE.md                     one-line descriptions without the banned phrases, departments from the
                                 taxonomy, three recommendations with a one-sentence rationale, no em dashes
   docs/taxonomy.md, clusters.md the allowed departments and cost clusters
+  docs/savings_assumptions.md   the acquirer decisions and the depends_on tag of every savings assumption
+                                (steps 2e and 2f), checked by S6
   docs/decisions.md             per-row deliverable (step 2c), group recommendation rule (step 2d), the
                                 outcomes fixed for named rows (steps 2b to 2e), the columns of the
                                 classification spec and the risk-note check (step 2d-fix), the verification
@@ -50,6 +52,9 @@ TAXONOMY = ROOT / "docs" / "taxonomy.md"
 CLUSTERS = ROOT / "docs" / "clusters.md"
 VALIDATION_REPORT = ROOT / "qa" / "validation_report.md"
 EXCEPTIONS_HEADING = "Verification exceptions"
+SAVINGS_ASSUMPTIONS = ROOT / "docs" / "savings_assumptions.md"
+# The levers named in step 2f as purely vendor actions: their assumptions carry depends_on none.
+VENDOR_ACTION_LEVERS = ["Salesforce licence audit", "AWS savings plans", "Navan policy", "Insurance re-broke"]
 
 # The columns of the classification spec, in its order (docs/decisions.md, step 2d-fix).
 REQUIRED_COLUMNS = ["vendor_id", "vendor_name_original", "vendor_name_clean", "spend_12m", "department",
@@ -185,6 +190,39 @@ def verification_exceptions(text: str | None) -> tuple[dict[str, str], list[str]
     return listed, problems
 
 
+def tag_problems(text: str) -> tuple[int, int, list[str]]:
+    """The depends_on tags of docs/savings_assumptions.md: (assumptions, decisions, problems).
+
+    Every row of the "Assumptions" table carries `none` or one or more names from the "Acquirer decisions"
+    table, never both; the levers named as vendor actions carry `none`.
+    """
+    names = [r[0].strip("`") for r in section_rows(text, "Acquirer decisions")[1:]]   # row 0 is the header
+    table_rows = section_rows(text, "Assumptions")
+    if not table_rows or "depends_on" not in table_rows[0]:
+        return 0, len(names), ["the Assumptions table has no depends_on column"]
+    col = table_rows[0].index("depends_on")
+    rows = table_rows[1:]
+    problems = [f"decision {n} is registered twice" for n in sorted({n for n in names if names.count(n) > 1})]
+    tags: dict[str, list[str]] = {}
+    for r in rows:
+        cell = r[col] if len(r) > col else ""
+        found = [t.strip().strip("`").strip() for t in cell.split(",")]
+        found = [t for t in found if t]
+        tags[r[0]] = found
+        if not found:
+            problems.append(f"{r[0]}: no depends_on tag")
+        elif "none" in found and len(found) > 1:
+            problems.append(f"{r[0]}: none together with a decision name")
+        else:
+            problems += [f"{r[0]}: {t} is not a registered decision" for t in found if t != "none" and t not in names]
+    for lever in VENDOR_ACTION_LEVERS:
+        if lever not in tags:
+            problems.append(f"{lever}: no row")
+        elif tags[lever] != ["none"]:
+            problems.append(f"{lever}: tagged {', '.join(tags[lever]) or 'nothing'}, expected none (step 2f)")
+    return len(rows), len(names), problems
+
+
 class Results:
     def __init__(self) -> None:
         self.items: list[tuple[str, str, str, str]] = []
@@ -246,6 +284,11 @@ def structural_checks(res: Results, clean: list[dict]) -> None:
     clus = [r[1] for r in section_rows(CLUSTERS.read_text(encoding="utf-8"), "Clusters")]
     res.add("S5", "Taxonomy and cluster lists load (12 departments, 18 clusters)", len(deps) == 12 and len(clus) == 18,
             f"{len(deps)} departments, {len(clus)} clusters")
+
+    n_rows, n_names, problems = tag_problems(SAVINGS_ASSUMPTIONS.read_text(encoding="utf-8"))
+    res.add("S6", f"Every savings assumption in {rel(SAVINGS_ASSUMPTIONS)} carries depends_on: none, or decision names "
+                  "registered there; the levers named as vendor actions carry none",
+            not problems and n_rows > 0, f"{n_rows} assumptions, {n_names} decisions; problems: {sample(problems) or 'none'}")
 
 
 # ---------------------------------------------------------------- classification checks
@@ -547,6 +590,29 @@ MUTATIONS = [
 ]
 
 
+def retag(lever: str, tag: str):
+    """Edit docs/savings_assumptions.md text: give the lever's row this depends_on cell."""
+    def mutate(text: str) -> str:
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            if line.startswith(f"| {lever} |"):
+                cells = line.strip().strip("|").split("|")
+                cells[-1] = f" {tag} "
+                lines[i] = "|" + "|".join(cells) + "|"
+                return "\n".join(lines) + "\n"
+        raise AssertionError(f"self-test lever not found: {lever}")
+    return mutate
+
+
+# Planted errors in the real docs/savings_assumptions.md text, each to be caught by S6.
+DOC_MUTATIONS = [
+    ("Assumption without a depends_on tag", retag("Law firms", "")),
+    ("Tag that is not a registered decision", retag("Insurers", "`group_finance`")),
+    ("none together with a decision name", retag("Tail spend", "`none`, `group_systems`")),
+    ("Lever named as a vendor action tagged with a decision", retag("Navan policy", "`remote_operating_model`")),
+]
+
+
 def self_test(clean: list[dict]) -> bool:
     base_rows = synthetic(clean)
     base_report = SYNTHETIC_VALIDATION_REPORT
@@ -570,7 +636,18 @@ def self_test(clean: list[dict]) -> bool:
         print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
               f" (checks failing: {', '.join(res.failed()) or 'none'}"
               + "".join(f"; {expected} reports {m!r}" for m in must) + ")")
-    print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus {len(MUTATIONS)} planted errors")
+    doc = SAVINGS_ASSUMPTIONS.read_text(encoding="utf-8")
+    n_rows, n_names, problems = tag_problems(doc)
+    doc_ok = not problems and n_rows > 0
+    all_ok &= doc_ok
+    print(f"{'PASS' if doc_ok else 'FAIL'}    {rel(SAVINGS_ASSUMPTIONS)} as it stands passes S6: {n_rows} assumptions, "
+          f"{n_names} decisions" + (f" (problems: {'; '.join(problems)})" if problems else ""))
+    for title, mutate in DOC_MUTATIONS:
+        _, _, problems = tag_problems(mutate(doc))
+        all_ok &= bool(problems)
+        print(f"{'PASS' if problems else 'FAIL'}    planted error caught by S6: {title} ({'; '.join(problems) or 'none'})")
+    print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus {len(MUTATIONS) + len(DOC_MUTATIONS)} "
+          "planted errors")
     return all_ok
 
 

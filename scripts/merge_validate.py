@@ -316,7 +316,7 @@ def render(m: dict, clean: list[dict], paths: dict, items: list | None) -> str:
         lines += ["Not run yet.", ""]
     else:
         lines += ["The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural "
-                  "checks S1 to S5 and classification checks C1 to C18.", "",
+                  "checks S1 to S6 and classification checks C1 to C18.", "",
                   *table(["Check", "Result", "Rule"], [[cid, status, rule] for cid, status, rule, _ in items]), ""]
     lines += ["## Failures", ""]
     if items is None:

@@ -2,6 +2,41 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: remaining decision tags (prompt 14, step 2f)
+
+### 1. The four points raised after step 2e are approved
+
+The sixth decision name `group_it_procurement`; the hardware rule ahead of the size test; the QA checks for the nine hardware rows and the three advisers; and Finance question 6.
+
+### 2. Three more decision names
+
+- `group_payroll`: employer-of-record and payroll outsourcing.
+- `group_systems`: HR and finance systems migrating to the parent's HRIS and ERP.
+- `group_legal`: law firm panel consolidation.
+
+That makes nine decisions in `docs/savings_assumptions.md`.
+
+### 3. Every assumption carries a tag
+
+`docs/savings_assumptions.md` now lists every lever in `docs/recommendation_rules.md`, each with its `depends_on` tag. The savings percentages are still set in the savings step.
+
+- Purely vendor actions carry `none`. The cases named are the Salesforce licence audit, AWS savings plans, Navan policy and the insurance re-broke. The same test, that the company can act with its own vendors without any acquirer decision, gives `none` to:
+  - the tool consolidations (two productivity suites, work-management and integration tools, contact-data tools, HubSpot alongside Salesforce marketing);
+  - one entity per vendor;
+  - the Terminate categories that need no decision (perks, events, gifts and memberships; food, groceries, gifts and marketplace purchases through AP; unidentified payees; deal and transaction advisers);
+  - tail spend, and the general Consolidate and Optimize levers.
+- Every other lever carries the decision it depends on: coworking and offices (`remote_operating_model`), recruiting agencies (`group_talent_function`), insurers (`group_insurance_programme`), auditors and accountants (`group_auditor`), the CRM instance (`parent_crm_instance`), employee hardware (`group_it_procurement`), employer-of-record and payroll outsourcing (`group_payroll`), HR and finance systems (`group_systems`) and law firms (`group_legal`).
+- LinkedIn's seat review is the one Optimize-list lever not named as a vendor action, so it carries `group_talent_function`: LinkedIn sits in Recruiting and HR outsourcing, and how many recruiting seats the company needs depends on who does its hiring. Open for confirmation.
+- The insurance re-broke carries `none` as decided, although the Optimize list words it "re-broke under the group programme" (prompt 6). Moving the company's cover into the group programme is the separate insurers lever, tagged `group_insurance_programme`.
+- The two fixed rows, student labour and outside the savings base, count no saving, so they carry `none`.
+
+### 4. Where it is implemented
+
+- `docs/savings_assumptions.md`: the three decision names, and the table of levers with a tag on every row.
+- `docs/recommendation_rules.md`: the section "Savings that depend on the acquirer's decisions" names the nine decisions and the four vendor actions.
+- `qa/check_outputs.py`: new structural check S6, under which every assumption carries `none` or registered decision names, never both, and the four named vendor actions carry `none`. Four planted errors are added to the self-test, 43 in all.
+- `scripts/merge_validate.py`: the report's description of the checks names S6.
+
 ## 2026-11-10: decision tags, hardware rule, merge script (prompt 13, step 2e)
 
 ### 1. Savings that depend on the acquirer are tagged
@@ -73,13 +108,13 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`. Extended in step 2f (prompt 14): S6 checks the `depends_on` tags.
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, clean and then with 39 planted errors, and shows each error caught.
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, and S6 on the savings register, clean and then with 43 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
-| S1 to S5 | group definitions and the merge map agree; the per-row links are exactly Amazon, Microsoft, and Sodexo and Pluxee; the rows fixed by decisions are the vendors the decisions name; the taxonomy and cluster lists load |
+| S1 to S6 | group definitions and the merge map agree; the per-row links are exactly Amazon, Microsoft, and Sodexo and Pluxee; the rows fixed by decisions are the vendors the decisions name; the taxonomy and cluster lists load; every savings assumption carries `none` or registered decision names, and the four named vendor actions carry `none` |
 | C1, C2 | the 16 columns of the classification spec are present; exactly one row per source row (386), no duplicates |
 | C3 to C6 | departments, clusters and recommendations take allowed values; `is_addressable`, `is_recurring` and `verified` are TRUE or FALSE; confidence is high, medium or low |
 | C7 to C9 | one-line descriptions without the banned phrases; one-sentence rationales; no em or en dashes |

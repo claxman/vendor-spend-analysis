@@ -135,3 +135,9 @@ Add to docs/decisions.md and the rules: (1) every savings assumption that depend
 
 Batch format for classification: one CSV per batch of 40 vendors in outputs/batches/batch_NN.csv, with exactly these 16 columns: vendor_id, vendor_name_original, vendor_name_clean, spend_12m, department, sub_function, description, recommendation, rationale, risk_note, cost_cluster, is_addressable, is_recurring, confidence, verified, source_url. Write scripts/merge_validate.py now: it merges the batches, sorts by vendor_id, writes outputs/vendors_classified.csv, runs qa/check_outputs.py, and writes qa/validation_report.md with counts, distributions by department, recommendation, cluster and confidence, the low-confidence list sorted by spend, a "Verification exceptions" section, and every failure. Commit as "Step 2e: decision tags, hardware rule, merge script".
 ```
+
+## Prompt 14 (2026-11-10)
+
+```text
+Approved on all four. Add depends_on names for the other three: group_payroll (employer-of-record and payroll outsourcing), group_systems (HR and finance systems migrating to the parent's HRIS and ERP), group_legal (law firm panel consolidation). Every assumption in docs/savings_assumptions.md that is not purely a vendor action now carries a tag; the ones that are purely vendor actions (Salesforce licence audit, AWS savings plans, Navan policy, insurance re-broke) carry none. Commit as "Step 2f: remaining decision tags". Then stop; the next prompt starts classification.
+```
