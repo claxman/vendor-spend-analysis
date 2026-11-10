@@ -27,7 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vsa_common import (  # noqa: E402
-    CONFIG_SHEET, DISTINCT_VERDICTS, LINK_GROUPS, MERGE_GROUPS, RAW_PATH, ROOT, assert_no_dashes,
+    CONFIG_SHEET, DISTINCT_VERDICTS, EM_DASH, EN_DASH, LINK_GROUPS, MERGE_GROUPS, RAW_PATH, ROOT, assert_no_dashes,
     load_vendor_records, md_escape, money, normalize_name, open_workbook, pct, rel, repair_mojibake, section_rows,
     sha256, table, write_text,
 )
@@ -202,9 +202,10 @@ def check_docs(recs_by_id: dict, config_departments: list[str]) -> tuple[list[tu
                    f"{len(covered)} ids ({len(set(covered))} distinct); {len(bad_ids)} unknown ids; {len(bad_names)} "
                    "name mismatches" + (": " + "; ".join(bad_names[:3]) if bad_names else ""),
                    not bad_ids and not bad_names and len(covered) == len(set(covered))))
-    for doc in ("taxonomy.md", "recommendation_rules.md", "vendor_hints.md", "clusters.md", "decisions.md"):
+    for doc in ("taxonomy.md", "recommendation_rules.md", "vendor_hints.md", "clusters.md", "decisions.md",
+                "savings_assumptions.md"):
         text = (DOCS / doc).read_text(encoding="utf-8")
-        ok = "—" not in text and "–" not in text
+        ok = EM_DASH not in text and EN_DASH not in text
         checks.append((f"docs/{doc} has no em or en dash", "clean" if ok else "dash found", ok))
     return checks, sorted(set(covered))
 

@@ -2,10 +2,45 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: decision tags, hardware rule, merge script (prompt 13, step 2e)
+
+### 1. Savings that depend on the acquirer are tagged
+
+- Every savings assumption that depends on a choice by the acquirer carries a `depends_on` tag with that decision's name, in `docs/savings_assumptions.md` and in `outputs/analysis/savings.md`. The decisions named: remote operating model (`remote_operating_model`), group talent function (`group_talent_function`), group insurance programme (`group_insurance_programme`), group auditor (`group_auditor`) and parent CRM instance (`parent_crm_instance`).
+- `group_it_procurement` is added for the hardware rule below, since that saving needs the acquirer's choice too. An assumption that needs no such choice carries `none`.
+- The memo presents the Top 3 as decisions with their value, not as facts about the parent.
+
+### 2. Employee hardware is Consolidate, not Terminate
+
+- Employee hardware is Consolidate into group IT procurement: the four Apple entities (`V0123`, `V0172`, `V0175`, `V0229`), HP (`V0167`), Currys (`V0378`), Magazin Računalni Sistemi (`V0066`), Sniper Systems (`V0131`) and E-Disti (`V0260`). Each of their rationales names group IT procurement.
+- Terminate remains for food, groceries, gifts and marketplace purchases through AP. The Amazon marketplace rows (`V0203`, `V0291`) stay Terminate under it.
+- The rule is step 4 of the order of application, ahead of the size test, because E-Disti and Currys are under $1,000 and the size test would otherwise send them to tail-spend policy.
+
+### 3. Advisers whose spend may include sale-related work stay in the recurring base
+
+- BDO (`V0004`), Bisley Law (`V0018`) and Grant Thornton (`V0029`) keep `is_recurring` TRUE, so they are not treated as the non-recurring deal advisers of the Terminate list.
+- When `insights.md` is written, it notes that the recurring figure is likely lower for this reason. Question 6 for Finance asks for the sale-related share.
+
+### 4. Batch format and the merge script
+
+- The classification is written in batches of 40 vendors, one CSV each, `outputs/batches/batch_NN.csv` numbered from 01, with exactly the 16 columns of the classification spec, in its order. The 386 rows make nine batches of 40 and a tenth of 26.
+- `scripts/merge_validate.py` checks the batches (M1 to M7: file names and numbering, headers, batch sizes, row shape, each `vendor_id` once, numeric spend, the reasons file). It then merges them, sorts by `vendor_id`, writes `outputs/vendors_classified.csv`, runs `qa/check_outputs.py`, and writes `qa/validation_report.md`. The report holds counts, distributions by department, recommendation, cluster and confidence, the low-confidence list sorted by spend, the "Verification exceptions" section, every check, and every failure with its full detail.
+- The batches have no column for a verification reason, and the report is rebuilt on every run, so the reasons live in `qa/verification_exceptions.csv` (`vendor_id`, `reason`), kept by the verification step. The script copies them under "Verification exceptions", and C17 compares that list with the `verified` column, both ways.
+- The merged file is written even when a check fails, so that one run reports every failure. The exit code is 1 when any check fails, and also when there is no batch file, in which case nothing is written.
+- `python scripts/merge_validate.py --self-test` merges synthetic batches in a temporary directory. Shuffled batches come out in sheet order and pass every check; a second run, and a different shuffle, give byte-identical output; and 16 planted errors are each caught.
+
+### 5. Where it is implemented
+
+- `docs/recommendation_rules.md`: the hardware rule under Consolidate, the narrowed Terminate category, the adviser note, step 4 of the order of application, and the sections "Savings that depend on the acquirer's decisions" and "Recurring base".
+- `docs/savings_assumptions.md`: new; the register of decision names and of the assumptions fixed so far.
+- `qa/check_outputs.py`: C13 and C14 cover the nine hardware rows (Consolidate, with a rationale that names group IT procurement) and the three advisers (`is_recurring` TRUE); S4 confirms that the new ids are those vendors; three planted errors are added, 39 in all. A `run()` function and full details serve the merge script.
+- `scripts/merge_validate.py`: new.
+- `scripts/02_clean.py`: its no-dash check covers the new doc. In it and in `qa/check_outputs.py`, the dashes the code tests for are now written as escapes, so no file in the repository contains one.
+
 ## 2026-11-10: sheet order (prompt 12, step 2d-fix3)
 
 - `outputs/vendors_classified.csv` is written in the original sheet row order, `vendor_id` ascending (`V0002` to `V0387`), because its Department, Description and Suggestions columns are pasted straight into the Google Sheet and must line up row for row with the source.
-- `merge_validate.py`, the script that merges the classification batches, sorts to that order before writing, whatever order the batches came in. It is written in the classification step; this records the requirement it has to meet.
+- `merge_validate.py`, the script that merges the classification batches, sorts to that order before writing, whatever order the batches came in. It was written in step 2e as `scripts/merge_validate.py`.
 - C18 matches `vendor_name_original` and `vendor_name_clean` to `outputs/vendors_clean.csv` by `vendor_id`, no longer by position, and also confirms the order. In the self-test, a shuffled file and two swapped rows each fail C18 alone, with no name mismatches reported, which shows the names are matched by id and the order is checked separately.
 
 ## 2026-11-10: group recommendation rule (prompt 9, step 2d)
@@ -38,9 +73,9 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`.
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, clean and then with 36 planted errors, and shows each error caught.
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, clean and then with 39 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
@@ -51,7 +86,7 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 | C10 | total `spend_12m` equals the clean file's total exactly |
 | C11 | the rows of each merge group and of each shared link group carry one recommendation |
 | C12 | every grouped row's rationale names its group, per-row links included; where the row's own name already contains the group's name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
-| C13, C14 | the outcomes and rationale wording fixed by decisions (steps 2b to 2d) |
+| C13, C14 | the outcomes and rationale wording fixed by decisions (steps 2b to 2e) |
 | C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
 | C16 | `risk_note` is non-empty for every Terminate and Consolidate row |
 | C17 | every row has `verified` TRUE, except rows with `verified` FALSE listed under "Verification exceptions" in `qa/validation_report.md`; a FALSE row not listed there fails, and a listed `vendor_id` that is not FALSE in the file fails |
@@ -59,7 +94,7 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 
 Columns of `outputs/vendors_classified.csv`, as in the classification spec: `vendor_id`, `vendor_name_original`, `vendor_name_clean`, `spend_12m`, `department`, `sub_function`, `description`, `recommendation`, `rationale`, `risk_note`, `cost_cluster`, `is_addressable`, `is_recurring`, `confidence`, `verified`, `source_url`. `spend_12m` replaces the earlier `cost_usd`. Other columns may be added.
 
-The verification-exceptions rule (step 2d-fix2): every row must have `verified` TRUE. A row with `verified` FALSE must appear by `vendor_id`, with a one-line reason, under a heading "Verification exceptions" in `qa/validation_report.md`, and nothing else counts. C17 reads only that file and that heading: the lines under a heading whose text is exactly "Verification exceptions", up to the next heading of the same or a higher level. A line there that carries a `vendor_id` lists that row, and it must carry exactly one `vendor_id` and the reason on the same line, in the form `- Vnnnn: reason`. Lines without a `vendor_id` are ignored, and so are vendor names without an id, other headings and other files. The verification step writes `qa/validation_report.md`; the QA check only reads it.
+The verification-exceptions rule (step 2d-fix2): every row must have `verified` TRUE. A row with `verified` FALSE must appear by `vendor_id`, with a one-line reason, under a heading "Verification exceptions" in `qa/validation_report.md`, and nothing else counts. C17 reads only that file and that heading: the lines under a heading whose text is exactly "Verification exceptions", up to the next heading of the same or a higher level. A line there that carries a `vendor_id` lists that row, and it must carry exactly one `vendor_id` and the reason on the same line, in the form `- Vnnnn: reason`. Lines without a `vendor_id` are ignored, and so are vendor names without an id, other headings and other files. From step 2e, `scripts/merge_validate.py` writes `qa/validation_report.md` and copies this section from `qa/verification_exceptions.csv`, which the verification step keeps; the QA check only reads the report.
 
 ## 2026-11-10: decisions confirmed (prompt 8, step 2c)
 
@@ -159,7 +194,7 @@ Implemented in `docs/recommendation_rules.md` and `docs/clusters.md`.
 
 ## Open questions for Finance
 
-Questions the file cannot answer, collected from `outputs/analysis/01_forensics.md`. Each one changes a classification or a savings figure.
+Questions the file cannot answer, collected from `outputs/analysis/01_forensics.md` and from later decisions. Each one changes a classification or a savings figure.
 
 | # | Question | Vendors | Why it matters |
 |---|---|---|---|
@@ -168,3 +203,4 @@ Questions the file cannot answer, collected from `outputs/analysis/01_forensics.
 | 3 | What do the Croatian companies of unknown function supply, starting with Weking d.o.o.? | `V0009` and the 12 others listed in `docs/vendor_hints.md` | $309,614 that cannot yet be described or recommended with confidence |
 | 4 | What was the City of Zagreb spatial-planning payment for? | `V0073` | $11,637, probably one-off |
 | 5 | Which group entity does the Cayman Islands Government payment relate to? | `V0361` | The legal-entity map behind the payee list |
+| 6 | How much of the BDO, Bisley Law and Grant Thornton spend was sale-related work? | `V0004`, `V0018`, `V0029` | They stay in the recurring base (step 2e); the sale-related share would come out of it |

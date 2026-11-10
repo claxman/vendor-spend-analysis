@@ -32,6 +32,7 @@ Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in secti
 | docs/vendor_hints.md has no em or en dash | clean | yes |
 | docs/clusters.md has no em or en dash | clean | yes |
 | docs/decisions.md has no em or en dash | clean | yes |
+| docs/savings_assumptions.md has no em or en dash | clean | yes |
 
 ## 2. What the cleaning does
 

@@ -19,6 +19,8 @@ Two or more vendors serve the same function, or the same vendor is paid through 
 - HubSpot alongside Salesforce marketing
 - HR and finance systems the parent already runs
 
+Employee hardware is also Consolidate, into group IT procurement, not Terminate (decision of 2026-11-10, step 2e): the four Apple entities, HP, Currys, Magazin Računalni Sistemi, Sniper Systems and E-Disti. Their rationale names group IT procurement as the channel to keep.
+
 Name the retained vendor in the rationale. Where the vendor to keep is the parent's incumbent and is not in this file, the rationale names it by role ("the parent's group insurance programme", "the parent's finance system"), because the parent's vendors are not known.
 
 ## Terminate
@@ -29,10 +31,12 @@ Redundant after acquisition by a remote-first parent with its own talent, financ
 - employer-of-record and payroll outsourcing where the parent's payroll covers the country
 - deal and transaction advisers (non-recurring)
 - perks, events, gifts and memberships without a commercial justification
-- consumer retail purchases through AP
+- food, groceries, gifts and marketplace purchases through AP (employee hardware is not in this category: see Consolidate)
 - unidentified payees until identified
 
 Where the case depends on something this file cannot show, such as whether the parent's payroll covers a country, the rationale states the condition ("terminate once the parent's payroll covers Germany").
+
+An adviser whose spend plausibly includes sale-related work as well as its usual work (BDO, Bisley Law, Grant Thornton) is not one of the non-recurring deal and transaction advisers: its spend stays in the recurring base (see "Recurring base" below, step 2e).
 
 ## Optimize
 
@@ -66,6 +70,18 @@ A savings assumption is the share of addressable spend the savings script counts
 | Student labour (cluster Student labour) | TRUE | 0% | workforce cost, set by the hiring plan, not a vendor action |
 | Statutory payees, customer-mandated fees, Telefónica | FALSE | none: outside the savings base | non-discretionary, excluded from the savings base |
 
+Every assumption is also entered in `docs/savings_assumptions.md` with its `depends_on` tag (next section).
+
+## Savings that depend on the acquirer's decisions
+
+Decided in step 2e (prompt 13). A savings assumption that holds only if the acquirer makes a particular choice is tagged with that decision's name in a `depends_on` column, in `docs/savings_assumptions.md` and in `outputs/analysis/savings.md` next to the figure. The decisions named so far are the remote operating model, the group talent function, the group insurance programme, the group auditor and the parent CRM instance, plus group IT procurement for employee hardware; `docs/savings_assumptions.md` gives their tag names. An assumption that needs none of them carries `none`.
+
+The memo presents the Top 3 as decisions with their value, not as facts about the parent: what the CEO and CFO would decide, what it is worth a year under the stated assumption, and which decision the value depends on. The spend file shows what the company spends, not what the parent has or runs.
+
+## Recurring base
+
+`is_recurring` TRUE puts a row's spend in the recurring base. BDO (`V0004`), Bisley Law (`V0018`) and Grant Thornton (`V0029`) stay in it although their spend plausibly includes sale-related work (step 2e). When `insights.md` is written, it notes that the recurring figure is therefore likely lower than shown.
+
 ## Merged and linked rows
 
 The sheet is filled per row (step 2c): all 386 rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups. Which rows share a recommendation (step 2d):
@@ -76,21 +92,22 @@ The sheet is filled per row (step 2c): all 386 rows get their own department, de
 - In every case each grouped row's rationale names its group, for example "one of two Navan entities" or "part of the Microsoft group". Where the row's own name already contains the group's name, the rationale also shows the grouping in words such as "both", "group" or "entities".
 - Size tests such as the under-$1,000 rule use the group total for a group that shares a recommendation, and the row otherwise.
 
-Outcomes fixed for the per-row groups (step 2d): AWS is Optimize (Optimize list); Amazon.co.uk and Amazon (Aus) are Terminate (consumer retail purchases through AP); Microsoft 365 is Consolidate (two productivity suites); LinkedIn is Optimize (seat review); npm follows the developer-tool rule: department Engineering, cluster Software subscriptions (non-Salesforce), and a recommendation from the order of application below, like any other developer tool.
+Outcomes fixed for the per-row groups (step 2d): AWS is Optimize (Optimize list); Amazon.co.uk and Amazon (Aus) are Terminate (marketplace purchases through AP); Microsoft 365 is Consolidate (two productivity suites); LinkedIn is Optimize (seat review); npm follows the developer-tool rule: department Engineering, cluster Software subscriptions (non-Salesforce), and a recommendation from the order of application below, like any other developer tool.
 
 ## Order of application (approved 2026-11-10)
 
-The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides. For a group that shares a recommendation the steps are applied once, to the group; the rows of a per-row link group are taken one by one.
+The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides. For a group that shares a recommendation the steps are applied once, to the group; the rows of a per-row link group are taken one by one. Step 4 was added in step 2e.
 
 1. Statutory payee, customer-mandated fee or Telefónica payment: Optimize, not addressable, "non-discretionary, excluded from the savings base"; for Telefónica the rationale adds that rebates would belong against revenue. This comes first so that nothing non-discretionary is terminated or consolidated.
 2. Student labour: Optimize, addressable, 0% savings assumption, rationale "workforce cost, set by the hiring plan, not a vendor action". Label confirmed 2026-11-10 (step 2c).
 3. Named in the Optimize list (Salesforce, AWS, Navan, the insurance broker, LinkedIn): Optimize. Where the vendor is paid through two entities, the rationale names the one entity to keep.
-4. Unidentified payee: Terminate until identified.
-5. Under $1,000 in 12-month spend, measured on the group total for a group that shares a recommendation, otherwise on the row: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
-6. In a Terminate category: Terminate, stating any condition.
-7. The same vendor paid through more than one entity, whether merged or linked as the same brand: Consolidate, naming the entity to keep.
-8. The same function as other vendors: Consolidate, naming the vendor to keep.
-9. Anything else essential: Optimize, naming the lever (price, volume or policy).
+4. Employee hardware (the four Apple entities, HP, Currys, Magazin Računalni Sistemi, Sniper Systems, E-Disti): Consolidate into group IT procurement, whatever the amount. It comes before the size test so that the small hardware rows are consolidated too.
+5. Unidentified payee: Terminate until identified.
+6. Under $1,000 in 12-month spend, measured on the group total for a group that shares a recommendation, otherwise on the row: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
+7. In a Terminate category: Terminate, stating any condition.
+8. The same vendor paid through more than one entity, whether merged or linked as the same brand: Consolidate, naming the entity to keep.
+9. The same function as other vendors: Consolidate, naming the vendor to keep.
+10. Anything else essential: Optimize, naming the lever (price, volume or policy).
 
 ## Writing the rationale
 

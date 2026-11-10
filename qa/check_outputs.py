@@ -6,16 +6,18 @@ Where each rule comes from:
                                 taxonomy, three recommendations with a one-sentence rationale, no em dashes
   docs/taxonomy.md, clusters.md the allowed departments and cost clusters
   docs/decisions.md             per-row deliverable (step 2c), group recommendation rule (step 2d), the
-                                outcomes fixed for named rows (steps 2b to 2d), the columns of the
+                                outcomes fixed for named rows (steps 2b to 2e), the columns of the
                                 classification spec and the risk-note check (step 2d-fix), the verification
-                                exceptions (step 2d-fix2), and names matched by vendor_id with the rows in the
-                                original sheet order (step 2d-fix3)
+                                exceptions (step 2d-fix2), names matched by vendor_id with the rows in the
+                                original sheet order (step 2d-fix3), and the hardware rule and the advisers
+                                kept in the recurring base (step 2e)
   scripts/vsa_common.py         the merge and link groups, their recommendation scope and the names a
                                 rationale may use for each group
 
 Structural checks run now. The classification checks run once outputs/vendors_classified.csv exists;
 until then they are reported as pending. C17 reads only the "Verification exceptions" heading of
-qa/validation_report.md, which the verification step writes; this script never writes it.
+qa/validation_report.md, which scripts/merge_validate.py writes from qa/verification_exceptions.csv; this
+script never writes it. scripts/merge_validate.py runs these checks through run(), with full details.
 
 Usage:
     python qa/check_outputs.py              check the real files
@@ -67,11 +69,19 @@ ABBREVIATIONS = ["j.d.o.o.", "d.o.o.", "d.d.", "s.r.o.", "inc.", "ltd.", "co.", 
                  "pty.", "e.g.", "i.e.", "vs.", "no.", "vl.", "mr.", "ms.", "st.", "u.s.", "u.k."]
 PER_ROW_LINKS = {"Amazon", "Microsoft", "Sodexo and Pluxee"}  # docs/decisions.md, step 2d
 VENDOR_ID = re.compile(r"\bV\d{4}\b")
+# Step 2e: employee hardware (the four Apple entities, Magazin Računalni Sistemi, Sniper Systems, HP, E-Disti,
+# Currys) is Consolidate into group IT procurement; BDO, Bisley Law and Grant Thornton stay in the recurring base.
+HARDWARE_IDS = ["V0066", "V0123", "V0131", "V0167", "V0172", "V0175", "V0229", "V0260", "V0378"]
+RECURRING_ADVISER_IDS = ["V0004", "V0018", "V0029"]
+# True lists every item in a check's detail instead of the first few; scripts/merge_validate.py sets it so that
+# qa/validation_report.md shows every failure in full.
+FULL_DETAIL = False
 
 # Outcomes fixed by recorded decisions: (vendor_ids, column, expected value, source).
 DECISION_EXPECTATIONS = [
     (["V0014", "V0103"], "recommendation", "Optimize", "step 2d: AWS is Optimize"),
-    (["V0203", "V0291"], "recommendation", "Terminate", "step 2d: Amazon marketplaces, consumer retail through AP"),
+    (["V0203", "V0291"], "recommendation", "Terminate",
+     "steps 2d and 2e: Amazon marketplaces, marketplace purchases through AP"),
     (["V0081"], "recommendation", "Consolidate", "step 2d: Microsoft 365, two productivity suites"),
     (["V0026"], "recommendation", "Optimize", "step 2d: LinkedIn, seat review"),
     (["V0125"], "department", "Engineering", "step 2d: npm follows the developer-tool rule (taxonomy rule 9)"),
@@ -87,18 +97,24 @@ DECISION_EXPECTATIONS = [
     (["V0034"], "cost_cluster", "Salesforce platform", "step 2b: Mason Frank"),
     (["V0173"], "department", "SaaS", "step 2b: Slack"),
     (["V0173"], "cost_cluster", "Salesforce platform", "step 2b: Slack"),
+    (HARDWARE_IDS, "recommendation", "Consolidate", "step 2e: employee hardware, into group IT procurement"),
+    (RECURRING_ADVISER_IDS, "is_recurring", "TRUE",
+     "step 2e: advisers whose spend may include sale-related work stay in the recurring base"),
 ]
 # Phrases a rationale must contain: (vendor_ids, phrases, source).
 RATIONALE_EXPECTATIONS = [
     (["V0015", "V0093"], ["rebate", "revenue"], "step 2b: Telefónica rebates would belong against revenue"),
     (["V0030", "V0086", "V0186"], ["hiring plan"], "step 2b: student labour rationale"),
+    (HARDWARE_IDS, ["group it procurement"], "step 2e: hardware rationale names group IT procurement"),
 ]
 # Each fixed row's clean name must contain this, so a mistyped id cannot test the wrong vendor.
 EXPECTED_NAMES = {"V0014": "Amazon Web Services", "V0103": "Amazon Web Services", "V0203": "Amazon",
                   "V0291": "Amazon", "V0081": "Microsoft", "V0026": "LinkedIn", "V0125": "npm",
                   "V0015": "Telefonica", "V0093": "Telefonica", "V0030": "Studentski Centar",
                   "V0086": "Studentski Centar", "V0186": "Studentski Centar", "V0034": "Mason Frank",
-                  "V0173": "Slack"}
+                  "V0173": "Slack", "V0066": "Racunalni Sistemi", "V0123": "Apple", "V0131": "Sniper Systems",
+                  "V0167": "HP", "V0172": "Apple", "V0175": "Apple", "V0229": "Apple", "V0260": "E-Disti",
+                  "V0378": "Currys", "V0004": "BDO", "V0018": "Bisley Law", "V0029": "Grant Thornton"}
 
 
 # ---------------------------------------------------------------- helpers
@@ -186,6 +202,8 @@ class Results:
 
 
 def sample(items: list, k: int = 3) -> str:
+    if FULL_DETAIL:
+        k = len(items)
     return "; ".join(str(x) for x in items[:k]) + (f" (and {len(items) - k} more)" if len(items) > k else "")
 
 
@@ -407,6 +425,8 @@ def synthetic(clean: list[dict]) -> list[dict]:
                                    "from the savings base, and rebates would belong against revenue.")
     for vid in ("V0030", "V0086", "V0186"):
         by_id[vid]["rationale"] = "Synthetic rationale: workforce cost, set by the hiring plan, not a vendor action."
+    for vid in HARDWARE_IDS:
+        by_id[vid]["rationale"] = by_id[vid]["rationale"][:-1] + ", consolidated into group IT procurement."
     for r in rows:
         if r["recommendation"] in NEEDS_RISK_NOTE:
             r["risk_note"] = "Synthetic risk note for the QA self-test"
@@ -477,6 +497,10 @@ MUTATIONS = [
     ("Amazon marketplace row not Terminate", set_field("V0203", "recommendation", "Optimize"), "C13"),
     ("Microsoft 365 not Consolidate", set_field("V0081", "recommendation", "Optimize"), "C13"),
     ("npm outside Engineering", set_field("V0125", "department", "SaaS"), "C13"),
+    ("Employee hardware Terminated as retail", set_field("V0378", "recommendation", "Terminate"), "C13"),
+    ("Hardware rationale without group IT procurement",
+     set_field("V0167", "rationale", "Synthetic rationale for one hardware vendor."), "C14"),
+    ("Adviser taken out of the recurring base", set_field("V0018", "is_recurring", "FALSE"), "C13"),
     ("Telefónica rationale without the revenue note",
      set_field("V0015", "rationale", "Synthetic rationale, part of the Telefónica group: non-discretionary, "
                                      "excluded from the savings base."), "C14"),
@@ -484,7 +508,7 @@ MUTATIONS = [
      set_field("V0093", "rationale", "Synthetic rationale, part of the Telefónica group, where rebates would "
                                      "belong against revenue."), "C15"),
     ("Banned phrase in a description", set_field("V0002", "description", "CRM solutions for the sales team"), "C7"),
-    ("Em dash in a description", set_field("V0005", "description", "Flexible offices — London"), "C9"),
+    ("Em dash in a description", set_field("V0005", "description", f"Flexible offices {EM_DASH} London"), "C9"),
     ("Two-sentence rationale", set_field("V0004", "rationale", "First sentence. Second sentence."), "C8"),
     ("Department outside the taxonomy", set_field("V0006", "department", "IT"), "C3"),
     ("Cluster outside the fixed list", set_field("V0007", "cost_cluster", "Facilities"), "C4"),
@@ -552,17 +576,24 @@ def self_test(clean: list[dict]) -> bool:
 
 # ---------------------------------------------------------------- main
 
-def main(argv: list[str]) -> int:
+def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT) -> Results:
+    """The structural checks, then the classification checks once `classified` exists. main() calls it on the
+    real files; scripts/merge_validate.py calls it on the files it has just written."""
     clean = read_csv(CLEAN)
-    if "--self-test" in argv:
-        return 0 if self_test(clean) else 1
     res = Results()
     structural_checks(res, clean)
-    if CLASSIFIED.exists():
-        validation_text = VALIDATION_REPORT.read_text(encoding="utf-8") if VALIDATION_REPORT.exists() else None
-        classification_checks(res, read_csv(CLASSIFIED), clean, validation_text)
+    if classified.exists():
+        validation_text = report.read_text(encoding="utf-8") if report.exists() else None
+        classification_checks(res, read_csv(classified), clean, validation_text)
     else:
-        res.add("C*", "Classification checks C1 to C18", None, f"{rel(CLASSIFIED)} not produced yet")
+        res.add("C*", "Classification checks C1 to C18", None, f"{rel(classified)} not produced yet")
+    return res
+
+
+def main(argv: list[str]) -> int:
+    if "--self-test" in argv:
+        return 0 if self_test(read_csv(CLEAN)) else 1
+    res = run()
     res.show()
     failed = res.failed()
     print(f"{len(failed)} failed" + (f": {', '.join(failed)}" if failed else ""))

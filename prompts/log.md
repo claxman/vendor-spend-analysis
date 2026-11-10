@@ -127,3 +127,11 @@ C17 is inverted. The rule is: every row must have verified TRUE; any row with ve
 ```text
 Change C18 to match by vendor_id rather than by position. Separately, require that outputs/vendors_classified.csv is written in the original sheet row order (vendor_id ascending), because its Department, Description and Suggestions columns will be pasted straight into the Google Sheet and must line up row for row with the source. merge_validate.py sorts to that order before writing, whatever order the batches came in, and C18 then also confirms the order. Add a planted-error case for a shuffled file. Commit as "Step 2d-fix3: id matching and sheet order".
 ```
+
+## Prompt 13 (2026-11-10)
+
+```text
+Add to docs/decisions.md and the rules: (1) every savings assumption that depends on a choice by the acquirer (remote operating model, group talent function, group insurance programme, group auditor, parent CRM instance) is tagged with a depends_on decision name in docs/savings_assumptions.md and savings.md, and the memo presents the Top 3 as decisions with their value, not as facts about the parent. (2) Employee hardware (Apple entities, HP, Currys, Magazin Računalni Sistemi, Sniper Systems, E-Disti) is Consolidate into group IT procurement, not Terminate; Terminate remains for food, groceries, gifts and marketplace purchases through AP. (3) Where an adviser's spend plausibly includes sale-related work (BDO, Bisley Law, Grant Thornton), keep it in the recurring base and note in insights.md later that the recurring figure is likely lower.
+
+Batch format for classification: one CSV per batch of 40 vendors in outputs/batches/batch_NN.csv, with exactly these 16 columns: vendor_id, vendor_name_original, vendor_name_clean, spend_12m, department, sub_function, description, recommendation, rationale, risk_note, cost_cluster, is_addressable, is_recurring, confidence, verified, source_url. Write scripts/merge_validate.py now: it merges the batches, sorts by vendor_id, writes outputs/vendors_classified.csv, runs qa/check_outputs.py, and writes qa/validation_report.md with counts, distributions by department, recommendation, cluster and confidence, the low-confidence list sorted by spend, a "Verification exceptions" section, and every failure. Commit as "Step 2e: decision tags, hardware rule, merge script".
+```
