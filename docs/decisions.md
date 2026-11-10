@@ -2,6 +2,52 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-10: group recommendation rule (prompt 9, step 2d)
+
+### 1. Which rows share a recommendation
+
+The exception proposed in step 2c is approved, and the rule is restated:
+
+- One recommendation per merge group, since a merge is the same vendor relationship: Navan, AWS, TM Forum, and 4i while the merge is proposed.
+- One recommendation per link group whose products are the same kind of service: the same-brand groups (Apple, Bupa, HR Solution International, Acclime, DHL, Telefónica, Allianz Australia, GRT Hotels & Resorts) and the shared-parent groups Salesforce with Slack, Atlassian with Trello, SolarWinds with Papertrail, and the two ICICI insurers.
+- A recommendation per row for shared-parent links with different services: Amazon (the two marketplaces and AWS), Microsoft (Microsoft 365, LinkedIn and npm), and Sodexo and Pluxee if the link stands.
+- Either way, every grouped row's rationale names its group.
+
+### 2. Outcomes fixed for the per-row groups
+
+| Row | Recommendation | Rule |
+|---|---|---|
+| AWS (`V0014`, `V0103`) | Optimize | named in the Optimize list: savings plans, one organisation |
+| Amazon.co.uk (`V0203`), Amazon (Aus) (`V0291`) | Terminate | consumer retail purchases through AP |
+| Microsoft 365 (`V0081`) | Consolidate | two productivity suites |
+| LinkedIn (`V0026`) | Optimize | seat review |
+| npm (`V0125`) | follows the developer-tool rule | department Engineering (taxonomy rule 9), cluster Software subscriptions (non-Salesforce) (clusters C10), and a recommendation from the order of application like any other developer tool, not inherited from the Microsoft group |
+
+### 3. Where it is implemented
+
+- `scripts/vsa_common.py`: every link group carries `recommendation`, either `shared` or `per row`, and every merge and link group lists the names a rationale may use for it.
+- `qa/vendor_groups.csv`: new column `link_recommendation`, `shared` or `per row` for every linked row.
+- `docs/recommendation_rules.md`: the section "Merged and linked rows" and the order of application follow the restated rule.
+- `outputs/analysis/01_forensics.md` and `02_cleaning_report.md` show the recommendation scope of each link group.
+
+### 4. The QA check
+
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification, clean and then with 18 planted errors, and shows each error caught.
+
+| Check | Rule |
+|---|---|
+| S1 to S5 | group definitions and the merge map agree; the per-row links are exactly Amazon, Microsoft, and Sodexo and Pluxee; the rows fixed by decisions are the vendors the decisions name; the taxonomy and cluster lists load |
+| C1, C2 | required columns present; exactly one row per source row (386), no duplicates |
+| C3 to C6 | departments, clusters, recommendations, `is_addressable` and confidence take allowed values |
+| C7 to C9 | one-line descriptions without the banned phrases; one-sentence rationales; no em or en dashes |
+| C10 | total cost equals the clean file's total exactly |
+| C11 | the rows of each merge group and of each shared link group carry one recommendation |
+| C12 | every grouped row's rationale names its group, per-row links included; where the row's own name already contains the group's name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
+| C13, C14 | the outcomes and rationale wording fixed by decisions (steps 2b to 2d) |
+| C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
+
+The check expects these columns in `outputs/vendors_classified.csv`: `vendor_id`, `department`, `description`, `recommendation`, `rationale`, `cost_cluster`, `is_addressable`, `confidence`, `cost_usd`. Other columns may be added.
+
 ## 2026-11-10: decisions confirmed (prompt 8, step 2c)
 
 ### 1. The step 2b proposals are confirmed
@@ -27,7 +73,9 @@ In practice:
 - Rankings use the merged view (`canonical_vendor`); savings roll-ups use the cost clusters and, where one negotiation covers a link group, the group total.
 - The QA script checks that the rows of every group share one recommendation and that each of their rationales names the group.
 
-### 4. Open point: two link groups where one recommendation does not fit
+Refined in step 2d: link groups whose rows are different services take a recommendation per row, and the size test uses the group total only for groups that share a recommendation.
+
+### 4. Open point: two link groups where one recommendation does not fit (resolved in step 2d)
 
 Applying point 3 to every link group meets two shared-parent groups whose rows are different products with different levers under `docs/recommendation_rules.md`:
 

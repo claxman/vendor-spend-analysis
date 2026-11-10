@@ -1,6 +1,6 @@
 # Recommendation rules
 
-Every row of the sheet, all 386 of them, gets exactly one recommendation from {Terminate, Consolidate, Optimize} and a one-sentence rationale. Rows in a merge or link group in `qa/vendor_groups.csv` carry the same recommendation, and each rationale names the group (see "Merged and linked rows" below). A recommendation is a decision label: any savings figure attached to it is computed by a script from the spend data, with its assumption written next to it (`CLAUDE.md`).
+Every row of the sheet, all 386 of them, gets exactly one recommendation from {Terminate, Consolidate, Optimize} and a one-sentence rationale. Rows in a merge group, or in a link group marked `shared` in `qa/vendor_groups.csv`, carry the same recommendation; every grouped row's rationale names its group (see "Merged and linked rows" below). A recommendation is a decision label: any savings figure attached to it is computed by a script from the spend data, with its assumption written next to it (`CLAUDE.md`).
 
 The context is fixed by the brief: the company has been acquired by a remote-first parent that has its own talent, finance and legal functions.
 
@@ -68,22 +68,25 @@ A savings assumption is the share of addressable spend the savings script counts
 
 ## Merged and linked rows
 
-The sheet is filled per row (decision of 2026-11-10, step 2c): all 386 rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups.
+The sheet is filled per row (step 2c): all 386 rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups. Which rows share a recommendation (step 2d):
 
-- Rows in one merge or link group carry the same recommendation, decided once for the group.
-- Each of their rationales names the group, for example "one of two Navan entities" or "part of the Bupa link group".
-- Size tests, such as the under-$1,000 rule, use the group total.
-- Open point: the Amazon and Microsoft shared-parent groups mix products these rules treat differently; see `docs/decisions.md`, step 2c, point 4. Their department and description can be set now; their recommendations wait until it is settled.
+- One recommendation per merge group, the same vendor relationship: Navan, AWS, TM Forum, and 4i while the merge is proposed.
+- One recommendation per link group whose products are the same kind of service: the same-brand groups (Apple, Bupa, HR Solution International, Acclime, DHL, Telefónica, Allianz Australia, GRT Hotels & Resorts) and the shared-parent groups Salesforce with Slack, Atlassian with Trello, SolarWinds with Papertrail, and the two ICICI insurers. These are marked `shared` in the `link_recommendation` column of `qa/vendor_groups.csv`.
+- A recommendation per row for shared-parent or same-lineage links whose rows are different services: Amazon (AWS and the two marketplaces), Microsoft (Microsoft 365, LinkedIn and npm), and Sodexo and Pluxee while the link stands. These are marked `per row`.
+- In every case each grouped row's rationale names its group, for example "one of two Navan entities" or "part of the Microsoft group". Where the row's own name already contains the group's name, the rationale also shows the grouping in words such as "both", "group" or "entities".
+- Size tests such as the under-$1,000 rule use the group total for a group that shares a recommendation, and the row otherwise.
+
+Outcomes fixed for the per-row groups (step 2d): AWS is Optimize (Optimize list); Amazon.co.uk and Amazon (Aus) are Terminate (consumer retail purchases through AP); Microsoft 365 is Consolidate (two productivity suites); LinkedIn is Optimize (seat review); npm follows the developer-tool rule: department Engineering, cluster Software subscriptions (non-Salesforce), and a recommendation from the order of application below, like any other developer tool.
 
 ## Order of application (approved 2026-11-10)
 
-The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides. For a merge or link group the steps are applied once, to the group.
+The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides. For a group that shares a recommendation the steps are applied once, to the group; the rows of a per-row link group are taken one by one.
 
 1. Statutory payee, customer-mandated fee or Telefónica payment: Optimize, not addressable, "non-discretionary, excluded from the savings base"; for Telefónica the rationale adds that rebates would belong against revenue. This comes first so that nothing non-discretionary is terminated or consolidated.
 2. Student labour: Optimize, addressable, 0% savings assumption, rationale "workforce cost, set by the hiring plan, not a vendor action". Label confirmed 2026-11-10 (step 2c).
 3. Named in the Optimize list (Salesforce, AWS, Navan, the insurance broker, LinkedIn): Optimize. Where the vendor is paid through two entities, the rationale names the one entity to keep.
 4. Unidentified payee: Terminate until identified.
-5. Under $1,000 in 12-month spend, measured on the merge or link group total, or on the row when it is in no group: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
+5. Under $1,000 in 12-month spend, measured on the group total for a group that shares a recommendation, otherwise on the row: Terminate if non-essential, otherwise Optimize with "fold into tail-spend policy".
 6. In a Terminate category: Terminate, stating any condition.
 7. The same vendor paid through more than one entity, whether merged or linked as the same brand: Consolidate, naming the entity to keep.
 8. The same function as other vendors: Consolidate, naming the vendor to keep.

@@ -103,3 +103,9 @@ Commit as "Step 2b: rule decisions".
 ```text
 Approved on all three: links for the eight groups, AWS stays merged, student labour is Optimize. On Sodexo and Pluxee, let the web verification decide: if the Sodexo SVC India invoices are meal cards under the former name, it is a rename and becomes a merge; if they are catering, the link stands. One requirement to make explicit in docs/decisions.md: the sheet deliverable is per row, so all 386 original rows get their own department, description and recommendation, and merges and links exist only for ranking and savings roll-ups. Rows in a merge or link group carry the same recommendation and a rationale that names the group. Commit as "Step 2c: decisions confirmed".
 ```
+
+## Prompt 9 (2026-11-10)
+
+```text
+Exception approved and the rule restated: one recommendation per merge group (same vendor relationship), and per same-brand link group where the products are the same kind of service (Salesforce and Slack, Atlassian and Trello, SolarWinds and Papertrail, the two ICICI insurers). Shared-parent links with different services (Amazon marketplaces and AWS; Microsoft 365, LinkedIn and npm; Sodexo and Pluxee if the link stands) take their own recommendation per row, with the rationale still naming the group. So AWS is Optimize, the two Amazon marketplace rows are Terminate as consumer retail through AP, Microsoft 365 is Consolidate, LinkedIn is Optimize, npm follows the developer-tool rule. Update docs/decisions.md and the QA check accordingly. Commit as "Step 2d: group recommendation rule".
+```

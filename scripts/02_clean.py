@@ -28,7 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vsa_common import (  # noqa: E402
     CONFIG_SHEET, DISTINCT_VERDICTS, LINK_GROUPS, MERGE_GROUPS, RAW_PATH, ROOT, assert_no_dashes,
-    load_vendor_records, md_escape, money, normalize_name, open_workbook, pct, rel, repair_mojibake,
+    load_vendor_records, md_escape, money, normalize_name, open_workbook, pct, rel, repair_mojibake, section_rows,
     sha256, table, write_text,
 )
 
@@ -162,18 +162,6 @@ def clean_name(raw: str, vid: str) -> tuple[str, list[dict], list[str]]:
 
 # ---------------------------------------------------------------- doc checks
 
-def section_rows(text: str, heading: str) -> list[list[str]]:
-    """Cells of the markdown table under a '## heading' (up to the next '## ')."""
-    m = re.search(rf"^## {re.escape(heading)}\n(.*?)(?=^## |\Z)", text, re.S | re.M)
-    if not m:
-        raise SystemExit(f"heading '## {heading}' not found")
-    rows = []
-    for line in m.group(1).splitlines():
-        if line.startswith("|") and not re.match(r"^\|\s*-", line) and not re.match(r"^\|\s*#\s*\|", line):
-            rows.append([c.strip() for c in line.strip().strip("|").split("|")])
-    return rows
-
-
 def check_docs(recs_by_id: dict, config_departments: list[str]) -> tuple[list[tuple[str, str, bool]], list[str]]:
     checks = []
     tax = (DOCS / "taxonomy.md").read_text(encoding="utf-8")
@@ -269,6 +257,7 @@ def main() -> int:
         link = link_of.get(x)
         r["link_group"] = link["label"] if link else ""
         r["link_type"] = link["type"] if link else ""
+        r["link_recommendation"] = link["recommendation"] if link else ""
         if x in group_of:
             g, gid = group_of[x]
             r.update(group_id=gid, canonical=g["canonical"], decision=g["status"], relationship=g["relationship"],
@@ -297,9 +286,11 @@ def main() -> int:
           repr(float(r["cost"])), "; ".join(r["notes"])] for r in recs])
     groups_csv = to_csv(
         ["vendor_id", "source_row", "vendor_name_raw", "vendor_name_clean", "match_key", "group_id",
-         "canonical_vendor", "decision", "relationship", "merge_confidence", "link_group", "link_type", "reason"],
+         "canonical_vendor", "decision", "relationship", "merge_confidence", "link_group", "link_type",
+         "link_recommendation", "reason"],
         [[r["vendor_id"], r["row"], r["name"], r["clean"], r["key"], r["group_id"], r["canonical"], r["decision"],
-          r["relationship"], r["confidence"], r["link_group"], r["link_type"], r["reason"]] for r in recs])
+          r["relationship"], r["confidence"], r["link_group"], r["link_type"], r["link_recommendation"],
+          r["reason"]] for r in recs])
     changes_csv = to_csv(["vendor_id", "step", "before", "after", "reason"],
                          [[c["vendor_id"], c["step"], c["before"], c["after"], c["reason"]] for c in all_changes])
     write_text(OUT_CLEAN, clean_csv)
@@ -363,7 +354,8 @@ def main() -> int:
         "clean name (`vendor_name_clean`), the matching key, the merge group, the canonical vendor, the link group, "
         "the exact cost as stored, and notes on the name.",
         f"- `{rel(OUT_GROUPS)}`: the entity merge map, one row per source row, with decision (merge, proposed merge or "
-        "keep), relationship, confidence, link group and type, and reason.",
+        "keep), relationship, confidence, link group, link type, whether the link shares one recommendation, and "
+        "reason.",
         f"- `{rel(OUT_CHANGES)}`: every change from original to clean name, one line per step.",
         "",
         "Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in section 4.",
@@ -391,8 +383,9 @@ def main() -> int:
         f"7. **Entity merge map.** {len(MERGE_GROUPS)} merge groups ({len(proposed)} proposed) covering {merge_rows} rows; "
         "every other row is its own group, and `group_id` is the vendor_id of the group's largest row. "
         f"{len(LINK_GROUPS)} link groups tie related vendors together without merging them (`link_group`). Both serve "
-        "only ranking and savings roll-ups: every row is still classified on its own, and the rows of a group share "
-        "one recommendation (decision of step 2c).",
+        "only ranking and savings roll-ups: every row is still classified on its own. The rows of a merge group, and of "
+        "a link group marked shared, carry one recommendation; link groups marked per row (shared parent or lineage, "
+        "different services) take one per row; every grouped row's rationale names its group (steps 2c and 2d).",
         "",
         "## 3. Name changes",
         "",
@@ -431,8 +424,10 @@ def main() -> int:
               "under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). "
               "Where entities share a parent or brand but supply different products or contracts, or share a lineage, the "
               "vendors stay separate and are tied together through `link_group`. Whatever the grouping, the sheet is "
-              "filled per row: all rows get their own department, description and recommendation, and the rows of a "
-              "merge or link group share one recommendation whose rationale names the group (decision of step 2c).", "",
+              "filled per row: all rows get their own department, description and recommendation. The rows of a merge "
+              "group, and of a link group whose recommendation is shared, carry one recommendation; link groups whose "
+              "rows are different services take one per row; every grouped row's rationale names its group (steps 2c "
+              "and 2d).", "",
               f"{len(recs)} rows become {n_vendors} vendors ({n_if_reversed} if the proposed merge is reversed).", "",
               "### Merges", ""]
     lines += table(["Canonical vendor", "group_id", "Rows", "12-month cost", "Status", "Relationship", "Confidence", "Reason"],
@@ -442,8 +437,8 @@ def main() -> int:
     lines += ["", "### Links", "",
               "Linked vendors stay separate rows and separate vendors. The combined spend is shown because one negotiation "
               "can cover the group; it is not added to any one vendor.", ""]
-    lines += table(["Link group", "Type", "Rows", "Combined 12-month cost", "Reason"],
-                   [[g["label"], g["type"], listed(g["rows"]), money(spend(g["rows"])), g["reason"]]
+    lines += table(["Link group", "Type", "Recommendation", "Rows", "Combined 12-month cost", "Reason"],
+                   [[g["label"], g["type"], g["recommendation"], listed(g["rows"]), money(spend(g["rows"])), g["reason"]]
                     for g in sorted(LINK_GROUPS, key=lambda g: -spend(g["rows"]))])
     lines += ["", "### Reviewed and kept as different vendors", "",
               "From the near-duplicate search in `01_forensics.md`, candidates that are neither merged nor linked:", ""]

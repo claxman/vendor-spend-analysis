@@ -149,9 +149,9 @@ Merge policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it i
 | 1: same key | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc. | merge into AWS | one AWS relationship, the same cloud service and customer agreement, billed under the Inc. and LLC entity names |
 | 1: same key | 47 Bupa- Supplier; 71 Bupa Australia | link: Bupa (same brand, separate entities) | two Bupa entities with separate insurance contracts, one of them Bupa Australia |
 | 1: same key | 172 Apple Pty Ltd; 229 Apple - Amer | link: Apple (same brand, separate entities) | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
-| 1: same key | 203 Amazon.Co.Uk; 291 Amazon (Aus) | link: Amazon (shared parent) | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases |
+| 1: same key | 203 Amazon.Co.Uk; 291 Amazon (Aus) | link: Amazon (shared parent) | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services, so each row takes its own recommendation (decision of step 2d) |
 | 2: token subset | 3 Navan (Tripactions Inc); 24 Navan, Inc | merge into Navan | TripActions Inc renamed itself Navan Inc in 2023; both rows are the same travel and expense platform |
-| 2: token subset | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc.; 203 Amazon.Co.Uk; 291 Amazon (Aus) | link: Amazon (shared parent) | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases |
+| 2: token subset | 14 Amazon Web Services Llc; 103 Amazon Web Services Inc.; 203 Amazon.Co.Uk; 291 Amazon (Aus) | link: Amazon (shared parent) | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services, so each row takes its own recommendation (decision of step 2d) |
 | 2: similar spelling | 16 Hr Solution International Gmbh; 90 Hrsolution International Ag | link: HR Solution International (same brand, separate entities) | a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them |
 | 2: similar spelling | 25 Tmforum; 249 Tm Forum | merge into TM Forum | Tmforum and Tm Forum are two spellings of the same association |
 | 2: token subset | 30 Sveučilište U Zagrebu, Studentski Centar; 86 Studentski Centar - Split | different vendors, same type | three different university student centres (Zagreb, Split, Karlovac) offering the same student-work service |
@@ -183,12 +183,12 @@ Merges and links that string matching cannot find, from knowledge of the vendors
 
 | Rows and names | Treatment | Reason |
 |---|---|---|
-| 2 Salesforce Uk Ltd-Uk; 173 Slack Technologies Limited | link: Salesforce (shared parent) | Slack has been a Salesforce company since 2021, so it goes into the same renewal |
-| 91 Trello; 297 Atlassian Pty Ltd | link: Atlassian (shared parent) | Trello is an Atlassian product |
-| 130 Papertrail Inc; 311 Solarwinds, Inc | link: SolarWinds (shared parent) | Papertrail is a SolarWinds product |
-| 26 Linkedin Ireland Limited; 81 Microsoft Ireland Operations Limited; 125 Npm Inc | link: Microsoft (shared parent) | LinkedIn and npm (through GitHub) are Microsoft companies |
+| 2 Salesforce Uk Ltd-Uk; 173 Slack Technologies Limited | link: Salesforce (shared parent) | Slack has been a Salesforce company since 2021, so it goes into the same renewal and shares its recommendation |
+| 91 Trello; 297 Atlassian Pty Ltd | link: Atlassian (shared parent) | Trello is an Atlassian product; both are work-management tools |
+| 130 Papertrail Inc; 311 Solarwinds, Inc | link: SolarWinds (shared parent) | Papertrail is a SolarWinds product; both are monitoring tools |
+| 26 Linkedin Ireland Limited; 81 Microsoft Ireland Operations Limited; 125 Npm Inc | link: Microsoft (shared parent) | LinkedIn, Microsoft 365 and npm (through GitHub) are Microsoft companies with different services, so each row takes its own recommendation (decision of step 2d) |
 | 95 Icici Lombard Gic Ltd; 143 Cici Prudential Life Insurance Co. Ltd. | link: ICICI group (shared parent) | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
-| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | link: Sodexo and Pluxee (same lineage) | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10) |
+| 54 Sodexo Svc India Private Limited; 128 Pluxee India Private Limited | link: Sodexo and Pluxee (same lineage) | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link; while linked, each row takes its own recommendation (decisions of steps 2c and 2d) |
 
 Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendors (383 if the proposed merge is reversed):
 
@@ -201,25 +201,25 @@ Result: 3 merges and 1 proposed merge cover 8 rows, so 386 rows become 382 vendo
 
 15 link groups keep their vendors separate. Their combined spend is shown because a negotiation can cover the whole group; it is not added to any one vendor:
 
-| Link group | Type | Rows | Combined 12-month cost |
-|---|---|---|---|
-| Salesforce | shared parent | 2, 173 | $3,119,215 |
-| Amazon | shared parent | 14, 103, 203, 291 | $112,893 |
-| Telefónica | same brand, separate entities | 15, 93 | $96,037 |
-| HR Solution International | same brand, separate entities | 16, 90 | $87,810 |
-| Microsoft | shared parent | 26, 81, 125 | $68,929 |
-| Bupa | same brand, separate entities | 47, 71 | $35,263 |
-| Sodexo and Pluxee | same lineage | 54, 128 | $21,804 |
-| Acclime | same brand, separate entities | 99, 105 | $10,408 |
-| ICICI group | shared parent | 95, 143 | $9,167 |
-| Apple | same brand, separate entities | 123, 172, 175, 229 | $8,256 |
-| Allianz Australia | same brand, separate entities | 94, 212 | $7,069 |
-| Atlassian | shared parent | 91, 297 | $6,898 |
-| SolarWinds | shared parent | 130, 311 | $4,066 |
-| GRT Hotels & Resorts | same brand, separate entities | 171, 190 | $3,437 |
-| DHL | same brand, separate entities | 303, 336 | $310 |
+| Link group | Type | Recommendation | Rows | Combined 12-month cost |
+|---|---|---|---|---|
+| Salesforce | shared parent | shared | 2, 173 | $3,119,215 |
+| Amazon | shared parent | per row | 14, 103, 203, 291 | $112,893 |
+| Telefónica | same brand, separate entities | shared | 15, 93 | $96,037 |
+| HR Solution International | same brand, separate entities | shared | 16, 90 | $87,810 |
+| Microsoft | shared parent | per row | 26, 81, 125 | $68,929 |
+| Bupa | same brand, separate entities | shared | 47, 71 | $35,263 |
+| Sodexo and Pluxee | same lineage | per row | 54, 128 | $21,804 |
+| Acclime | same brand, separate entities | shared | 99, 105 | $10,408 |
+| ICICI group | shared parent | shared | 95, 143 | $9,167 |
+| Apple | same brand, separate entities | shared | 123, 172, 175, 229 | $8,256 |
+| Allianz Australia | same brand, separate entities | shared | 94, 212 | $7,069 |
+| Atlassian | shared parent | shared | 91, 297 | $6,898 |
+| SolarWinds | shared parent | shared | 130, 311 | $4,066 |
+| GRT Hotels & Resorts | same brand, separate entities | shared | 171, 190 | $3,437 |
+| DHL | same brand, separate entities | shared | 303, 336 | $310 |
 
-- Implication for classification: the sheet is filled per row, so all 386 rows get their own department, description and recommendation (decision of step 2c, `docs/decisions.md`). Merges and links serve only ranking and savings roll-ups. Rows in a merge or link group carry the same recommendation, and each rationale names the group (Slack inside the Salesforce renewal, one Bupa relationship across countries); the proposed 4i merge counts as a group until web verification confirms or reverses it. Two shared-parent groups whose rows are different products (Amazon, Microsoft) are an open point in `docs/decisions.md`. Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
+- Implication for classification: the sheet is filled per row, so all 386 rows get their own department, description and recommendation (`docs/decisions.md`, steps 2c and 2d). Merges and links serve only ranking and savings roll-ups. The rows of a merge group, and of a link group of the same kind of service, carry one recommendation (Slack inside the Salesforce renewal, one Bupa relationship across countries); the proposed 4i merge counts as a group until web verification confirms or reverses it. Link groups whose rows are different services (Amazon, Microsoft, and Sodexo and Pluxee while linked) take a recommendation per row. Every grouped row's rationale names its group. Same-type vendors that are neither merged nor linked (student centres, clinics, hotels, corporate secretaries) are consolidation questions for the classification step.
 - Implication for the memo: the vendor count is 382 (383 if the 4i merge is reversed), not 386. Navan, already second, grows from $357,984 to $415,913 across its old and new names. A linked group can be quoted as one figure where one negotiation covers it (Telefónica $96,037, HR Solution International $87,810), but its vendors stay separate rows.
 
 ## 7. Payee types
@@ -410,7 +410,7 @@ Payees over $5,000 whose function the name does not show:
 
 ## 9. What this means for classification
 
-- Classify all 386 rows, each with its own department, description and recommendation. Rows in one of the 4 merge groups (one of them proposed) or 15 link groups carry the same recommendation, and each rationale names the group; merges and links otherwise serve only ranking and savings roll-ups.
+- Classify all 386 rows, each with its own department, description and recommendation. Rows in one of the 4 merge groups (one of them proposed) or one of the 12 link groups marked shared carry the same recommendation; the 3 link groups of different services take one per row; every grouped row's rationale names its group. Merges and links otherwise serve only ranking and savings roll-ups.
 - Set confidence low for the 69 payees whose function the name does not show and for the six individuals; say so in the description rather than guessing.
 - Use the Croatian glossary terms surfaced here (obrt, vl., grad, osiguranje, medicina rada, prijevoz, dostava, ugostiteljstvo, savjetovanje, udruga) so Croatian descriptions are translations.
 - Statutory, government and customer-mandated payees take Optimize with the non-discretionary rationale.

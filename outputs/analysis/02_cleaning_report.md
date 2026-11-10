@@ -5,7 +5,7 @@ Generated 2026-11-10 by `scripts/02_clean.py`. The raw workbook was opened read-
 Outputs:
 
 - `outputs/vendors_clean.csv`: one row per source row with `vendor_id`, the original name (`vendor_name_raw`), the clean name (`vendor_name_clean`), the matching key, the merge group, the canonical vendor, the link group, the exact cost as stored, and notes on the name.
-- `qa/vendor_groups.csv`: the entity merge map, one row per source row, with decision (merge, proposed merge or keep), relationship, confidence, link group and type, and reason.
+- `qa/vendor_groups.csv`: the entity merge map, one row per source row, with decision (merge, proposed merge or keep), relationship, confidence, link group, link type, whether the link shares one recommendation, and reason.
 - `qa/name_changes.csv`: every change from original to clean name, one line per step.
 
 Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in section 4.
@@ -41,7 +41,7 @@ Decisions of 2026-11-10 applied (`docs/decisions.md`): the merge policy in secti
 4. **Tags and truncation marks** moved out of the display name and into `name_notes`.
 5. **Casing.** The source Title Cased every name, so acronyms, legal forms and brands are restored: the acronyms named in prompt 6 (BDO, DHL, HP, SS&C, TOG, GPT, CBRE, NCC, HEP, plus PricewaterhouseCoopers and LaSalle), other acronyms in the names, legal forms (LLP, LLC, GmbH; d.o.o. and d.d. in lower case as written in Croatia), brand casing (HubSpot, LinkedIn, DocuSign) and possessives (Kat's). AWS is the canonical name of the merged Amazon Web Services group; PwC and JLL are the canonical names of PricewaterhouseCoopers LLP and Jones Lang LaSalle.
 6. **Matching key** (`match_key`): the clean name with accents, legal forms, geography, stop words and the Supplier tag removed. It is used for matching only and never displayed.
-7. **Entity merge map.** 4 merge groups (1 proposed) covering 8 rows; every other row is its own group, and `group_id` is the vendor_id of the group's largest row. 15 link groups tie related vendors together without merging them (`link_group`). Both serve only ranking and savings roll-ups: every row is still classified on its own, and the rows of a group share one recommendation (decision of step 2c).
+7. **Entity merge map.** 4 merge groups (1 proposed) covering 8 rows; every other row is its own group, and `group_id` is the vendor_id of the group's largest row. 15 link groups tie related vendors together without merging them (`link_group`). Both serve only ranking and savings roll-ups: every row is still classified on its own. The rows of a merge group, and of a link group marked shared, carry one recommendation; link groups marked per row (shared parent or lineage, different services) take one per row; every grouped row's rationale names its group (steps 2c and 2d).
 
 ## 3. Name changes
 
@@ -115,7 +115,7 @@ Casing changes (205 rule applications on 183 rows) are listed in full in `qa/nam
 
 ## 4. Entity merge map
 
-Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). Where entities share a parent or brand but supply different products or contracts, or share a lineage, the vendors stay separate and are tied together through `link_group`. Whatever the grouping, the sheet is filled per row: all rows get their own department, description and recommendation, and the rows of a merge or link group share one recommendation whose rationale names the group (decision of step 2c).
+Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the same vendor relationship under a changed or variant name (a rename, a spelling variant, the same contract moved between entities). Where entities share a parent or brand but supply different products or contracts, or share a lineage, the vendors stay separate and are tied together through `link_group`. Whatever the grouping, the sheet is filled per row: all rows get their own department, description and recommendation. The rows of a merge group, and of a link group whose recommendation is shared, carry one recommendation; link groups whose rows are different services take one per row; every grouped row's rationale names its group (steps 2c and 2d).
 
 386 rows become 382 vendors (383 if the proposed merge is reversed).
 
@@ -132,23 +132,23 @@ Policy (decision of 2026-11-10, `docs/decisions.md`): merge only when it is the 
 
 Linked vendors stay separate rows and separate vendors. The combined spend is shown because one negotiation can cover the group; it is not added to any one vendor.
 
-| Link group | Type | Rows | Combined 12-month cost | Reason |
-|---|---|---|---|---|
-| Salesforce | shared parent | V0002 Salesforce UK Ltd; V0173 Slack Technologies Limited | $3,119,215 | Slack has been a Salesforce company since 2021, so it goes into the same renewal |
-| Amazon | shared parent | V0014 Amazon Web Services LLC; V0103 Amazon Web Services Inc.; V0203 Amazon.co.uk; V0291 Amazon (Aus) | $112,893 | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases |
-| Telefónica | same brand, separate entities | V0015 Telefonica Global Services GmbH; V0093 Telefónica Compras Electrónicas S.L. | $96,037 | two Telefónica group entities (Global Services GmbH, Compras Electrónicas S.L.); what each payment is goes to Finance |
-| HR Solution International | same brand, separate entities | V0016 HR Solution International GmbH; V0090 Hrsolution International AG | $87,810 | a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them |
-| Microsoft | shared parent | V0026 LinkedIn Ireland Limited; V0081 Microsoft Ireland Operations Limited; V0125 npm Inc | $68,929 | LinkedIn and npm (through GitHub) are Microsoft companies |
-| Bupa | same brand, separate entities | V0047 Bupa; V0071 Bupa Australia | $35,263 | two Bupa entities with separate insurance contracts, one of them Bupa Australia |
-| Sodexo and Pluxee | same lineage | V0054 Sodexo SVC India Private Limited; V0128 Pluxee India Private Limited | $21,804 | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10) |
-| Acclime | same brand, separate entities | V0099 Acclime Corporate Services; V0105 Acclime USA, Inc | $10,408 | Acclime's corporate services entity and its US entity, presumably separate engagements |
-| ICICI group | shared parent | V0095 ICICI Lombard GIC Ltd; V0143 Cici Prudential Life Insurance Co. Ltd. | $9,167 | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
-| Apple | same brand, separate entities | V0123 Apple Retail UK Ltd; V0172 Apple Pty Ltd; V0175 Apple Distribution International Ltd; V0229 Apple - AMER | $8,256 | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
-| Allianz Australia | same brand, separate entities | V0094 Allianz Australia Workers' Compensation (Victoria) Limited; V0212 Allianz WA | $7,069 | Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia: separate state policies (decision of 2026-11-10) |
-| Atlassian | shared parent | V0091 Trello; V0297 Atlassian Pty Ltd | $6,898 | Trello is an Atlassian product |
-| SolarWinds | shared parent | V0130 Papertrail Inc; V0311 SolarWinds, Inc | $4,066 | Papertrail is a SolarWinds product |
-| GRT Hotels & Resorts | same brand, separate entities | V0171 GRT Hotels And Resorts P Ltd; V0190 Radisson GRT - Unit Of Hotels & Resorts Pvt Ltd | $3,437 | two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts |
-| DHL | same brand, separate entities | V0303 DHL; V0336 DHL Express (UK) Ltd | $310 | a bare DHL record and DHL Express (UK); the file does not show that they are one account |
+| Link group | Type | Recommendation | Rows | Combined 12-month cost | Reason |
+|---|---|---|---|---|---|
+| Salesforce | shared parent | shared | V0002 Salesforce UK Ltd; V0173 Slack Technologies Limited | $3,119,215 | Slack has been a Salesforce company since 2021, so it goes into the same renewal and shares its recommendation |
+| Amazon | shared parent | per row | V0014 Amazon Web Services LLC; V0103 Amazon Web Services Inc.; V0203 Amazon.co.uk; V0291 Amazon (Aus) | $112,893 | AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services, so each row takes its own recommendation (decision of step 2d) |
+| Telefónica | same brand, separate entities | shared | V0015 Telefonica Global Services GmbH; V0093 Telefónica Compras Electrónicas S.L. | $96,037 | two Telefónica group entities (Global Services GmbH, Compras Electrónicas S.L.); what each payment is goes to Finance |
+| HR Solution International | same brand, separate entities | shared | V0016 HR Solution International GmbH; V0090 Hrsolution International AG | $87,810 | a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them |
+| Microsoft | shared parent | per row | V0026 LinkedIn Ireland Limited; V0081 Microsoft Ireland Operations Limited; V0125 npm Inc | $68,929 | LinkedIn, Microsoft 365 and npm (through GitHub) are Microsoft companies with different services, so each row takes its own recommendation (decision of step 2d) |
+| Bupa | same brand, separate entities | shared | V0047 Bupa; V0071 Bupa Australia | $35,263 | two Bupa entities with separate insurance contracts, one of them Bupa Australia |
+| Sodexo and Pluxee | same lineage | per row | V0054 Sodexo SVC India Private Limited; V0128 Pluxee India Private Limited | $21,804 | same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link; while linked, each row takes its own recommendation (decisions of steps 2c and 2d) |
+| Acclime | same brand, separate entities | shared | V0099 Acclime Corporate Services; V0105 Acclime USA, Inc | $10,408 | Acclime's corporate services entity and its US entity, presumably separate engagements |
+| ICICI group | shared parent | shared | V0095 ICICI Lombard GIC Ltd; V0143 Cici Prudential Life Insurance Co. Ltd. | $9,167 | ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers |
+| Apple | same brand, separate entities | shared | V0123 Apple Retail UK Ltd; V0172 Apple Pty Ltd; V0175 Apple Distribution International Ltd; V0229 Apple - AMER | $8,256 | four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases |
+| Allianz Australia | same brand, separate entities | shared | V0094 Allianz Australia Workers' Compensation (Victoria) Limited; V0212 Allianz WA | $7,069 | Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia: separate state policies (decision of 2026-11-10) |
+| Atlassian | shared parent | shared | V0091 Trello; V0297 Atlassian Pty Ltd | $6,898 | Trello is an Atlassian product; both are work-management tools |
+| SolarWinds | shared parent | shared | V0130 Papertrail Inc; V0311 SolarWinds, Inc | $4,066 | Papertrail is a SolarWinds product; both are monitoring tools |
+| GRT Hotels & Resorts | same brand, separate entities | shared | V0171 GRT Hotels And Resorts P Ltd; V0190 Radisson GRT - Unit Of Hotels & Resorts Pvt Ltd | $3,437 | two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts |
+| DHL | same brand, separate entities | shared | V0303 DHL; V0336 DHL Express (UK) Ltd | $310 | a bare DHL record and DHL Express (UK); the file does not show that they are one account |
 
 ### Reviewed and kept as different vendors
 

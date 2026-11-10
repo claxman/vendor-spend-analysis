@@ -76,6 +76,18 @@ def table(headers: list[str], rows: list[list]) -> list[str]:
     return out
 
 
+def section_rows(text: str, heading: str) -> list[list[str]]:
+    """Cells of the markdown table under a '## heading' (up to the next '## ')."""
+    m = re.search(rf"^## {re.escape(heading)}\n(.*?)(?=^## |\Z)", text, re.S | re.M)
+    if not m:
+        raise SystemExit(f"heading '## {heading}' not found")
+    rows = []
+    for line in m.group(1).splitlines():
+        if line.startswith("|") and not re.match(r"^\|\s*-", line) and not re.match(r"^\|\s*#\s*\|", line):
+            rows.append([c.strip() for c in line.strip().strip("|").split("|")])
+    return rows
+
+
 def assert_no_dashes(text: str, label: str) -> None:
     for ch, name in ((EM_DASH, "em dash"), (EN_DASH, "en dash")):
         if ch in text:
@@ -286,59 +298,82 @@ def load_vendor_records(path: Path = RAW_PATH) -> list[dict]:
 
 
 # ---------------------------------------------------------------- entity merges and links
-# Policy (decision of 2026-11-10, docs/decisions.md): merge only when it is the
-# same vendor relationship under a changed or variant name (a rename, a
-# spelling variant, the same contract moved between entities). Where entities
-# share a parent or brand but supply different products or contracts, or share
-# a lineage, record a link instead. MERGE_GROUPS and LINK_GROUPS are the source
-# of truth for qa/vendor_groups.csv.
+# Policy (docs/decisions.md, steps 2b to 2d): merge only when it is the same
+# vendor relationship under a changed or variant name (a rename, a spelling
+# variant, the same contract moved between entities). Where entities share a
+# parent or brand but supply different products or contracts, or share a
+# lineage, record a link instead. MERGE_GROUPS and LINK_GROUPS are the source of
+# truth for qa/vendor_groups.csv and for the group checks in qa/check_outputs.py.
+#
+# Recommendations (step 2d): every merge group shares one recommendation, and so
+# does every link group whose "recommendation" is "shared" (same-brand entities,
+# and shared-parent groups of the same kind of service). Link groups marked
+# "per row" (shared parent or lineage, different services) take a recommendation
+# per row. Either way, the rationale of every grouped row names its group.
+# "names" lists how a rationale may name the group: any one entry, where an entry
+# that is a list needs all of its terms.
 
 MERGE_GROUPS = [
     {"canonical": "Navan", "rows": [3, 24], "status": "merge", "confidence": "high",
-     "relationship": "renamed entity",
+     "relationship": "renamed entity", "names": ["Navan"],
      "reason": "TripActions Inc renamed itself Navan Inc in 2023; both rows are the same travel and expense platform"},
     {"canonical": "AWS", "rows": [14, 103], "status": "merge", "confidence": "high",
-     "relationship": "same service, entity name variant",
+     "relationship": "same service, entity name variant", "names": ["AWS", "Amazon Web Services"],
      "reason": "one AWS relationship, the same cloud service and customer agreement, billed under the Inc. and LLC entity names"},
     {"canonical": "TM Forum", "rows": [25, 249], "status": "merge", "confidence": "high",
-     "relationship": "spelling variant",
+     "relationship": "spelling variant", "names": ["TM Forum", "TMForum"],
      "reason": "Tmforum and Tm Forum are two spellings of the same association"},
     {"canonical": "4i", "rows": [17, 72], "status": "proposed merge", "confidence": "medium",
-     "relationship": "same group, other entity",
+     "relationship": "same group, other entity", "names": ["4i"],
      "reason": "shared and unusual 4i brand, both advisory or consulting in India; to be confirmed or reversed by web verification"},
 ]
 
 LINK_GROUPS = [
-    {"label": "Salesforce", "rows": [2, 173], "type": "shared parent",
-     "reason": "Slack has been a Salesforce company since 2021, so it goes into the same renewal"},
-    {"label": "Atlassian", "rows": [91, 297], "type": "shared parent",
-     "reason": "Trello is an Atlassian product"},
-    {"label": "SolarWinds", "rows": [130, 311], "type": "shared parent",
-     "reason": "Papertrail is a SolarWinds product"},
-    {"label": "Microsoft", "rows": [26, 81, 125], "type": "shared parent",
-     "reason": "LinkedIn and npm (through GitHub) are Microsoft companies"},
-    {"label": "ICICI group", "rows": [95, 143], "type": "shared parent",
+    {"label": "Salesforce", "rows": [2, 173], "type": "shared parent", "recommendation": "shared",
+     "names": ["Salesforce"],
+     "reason": "Slack has been a Salesforce company since 2021, so it goes into the same renewal and shares its recommendation"},
+    {"label": "Atlassian", "rows": [91, 297], "type": "shared parent", "recommendation": "shared",
+     "names": ["Atlassian"],
+     "reason": "Trello is an Atlassian product; both are work-management tools"},
+    {"label": "SolarWinds", "rows": [130, 311], "type": "shared parent", "recommendation": "shared",
+     "names": ["SolarWinds"],
+     "reason": "Papertrail is a SolarWinds product; both are monitoring tools"},
+    {"label": "Microsoft", "rows": [26, 81, 125], "type": "shared parent", "recommendation": "per row",
+     "names": ["Microsoft"],
+     "reason": "LinkedIn, Microsoft 365 and npm (through GitHub) are Microsoft companies with different services, so each row takes its own recommendation (decision of step 2d)"},
+    {"label": "ICICI group", "rows": [95, 143], "type": "shared parent", "recommendation": "shared",
+     "names": ["ICICI"],
      "reason": "ICICI Lombard (general insurance) and ICICI Prudential (life insurance) are separate ICICI group insurers"},
-    {"label": "Amazon", "rows": [14, 103, 203, 291], "type": "shared parent",
-     "reason": "AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services and purchases"},
-    {"label": "Apple", "rows": [123, 172, 175, 229], "type": "same brand, separate entities",
+    {"label": "Amazon", "rows": [14, 103, 203, 291], "type": "shared parent", "recommendation": "per row",
+     "names": ["Amazon"],
+     "reason": "AWS and the Amazon marketplaces in the UK and Australia share a parent but are different services, so each row takes its own recommendation (decision of step 2d)"},
+    {"label": "Apple", "rows": [123, 172, 175, 229], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["Apple"],
      "reason": "four Apple regional entities (UK retail, Australia, Ireland, Americas) with separate purchases"},
-    {"label": "Bupa", "rows": [47, 71], "type": "same brand, separate entities",
+    {"label": "Bupa", "rows": [47, 71], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["Bupa"],
      "reason": "two Bupa entities with separate insurance contracts, one of them Bupa Australia"},
     {"label": "HR Solution International", "rows": [16, 90], "type": "same brand, separate entities",
+     "recommendation": "shared", "names": ["HR Solution", "HRsolution"],
      "reason": "a GmbH and an AG, so two legal entities and presumably two country contracts; a merge only if one contract moved between them"},
-    {"label": "Acclime", "rows": [99, 105], "type": "same brand, separate entities",
+    {"label": "Acclime", "rows": [99, 105], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["Acclime"],
      "reason": "Acclime's corporate services entity and its US entity, presumably separate engagements"},
-    {"label": "DHL", "rows": [303, 336], "type": "same brand, separate entities",
+    {"label": "DHL", "rows": [303, 336], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["DHL"],
      "reason": "a bare DHL record and DHL Express (UK); the file does not show that they are one account"},
-    {"label": "Telef\u00f3nica", "rows": [15, 93], "type": "same brand, separate entities",
-     "reason": "two Telef\u00f3nica group entities (Global Services GmbH, Compras Electr\u00f3nicas S.L.); what each payment is goes to Finance"},
-    {"label": "Allianz Australia", "rows": [94, 212], "type": "same brand, separate entities",
+    {"label": "Telefónica", "rows": [15, 93], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["Telefónica"],
+     "reason": "two Telefónica group entities (Global Services GmbH, Compras Electrónicas S.L.); what each payment is goes to Finance"},
+    {"label": "Allianz Australia", "rows": [94, 212], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["Allianz"],
      "reason": "Allianz workers' compensation in Victoria and, by the Wa suffix, Western Australia: separate state policies (decision of 2026-11-10)"},
-    {"label": "GRT Hotels & Resorts", "rows": [171, 190], "type": "same brand, separate entities",
+    {"label": "GRT Hotels & Resorts", "rows": [171, 190], "type": "same brand, separate entities", "recommendation": "shared",
+     "names": ["GRT"],
      "reason": "two hotels of the GRT group; the Radisson row names itself a unit of GRT Hotels & Resorts"},
-    {"label": "Sodexo and Pluxee", "rows": [54, 128], "type": "same lineage",
-     "reason": "same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link (decision of 2026-11-10)"},
+    {"label": "Sodexo and Pluxee", "rows": [54, 128], "type": "same lineage", "recommendation": "per row",
+     "names": [["Sodexo", "Pluxee"]],
+     "reason": "same lineage (Pluxee was demerged from Sodexo in 2024); web verification decides: meal cards billed under Pluxee's former name make it a rename and a merge, on-site catering keeps the link; while linked, each row takes its own recommendation (decisions of steps 2c and 2d)"},
 ]
 
 # Candidate sets from the string search that are reviewed and neither merged nor linked.
@@ -359,6 +394,22 @@ DISTINCT_VERDICTS = [
     ([247, 304], "different vendors, same type", "two different hotels"),
     ([328, 384], "different vendors, same type", "two different health institutions"),
 ]
+
+
+def _word_text(s: str) -> str:
+    s = re.sub(r"[^a-z0-9]+", " ", strip_accents(s).lower())
+    return f" {' '.join(s.split())} "
+
+
+def names_group(text: str, names: list) -> bool:
+    """True if text names the group: any entry of names matches as whole words,
+    ignoring case and accents; an entry that is a list needs all of its terms."""
+    t = _word_text(text)
+    for entry in names:
+        terms = entry if isinstance(entry, list) else [entry]
+        if all(_word_text(term) in t for term in terms):
+            return True
+    return False
 
 
 def merge_group_of(row: int) -> dict | None:
