@@ -115,3 +115,9 @@ Exception approved and the rule restated: one recommendation per merge group (sa
 ```text
 Approved on all three. Align the QA's expected columns with the classification spec so nothing fails on naming: vendor_id, vendor_name_original, vendor_name_clean, spend_12m (use this name rather than cost_usd), department, sub_function, description, recommendation, rationale, risk_note, cost_cluster, is_addressable, is_recurring, confidence, verified, source_url. Add two checks: risk_note is non-empty for every Terminate and Consolidate row, and verified is TRUE for every row with any exception listed by name in the report. Re-run the self-test. Commit as "Step 2d-fix: QA columns".
 ```
+
+## Prompt 11 (2026-11-10)
+
+```text
+C17 is inverted. The rule is: every row must have verified TRUE; any row with verified FALSE must appear by vendor_id, with a one-line reason, under a heading "Verification exceptions" in qa/validation_report.md, and nothing else counts. A FALSE row not listed there fails; a listed ID that is not FALSE in the file also fails. Point C17 only at that file and heading. Yes, add the one-line check that vendor_name_original and vendor_name_clean match outputs/vendors_clean.csv row for row. Re-run the self-test with planted errors for both. Commit as "Step 2d-fix2: verification exceptions".
+```

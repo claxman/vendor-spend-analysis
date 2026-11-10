@@ -32,9 +32,9 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names row for row.
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and report, clean and then with 27 planted errors, and shows each error caught.
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, clean and then with 35 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
@@ -48,11 +48,12 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 | C13, C14 | the outcomes and rationale wording fixed by decisions (steps 2b to 2d) |
 | C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
 | C16 | `risk_note` is non-empty for every Terminate and Consolidate row |
-| C17 | `verified` is TRUE for every row listed by name as an exception in a report |
+| C17 | every row has `verified` TRUE, except rows with `verified` FALSE listed under "Verification exceptions" in `qa/validation_report.md`; a FALSE row not listed there fails, and a listed `vendor_id` that is not FALSE in the file fails |
+| C18 | `vendor_name_original` and `vendor_name_clean` match `outputs/vendors_clean.csv` row for row: same order, same `vendor_id`, identical names |
 
 Columns of `outputs/vendors_classified.csv`, as in the classification spec: `vendor_id`, `vendor_name_original`, `vendor_name_clean`, `spend_12m`, `department`, `sub_function`, `description`, `recommendation`, `rationale`, `risk_note`, `cost_cluster`, `is_addressable`, `is_recurring`, `confidence`, `verified`, `source_url`. `spend_12m` replaces the earlier `cost_usd`. Other columns may be added.
 
-How C17 finds the exceptions: it reads every markdown report under `outputs/` and `outputs/analysis/`, takes each section whose heading contains the word "exception" (up to the next heading of the same or a higher level), and collects the rows the section names: by `vendor_id`, by the row's full original or clean name, or by its canonical vendor name, as whole words regardless of case and accents. A name that appears only inside a longer vendor name at the same place does not count, so "DHL" inside "DHL Express (UK) Ltd" names the DHL Express row, not the bare DHL row. A cited `vendor_id` that is not in the file fails the check. Until a report has such a section, C17 is reported as pending.
+The verification-exceptions rule (step 2d-fix2): every row must have `verified` TRUE. A row with `verified` FALSE must appear by `vendor_id`, with a one-line reason, under a heading "Verification exceptions" in `qa/validation_report.md`, and nothing else counts. C17 reads only that file and that heading: the lines under a heading whose text is exactly "Verification exceptions", up to the next heading of the same or a higher level. A line there that carries a `vendor_id` lists that row, and it must carry exactly one `vendor_id` and the reason on the same line, in the form `- Vnnnn: reason`. Lines without a `vendor_id` are ignored, and so are vendor names without an id, other headings and other files. The verification step writes `qa/validation_report.md`; the QA check only reads it.
 
 ## 2026-11-10: decisions confirmed (prompt 8, step 2c)
 
