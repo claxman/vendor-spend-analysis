@@ -32,21 +32,27 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification, clean and then with 18 planted errors, and shows each error caught.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added.
+
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and report, clean and then with 27 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
 | S1 to S5 | group definitions and the merge map agree; the per-row links are exactly Amazon, Microsoft, and Sodexo and Pluxee; the rows fixed by decisions are the vendors the decisions name; the taxonomy and cluster lists load |
-| C1, C2 | required columns present; exactly one row per source row (386), no duplicates |
-| C3 to C6 | departments, clusters, recommendations, `is_addressable` and confidence take allowed values |
+| C1, C2 | the 16 columns of the classification spec are present; exactly one row per source row (386), no duplicates |
+| C3 to C6 | departments, clusters and recommendations take allowed values; `is_addressable`, `is_recurring` and `verified` are TRUE or FALSE; confidence is high, medium or low |
 | C7 to C9 | one-line descriptions without the banned phrases; one-sentence rationales; no em or en dashes |
-| C10 | total cost equals the clean file's total exactly |
+| C10 | total `spend_12m` equals the clean file's total exactly |
 | C11 | the rows of each merge group and of each shared link group carry one recommendation |
 | C12 | every grouped row's rationale names its group, per-row links included; where the row's own name already contains the group's name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
 | C13, C14 | the outcomes and rationale wording fixed by decisions (steps 2b to 2d) |
 | C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
+| C16 | `risk_note` is non-empty for every Terminate and Consolidate row |
+| C17 | `verified` is TRUE for every row listed by name as an exception in a report |
 
-The check expects these columns in `outputs/vendors_classified.csv`: `vendor_id`, `department`, `description`, `recommendation`, `rationale`, `cost_cluster`, `is_addressable`, `confidence`, `cost_usd`. Other columns may be added.
+Columns of `outputs/vendors_classified.csv`, as in the classification spec: `vendor_id`, `vendor_name_original`, `vendor_name_clean`, `spend_12m`, `department`, `sub_function`, `description`, `recommendation`, `rationale`, `risk_note`, `cost_cluster`, `is_addressable`, `is_recurring`, `confidence`, `verified`, `source_url`. `spend_12m` replaces the earlier `cost_usd`. Other columns may be added.
+
+How C17 finds the exceptions: it reads every markdown report under `outputs/` and `outputs/analysis/`, takes each section whose heading contains the word "exception" (up to the next heading of the same or a higher level), and collects the rows the section names: by `vendor_id`, by the row's full original or clean name, or by its canonical vendor name, as whole words regardless of case and accents. A name that appears only inside a longer vendor name at the same place does not count, so "DHL" inside "DHL Express (UK) Ltd" names the DHL Express row, not the bare DHL row. A cited `vendor_id` that is not in the file fails the check. Until a report has such a section, C17 is reported as pending.
 
 ## 2026-11-10: decisions confirmed (prompt 8, step 2c)
 

@@ -109,3 +109,9 @@ Approved on all three: links for the eight groups, AWS stays merged, student lab
 ```text
 Exception approved and the rule restated: one recommendation per merge group (same vendor relationship), and per same-brand link group where the products are the same kind of service (Salesforce and Slack, Atlassian and Trello, SolarWinds and Papertrail, the two ICICI insurers). Shared-parent links with different services (Amazon marketplaces and AWS; Microsoft 365, LinkedIn and npm; Sodexo and Pluxee if the link stands) take their own recommendation per row, with the rationale still naming the group. So AWS is Optimize, the two Amazon marketplace rows are Terminate as consumer retail through AP, Microsoft 365 is Consolidate, LinkedIn is Optimize, npm follows the developer-tool rule. Update docs/decisions.md and the QA check accordingly. Commit as "Step 2d: group recommendation rule".
 ```
+
+## Prompt 10 (2026-11-10)
+
+```text
+Approved on all three. Align the QA's expected columns with the classification spec so nothing fails on naming: vendor_id, vendor_name_original, vendor_name_clean, spend_12m (use this name rather than cost_usd), department, sub_function, description, recommendation, rationale, risk_note, cost_cluster, is_addressable, is_recurring, confidence, verified, source_url. Add two checks: risk_note is non-empty for every Terminate and Consolidate row, and verified is TRUE for every row with any exception listed by name in the report. Re-run the self-test. Commit as "Step 2d-fix: QA columns".
+```

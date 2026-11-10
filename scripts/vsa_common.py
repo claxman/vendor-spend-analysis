@@ -396,7 +396,8 @@ DISTINCT_VERDICTS = [
 ]
 
 
-def _word_text(s: str) -> str:
+def word_text(s: str) -> str:
+    """Lower-case, accent-free words separated by single spaces, padded with a space at each end."""
     s = re.sub(r"[^a-z0-9]+", " ", strip_accents(s).lower())
     return f" {' '.join(s.split())} "
 
@@ -404,10 +405,10 @@ def _word_text(s: str) -> str:
 def names_group(text: str, names: list) -> bool:
     """True if text names the group: any entry of names matches as whole words,
     ignoring case and accents; an entry that is a list needs all of its terms."""
-    t = _word_text(text)
+    t = word_text(text)
     for entry in names:
         terms = entry if isinstance(entry, list) else [entry]
-        if all(_word_text(term) in t for term in terms):
+        if all(word_text(term) in t for term in terms):
             return True
     return False
 

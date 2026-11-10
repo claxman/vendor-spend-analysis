@@ -5,19 +5,21 @@ Where each rule comes from:
   CLAUDE.md                     one-line descriptions without the banned phrases, departments from the
                                 taxonomy, three recommendations with a one-sentence rationale, no em dashes
   docs/taxonomy.md, clusters.md the allowed departments and cost clusters
-  docs/decisions.md             per-row deliverable (step 2c), group recommendation rule (step 2d), and the
-                                outcomes fixed for named rows (steps 2b to 2d)
+  docs/decisions.md             per-row deliverable (step 2c), group recommendation rule (step 2d), the
+                                outcomes fixed for named rows (steps 2b to 2d), and the columns of the
+                                classification spec with the risk-note and verification checks (step 2d-fix)
   scripts/vsa_common.py         the merge and link groups, their recommendation scope and the names a
                                 rationale may use for each group
 
 Structural checks run now. The classification checks run once outputs/vendors_classified.csv exists;
-until then they are reported as pending.
+until then they are reported as pending. C17 reads the sections of the markdown reports under outputs/
+whose heading contains "exception".
 
 Usage:
     python qa/check_outputs.py              check the real files
-    python qa/check_outputs.py --self-test  run the classification checks on a synthetic classification,
-                                            first clean and then with planted errors, to show that each
-                                            check catches what it should
+    python qa/check_outputs.py --self-test  run the classification checks on a synthetic classification and
+                                            report, first clean and then with planted errors, to show that
+                                            each check catches what it should
 Exit code 1 if any check fails.
 """
 from __future__ import annotations
@@ -27,12 +29,13 @@ import csv
 import math
 import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from vsa_common import (  # noqa: E402
-    EM_DASH, EN_DASH, LINK_GROUPS, MERGE_GROUPS, names_group, rel, section_rows, strip_accents,
+    EM_DASH, EN_DASH, LINK_GROUPS, MERGE_GROUPS, names_group, rel, section_rows, strip_accents, word_text,
 )
 
 CLASSIFIED = ROOT / "outputs" / "vendors_classified.csv"
@@ -40,10 +43,15 @@ CLEAN = ROOT / "outputs" / "vendors_clean.csv"
 GROUPS = ROOT / "qa" / "vendor_groups.csv"
 TAXONOMY = ROOT / "docs" / "taxonomy.md"
 CLUSTERS = ROOT / "docs" / "clusters.md"
+REPORT_DIRS = [ROOT / "outputs", ROOT / "outputs" / "analysis"]
 
-REQUIRED_COLUMNS = ["vendor_id", "department", "description", "recommendation", "rationale", "cost_cluster",
-                    "is_addressable", "confidence", "cost_usd"]
+# The columns of the classification spec, in its order (docs/decisions.md, step 2d-fix).
+REQUIRED_COLUMNS = ["vendor_id", "vendor_name_original", "vendor_name_clean", "spend_12m", "department",
+                    "sub_function", "description", "recommendation", "rationale", "risk_note", "cost_cluster",
+                    "is_addressable", "is_recurring", "confidence", "verified", "source_url"]
+BOOLEAN_COLUMNS = ["is_addressable", "is_recurring", "verified"]
 RECOMMENDATIONS = {"Terminate", "Consolidate", "Optimize"}
+NEEDS_RISK_NOTE = {"Terminate", "Consolidate"}
 CONFIDENCE = {"high", "medium", "low"}
 BOOLEANS = {"TRUE", "FALSE"}
 BANNED_PHRASES = ["business services", "software company", "service provider", "solutions", "various services",
@@ -95,6 +103,11 @@ def read_csv(path: Path) -> list[dict]:
         return list(csv.DictReader(fh))
 
 
+def read_reports() -> list[tuple[str, str]]:
+    paths = sorted(p for d in REPORT_DIRS if d.exists() for p in d.glob("*.md"))
+    return [(rel(p), p.read_text(encoding="utf-8")) for p in paths]
+
+
 def plain(s: str) -> str:
     return strip_accents(s).lower()
 
@@ -117,6 +130,51 @@ def sentence_count(text: str) -> int:
     for abbr in ABBREVIATIONS:
         t = re.sub(re.escape(abbr), abbr.replace(".", ""), t, flags=re.IGNORECASE)
     return len(re.findall(r"[.!?]\s+(?=[A-Z0-9\"'(])", t)) + 1
+
+
+def exception_sections(reports: list[tuple[str, str]]) -> list[tuple[str, str, str]]:
+    """(report, heading, body) for every markdown heading that contains the word exception, up to the
+    next heading of the same or a higher level."""
+    out = []
+    for path, text in reports:
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            m = re.match(r"^(#{1,6})\s+(.*)$", line)
+            if not m or "exception" not in m.group(2).lower():
+                continue
+            level, body = len(m.group(1)), []
+            for nxt in lines[i + 1:]:
+                h = re.match(r"^(#{1,6})\s", nxt)
+                if h and len(h.group(1)) <= level:
+                    break
+                body.append(nxt)
+            out.append((path, m.group(2).strip(), "\n".join(body)))
+    return out
+
+
+def named_rows(text: str, clean: list[dict]) -> set[str]:
+    """vendor_ids a text names: by vendor_id, or by a row's full original, clean or canonical name as whole
+    words (ignoring case and accents). A name found only inside a longer name found at the same place does
+    not count, so DHL inside DHL Express (UK) Ltd names only the DHL Express row."""
+    found = set(re.findall(r"\bV\d{4}\b", text))
+    norm = word_text(text)
+    names: dict[str, set[str]] = defaultdict(set)
+    for r in clean:
+        for nm in (r["vendor_name_raw"], r["vendor_name_clean"], r["canonical_vendor"]):
+            key = word_text(nm).strip()
+            if key:
+                names[key].add(r["vendor_id"])
+    hits = []
+    for key, ids in names.items():
+        pattern = f" {key} "
+        start = norm.find(pattern)
+        while start != -1:
+            hits.append((start + 1, start + len(pattern) - 1, ids))
+            start = norm.find(pattern, start + 1)
+    for s, e, ids in hits:
+        if not any(s2 <= s and e <= e2 and (e2 - s2) > (e - s) for s2, e2, _ in hits):
+            found |= ids
+    return found
 
 
 class Results:
@@ -182,18 +240,22 @@ def structural_checks(res: Results, clean: list[dict]) -> None:
 
 # ---------------------------------------------------------------- classification checks
 
-def classification_checks(res: Results, rows: list[dict], clean: list[dict]) -> None:
+def classification_checks(res: Results, rows: list[dict], clean: list[dict], reports: list[tuple[str, str]]) -> None:
     deps = {r[1] for r in section_rows(TAXONOMY.read_text(encoding="utf-8"), "Departments")}
     clus = {r[1] for r in section_rows(CLUSTERS.read_text(encoding="utf-8"), "Clusters")}
     cols = set(rows[0].keys()) if rows else set()
     missing_cols = [c for c in REQUIRED_COLUMNS if c not in cols]
-    res.add("C1", "Required columns present", not missing_cols, f"missing: {', '.join(missing_cols) or 'none'}")
+    res.add("C1", "The columns of the classification spec are present", not missing_cols,
+            f"{len(REQUIRED_COLUMNS)} required; missing: {', '.join(missing_cols) or 'none'}")
     if missing_cols:
         return
 
     by_id = {r["vendor_id"]: r for r in rows}
     want = [r["vendor_id"] for r in clean]
-    dupes = sorted({r["vendor_id"] for r in rows if [x["vendor_id"] for x in rows].count(r["vendor_id"]) > 1})
+    seen: dict[str, int] = defaultdict(int)
+    for r in rows:
+        seen[r["vendor_id"]] += 1
+    dupes = sorted(i for i, n in seen.items() if n > 1)
     missing = [i for i in want if i not in by_id]
     extra = [i for i in by_id if i not in set(want)]
     res.add("C2", f"One row per source row ({len(want)}), no duplicates, no extras",
@@ -207,9 +269,10 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict]) -> 
     res.add("C4", "Cost clusters come from docs/clusters.md", not bad, f"bad: {sample(bad) or 'none'}")
     bad = [f"{r['vendor_id']}: {r['recommendation']}" for r in rows if r["recommendation"] not in RECOMMENDATIONS]
     res.add("C5", "Recommendations are Terminate, Consolidate or Optimize", not bad, f"bad: {sample(bad) or 'none'}")
-    bad = [r["vendor_id"] for r in rows if r["is_addressable"] not in BOOLEANS or r["confidence"] not in CONFIDENCE]
-    res.add("C6", "is_addressable is TRUE or FALSE; confidence is high, medium or low", not bad,
-            f"bad: {sample(bad) or 'none'}")
+    bad = [f"{r['vendor_id']}: {col}={r[col]!r}" for r in rows for col in BOOLEAN_COLUMNS if r[col] not in BOOLEANS]
+    bad += [f"{r['vendor_id']}: confidence={r['confidence']!r}" for r in rows if r["confidence"] not in CONFIDENCE]
+    res.add("C6", "is_addressable, is_recurring and verified are TRUE or FALSE; confidence is high, medium or low",
+            not bad, f"bad: {sample(bad) or 'none'}")
 
     bad = []
     for r in rows:
@@ -227,11 +290,11 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict]) -> 
     res.add("C9", "No em or en dash in any field", not bad, f"bad: {sample(bad) or 'none'}")
 
     try:
-        total = math.fsum(float(r["cost_usd"]) for r in rows)
+        total = math.fsum(float(r["spend_12m"]) for r in rows)
     except ValueError:
         total = float("nan")
     want_total = math.fsum(float(r["cost_usd"]) for r in clean)
-    res.add("C10", "Total cost equals the clean file's total exactly", total == want_total,
+    res.add("C10", "Total spend_12m equals the clean file's total exactly", total == want_total,
             f"${total:,.2f} against ${want_total:,.2f}")
 
     clean_names = {r["vendor_id"]: r["vendor_name_clean"] for r in clean}
@@ -270,8 +333,45 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict]) -> 
     res.add("C15", "Rows outside the savings base say \"non-discretionary, excluded from the savings base\"", not bad,
             f"bad: {sample(bad) or 'none'}")
 
+    bad = [r["vendor_id"] for r in rows if r["recommendation"] in NEEDS_RISK_NOTE and not r["risk_note"].strip()]
+    res.add("C16", "Every Terminate and Consolidate row has a risk_note", not bad, f"missing: {sample(bad) or 'none'}")
+
+    sections = exception_sections(reports)
+    if not sections:
+        res.add("C17", "Rows named in a report's Exceptions section are verified", None,
+                "no report under outputs/ has an Exceptions section yet")
+    else:
+        known = {r["vendor_id"] for r in clean}
+        named: set[str] = set()
+        for _, _, body in sections:
+            named |= named_rows(body, clean)
+        unknown = sorted(named - known)
+        unverified = sorted(i for i in named & known if by_id.get(i, {}).get("verified") != "TRUE")
+        res.add("C17", "Rows named in a report's Exceptions section are verified", not unknown and not unverified,
+                f"{len(sections)} section(s) in {', '.join(sorted({p for p, _, _ in sections}))}; "
+                f"{len(named & known)} rows named; not verified: {sample(unverified) or 'none'}; "
+                f"unknown ids: {sample(unknown) or 'none'}")
+
 
 # ---------------------------------------------------------------- self-test
+
+SYNTHETIC_REPORT_PATH = "outputs/analysis/synthetic_report.md"
+SYNTHETIC_REPORT = "\n".join([
+    "# Synthetic classification report",
+    "",
+    "## Exceptions",
+    "",
+    "- V0009 Weking d.o.o.: function unknown from the name.",
+    "- Telefónica Compras Electrónicas S.L.: listed by full name only, without its id.",
+    "- V0336 DHL Express (UK) Ltd: courier account.",
+    "- AWS: listed by canonical vendor name, which covers both of its rows.",
+    "",
+    "## Other findings",
+    "",
+    "- V0002 Salesforce UK Ltd is mentioned outside the Exceptions section and needs no verification.",
+])
+SYNTHETIC_EXCEPTION_IDS = ["V0009", "V0093", "V0336", "V0014", "V0103"]
+
 
 def synthetic(clean: list[dict]) -> list[dict]:
     """A classification that satisfies every rule, built only to exercise the checks."""
@@ -285,10 +385,12 @@ def synthetic(clean: list[dict]) -> list[dict]:
         rationale = ("Synthetic rationale, part of the "
                      + " and of the ".join(f"{name_text(g['names'][0])} group" for g in gs) + "."
                      if gs else "Synthetic rationale for the QA self-test.")
-        rows.append({"vendor_id": c["vendor_id"], "department": "G&A", "description": "Synthetic description for the QA self-test",
-                     "recommendation": "Optimize", "rationale": rationale,
-                     "cost_cluster": "Unidentified and individual payees", "is_addressable": "TRUE", "confidence": "low",
-                     "cost_usd": c["cost_usd"]})
+        rows.append({"vendor_id": c["vendor_id"], "vendor_name_original": c["vendor_name_raw"],
+                     "vendor_name_clean": c["vendor_name_clean"], "spend_12m": c["cost_usd"], "department": "G&A",
+                     "sub_function": "Synthetic sub-function", "description": "Synthetic description for the QA self-test",
+                     "recommendation": "Optimize", "rationale": rationale, "risk_note": "",
+                     "cost_cluster": "Unidentified and individual payees", "is_addressable": "TRUE",
+                     "is_recurring": "TRUE", "confidence": "low", "verified": "FALSE", "source_url": ""})
     by_id = {r["vendor_id"]: r for r in rows}
     for vids, col, expected, _ in DECISION_EXPECTATIONS:
         for vid in vids:
@@ -298,15 +400,39 @@ def synthetic(clean: list[dict]) -> list[dict]:
                                    "from the savings base, and rebates would belong against revenue.")
     for vid in ("V0030", "V0086", "V0186"):
         by_id[vid]["rationale"] = "Synthetic rationale: workforce cost, set by the hiring plan, not a vendor action."
+    for r in rows:
+        if r["recommendation"] in NEEDS_RISK_NOTE:
+            r["risk_note"] = "Synthetic risk note for the QA self-test"
+    for vid in SYNTHETIC_EXCEPTION_IDS:
+        by_id[vid]["verified"] = "TRUE"
+        by_id[vid]["source_url"] = "https://example.com/synthetic-evidence"
     return rows
 
 
 def set_field(vid: str, col: str, value: str):
-    def mutate(rows: list[dict]) -> list[dict]:
+    def mutate(rows: list[dict], reports: list[tuple[str, str]]):
         for r in rows:
             if r["vendor_id"] == vid:
                 r[col] = value
-        return rows
+        return rows, reports
+    return mutate
+
+
+def drop_row(vid: str):
+    def mutate(rows, reports):
+        return [r for r in rows if r["vendor_id"] != vid], reports
+    return mutate
+
+
+def rename_column(old: str, new: str):
+    def mutate(rows, reports):
+        return [{(new if k == old else k): v for k, v in r.items()} for r in rows], reports
+    return mutate
+
+
+def add_exception_line(line: str):
+    def mutate(rows, reports):
+        return rows, [(p, t.replace("## Other findings", f"{line}\n\n## Other findings")) for p, t in reports]
     return mutate
 
 
@@ -333,27 +459,41 @@ MUTATIONS = [
     ("Department outside the taxonomy", set_field("V0006", "department", "IT"), "C3"),
     ("Cluster outside the fixed list", set_field("V0007", "cost_cluster", "Facilities"), "C4"),
     ("Label outside the three recommendations", set_field("V0008", "recommendation", "Renegotiate"), "C5"),
-    ("A source row missing", lambda rows: [r for r in rows if r["vendor_id"] != "V0387"], "C2"),
+    ("verified neither TRUE nor FALSE", set_field("V0010", "verified", "yes"), "C6"),
+    ("is_recurring neither TRUE nor FALSE", set_field("V0011", "is_recurring", ""), "C6"),
+    ("A source row missing", drop_row("V0387"), "C2"),
+    ("Spend column under the old name cost_usd", rename_column("spend_12m", "cost_usd"), "C1"),
+    ("Terminate row without a risk_note", set_field("V0203", "risk_note", ""), "C16"),
+    ("Consolidate row without a risk_note", set_field("V0081", "risk_note", " "), "C16"),
+    ("Exception listed by vendor_id but not verified", set_field("V0009", "verified", "FALSE"), "C17"),
+    ("Exception listed by full name only but not verified", set_field("V0093", "verified", "FALSE"), "C17"),
+    ("Exception listed by canonical vendor name but not verified", set_field("V0103", "verified", "FALSE"), "C17"),
+    ("Exceptions section cites an unknown vendor_id", add_exception_line("- V0999 Unknown payee: not in the file."), "C17"),
 ]
 
 
 def self_test(clean: list[dict]) -> bool:
-    base = synthetic(clean)
+    base_rows = synthetic(clean)
+    base_reports = [(SYNTHETIC_REPORT_PATH, SYNTHETIC_REPORT)]
     res = Results()
-    classification_checks(res, copy.deepcopy(base), clean)
-    clean_ok = not res.failed()
-    print(f"{'PASS' if clean_ok else 'FAIL'}    synthetic classification that follows every rule passes all checks"
+    classification_checks(res, copy.deepcopy(base_rows), clean, list(base_reports))
+    clean_ok = not res.failed() and not any(status == "PENDING" for _, status, _, _ in res.items)
+    named = sorted(named_rows(exception_sections(base_reports)[0][2], clean))
+    print(f"{'PASS' if clean_ok else 'FAIL'}    synthetic classification that follows every rule passes all "
+          f"{len(res.items)} checks; the synthetic Exceptions section names {', '.join(named)}"
           + ("" if clean_ok else f" (failed: {', '.join(res.failed())})"))
     if not clean_ok:
         res.show()
-    all_ok = clean_ok
+    all_ok = clean_ok and named == sorted(SYNTHETIC_EXCEPTION_IDS)
     for title, mutate, expected in MUTATIONS:
+        rows, reports = mutate(copy.deepcopy(base_rows), list(base_reports))
         res = Results()
-        classification_checks(res, mutate(copy.deepcopy(base)), clean)
+        classification_checks(res, rows, clean, reports)
         caught = expected in res.failed()
         all_ok &= caught
         print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
               f" (checks failing: {', '.join(res.failed()) or 'none'})")
+    print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus {len(MUTATIONS)} planted errors")
     return all_ok
 
 
@@ -366,9 +506,9 @@ def main(argv: list[str]) -> int:
     res = Results()
     structural_checks(res, clean)
     if CLASSIFIED.exists():
-        classification_checks(res, read_csv(CLASSIFIED), clean)
+        classification_checks(res, read_csv(CLASSIFIED), clean, read_reports())
     else:
-        res.add("C*", "Classification checks C1 to C15", None, f"{rel(CLASSIFIED)} not produced yet")
+        res.add("C*", "Classification checks C1 to C17", None, f"{rel(CLASSIFIED)} not produced yet")
     res.show()
     failed = res.failed()
     print(f"{len(failed)} failed" + (f": {', '.join(failed)}" if failed else ""))
