@@ -2,6 +2,82 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-11: savings model and insights (prompt 17, step 4)
+
+### 1. The register
+
+- A tenth acquirer decision, `group_engineering_sourcing`: the contractor consultancies are replaced by the group's own engineering sourcing. It carries the Outsourced engineering and contractors lever (`V0009`, `V0019`, `V0116`, `V0185`), which closes the second open point of step 3b.
+- The Salesforce levers are restated for the platform reading, the first open point of step 3b: the lever on `V0002` is the platform agreement renegotiated at change of control, with internal seats trued down separately. It is a vendor action and carries no tag; co-terming with the parent's Salesforce relationship is part of that action and gets no tag of its own. `parent_crm_instance` now reaches only HubSpot.
+- Every lever carries `pct_low`, `pct_base` and `pct_high` (run-rate saving as a share of 12-month spend), `pct_without_decision` (what vendor action alone achieves if the tagged decision is not taken; equal to the base on untagged levers), `year1_factor` (0.5 where the renewal or notice date is unknown, higher for policy changes that start within 90 days, lower where the change waits for a year-end or a migration), `depends_on` and one sentence of reasoning.
+- The vendor actions of step 2f are now the Salesforce platform agreement, AWS and Navan; the insurance re-broke is the without-decision case of the commercial insurance lever rather than a lever of its own. `group_it_procurement` keeps its row, but no lever carries it, because the assumption given for employee hardware is a vendor action (section 4).
+- 39 levers in five opportunities: Salesforce platform agreement (4 levers), Office exit (2), Back office into group shared services (15), Second wave (12), Excluded (6). Each row ends with exactly one lever, in the order of precedence written in `docs/savings_assumptions.md` and coded in `scripts/savings_model.py`.
+
+### 2. Levers added or split beyond the assumptions list
+
+- Added with its own percentages: External training and coaching (`V0020`, `V0075`, `V0079`, $87,694; 25 / 50 / 75; without decision 25; 0.75; `group_talent_function`), because the list has no line for training and the rows are Consolidate into the group's development programmes. Open for confirmation.
+- Added at 0%: Bank, payment and certification fees (`V0216`, `V0198`, `V0142`, $5,299), because the list has no line for them and the fees follow transaction volume or the certificates customers ask for.
+- Split by tag: HR and finance systems (`group_systems`) and HubSpot (`parent_crm_instance`) share their percentages, not their tag; Employer-of-record providers (without decision 0) and Payroll processing providers (without decision 10) are two levers under `group_payroll`.
+- Split by sub_function inside a cluster: AWS, the telecom lines and the rest of Cloud, telecom and IT; the agencies, TM Forum and the rest of marketing; the auditors, the secretarial providers, the contingent-fee adviser and the fees inside the audit cluster; the brokers, the insurers and the statutory cover and benefit schemes inside Insurance and benefits.
+- Statutory cover and benefit schemes also holds the statutory occupational health rows, which are not addressable, so that every row outside the savings base sits on a 0% lever.
+- No other row fits the employment-law test: `V0202` is a recurring relationship and `V0264` a US firm whose one-off payment is not shown to be settlement advice.
+
+### 3. Rows whose lever is an analyst call
+
+Recorded in `docs/savings_assumptions.md` ("Lever assignment") and repeated in `outputs/analysis/savings.md`:
+
+| Row | Lever | Why |
+|---|---|---|
+| `V0351` Mithras Consultants | Audit, tax and accounting firms | actuarial valuations are an accounting requirement, so they follow the group auditor |
+| `V0211` Computershare-Caboodle | Other software subscriptions | a benefits platform fee, not pay or cover |
+| `V0098` Mercer, `V0273` Doctor Anywhere | Employee health and life insurance | benefits consulting and a health benefit |
+| `V0057` Benefit Systems, `V0121` Gym4You | Statutory cover and benefit schemes | the gym schemes the assumption names, although both are Terminate in the classification |
+| `V0058` Smart Group Services | Payroll processing providers | HR outsourcing, unconfirmed; the closest lever |
+| `V0179` Radius Group | Employer-of-record providers | global payroll and expansion services |
+| `V0020` Big Frontier, `V0075` Ramiro, `V0079` Emerge | External training and coaching | the lever added above |
+| `V0065` Pingo, `V0074` Bijeli Pijesak, `V0137` Orcola | Unidentified and individual payees | Terminate until identified, not the engineering sourcing lever of their cluster |
+| `V0309` Avoxi, `V0363` Click Send | Other cloud and IT, including employee hardware | telephony and an SMS API that do not end with the offices |
+| `V0168` Cision | Other marketing, media and events | a press release wire, not an agency |
+| `V0076` Visalogic | Law firms and legal resourcing | immigration work follows the legal cluster into the panel |
+| `V0216` Raiffeisenbank, `V0198` FastSpring, `V0142` Bureau Veritas | Bank, payment and certification fees | the lever added above |
+| `V0203`, `V0291` Amazon marketplaces | Office running costs | they follow their cluster as office consumables |
+
+### 4. Where the data argues against an assumption
+
+The assumptions are kept as given (prompt 17); these are the proposed changes.
+
+1. **Employee hardware carries no tag.** The nine hardware rows and the Chennai distributor (`V0048`) sit in Other cloud and IT at 10% with no tag, while their rationales name group IT procurement (step 2e) and `group_it_procurement` is a registered decision with no lever. Proposed: a separate Employee hardware lever at the same 5 / 10 / 20 with without-decision 5 and the tag, or retire the decision.
+2. **The gym schemes are Terminate at 0%.** Benefit Systems (`V0057`, $16,900) and Gym4You (`V0121`, $3,692) are Terminate in the classification (a perk with no commercial case) but 0% here under the gym-schemes line. Proposed: the Team events, perks and wellness lever (40 / 60 / 75) for both, worth $12,355 base, or Optimize in the classification.
+3. **Bisley Law is a control finding at 30%.** `V0018` ($67,414) takes the law-firms lever, yet the finding of step 3b says no payment should continue until Finance confirms the entity. Proposed: hold it at 0% until Finance answers question 7, or model it like an unidentified payee at 50%; the law-firms lever would then be $52,289 minus $20,224 base.
+4. **The Salesforce base rests on an unread contract.** The forensic pass said no Salesforce saving should be sized before the contract is read; the model sizes 15% of $3,117,226 at the prompt's request. The figure is the value of a negotiation the company cannot start until the contract and the usage data arrive (requests 2 and 3 in `insights.md`).
+5. **The one-off rule removes every individual from the unidentified-payee lever.** The six individuals and 13 other unidentified rows are non-recurring, so they sit in One-off spend that falls away at 0%; the lever holds the cluster's 18 recurring rows and the three unidentified contractors. Proposed: treat Unidentified and individual payees like the two recurring categories, so the stop-until-identified saving applies to the whole cluster ($50,939), worth $25,470 base rather than $17,809.
+6. **Couriers and marketplaces follow the office.** Eight courier and postage rows ($2,519) and the two Amazon marketplace rows ($1,340) take the Office running costs lever at 70% with `remote_operating_model`, although a remote company still ships parcels and the card policy removes the marketplaces whatever the office decision. Immaterial; proposed: 10% and no tag for the couriers.
+7. **Weking's saving rests on an unconfirmed entity.** The largest row under `group_engineering_sourcing` (`V0009`, $43,228 base) is a vendor whose entity Finance has not confirmed (question 3); the saving is provisional until it does.
+
+### 5. Where it is implemented
+
+- `docs/savings_assumptions.md`: rewritten, with the tenth decision, the five numbers per lever, the reasoning, the order of precedence and the analyst calls. `docs/recommendation_rules.md` names ten decisions and the restated vendor actions.
+- `scripts/savings_model.py` (new): the register parser, the lever map and the order of precedence, the figures, the roll-ups and the reconciliation. `scripts/03_savings.py` (new): writes `outputs/analysis/savings.csv` (one row per vendor, full precision) and `outputs/analysis/savings.md` (whole dollars: totals, excluded spend by reason, savings by opportunity, cluster and lever, the assumptions, the acquirer decisions with the value of each, the 15 largest vendor savings, the savings on non-recurring rows, the reconciliation and the analyst calls), then runs the savings checks. `scripts/04_insights.py` (new): writes `outputs/analysis/insights.md` from the files in the repository, checking that every row it names carries the fact it is used for.
+- `qa/check_outputs.py`: savings checks V1 to V8 (low <= base <= high; without decision <= base; year 1 = base times a factor between 0 and 1; no saving on a non-addressable or M&A row; no saving above spend; every row has one registered lever with the register's values and every lever is used, with the rows matching the classification; every tag is a registered decision; the roll-ups in `savings.md` equal the sums of the rows). They run once `savings.csv` exists, in `run()` and from `03_savings.py`. The self-test builds synthetic savings rows from the synthetic classification and the real register; 13 planted errors are added, 66 in all. S6's vendor actions are the three above, and `retag` finds the `depends_on` column by its header.
+- `scripts/merge_validate.py`: passes the savings paths to `run()`, so `qa/validation_report.md` lists the V checks (39 checks); its self-test passes paths that do not exist, so they show as pending there.
+- All 39 checks pass; both self-tests pass, with 66 and 16 planted errors.
+
+### 6. Result
+
+From `outputs/analysis/savings.md`:
+
+| Measure | Value |
+|---|---|
+| Total spend | $7,887,360 (386 rows) |
+| Recurring base | $7,556,683 (95.8%) |
+| Spend on levers with a base above 0% | $7,319,579 (92.8%) |
+| Run-rate saving, low / base / high | $1,577,593 / $2,247,348 / $3,113,593 (base 28.5% of spend) |
+| Without any acquirer decision | $1,283,210 (16.3%) |
+| Year 1 | $1,221,188 (15.5%) |
+| By opportunity (base) | Salesforce platform agreement $514,601; Office exit $671,503; Back office into group shared services $650,213; Second wave $411,030; Excluded $0 |
+| Value of each decision (base with it minus without it) | `remote_operating_model` $467,473; `group_auditor` $138,410; `group_talent_function` $131,906; `group_systems` $71,233; `group_engineering_sourcing` $43,267; `group_legal` $34,859; `group_insurance_programme` $34,776; `parent_crm_instance` $22,531; `group_payroll` $19,681; `group_it_procurement` $0 |
+
+The Top 3, the methodology, the memo and the README are not written in this step.
+
 ## 2026-11-11: SaaS department reading (prompt 17, step 3c)
 
 ### 1. The reading

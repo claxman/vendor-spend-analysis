@@ -316,7 +316,8 @@ def render(m: dict, clean: list[dict], paths: dict, items: list | None) -> str:
         lines += ["Not run yet.", ""]
     else:
         lines += ["The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural "
-                  "checks S1 to S6 and classification checks C1 to C18.", "",
+                  "checks S1 to S6, classification checks C1 to C18 and, once `outputs/analysis/savings.csv` exists, "
+                  "the savings checks V1 to V8 on it (step 4).", "",
                   *table(["Check", "Result", "Rule"], [[cid, status, rule] for cid, status, rule, _ in items]), ""]
     lines += ["## Failures", ""]
     if items is None:
@@ -348,7 +349,7 @@ def merge_and_validate(paths: dict, quiet: bool = False) -> tuple[int, list]:
     write_text(paths["report"], render(m, clean, paths, None))   # the section C17 reads
     check_outputs.FULL_DETAIL = True
     try:
-        res = check_outputs.run(paths["out"], paths["report"])
+        res = check_outputs.run(paths["out"], paths["report"], paths["savings"], paths["savings_report"])
     finally:
         check_outputs.FULL_DETAIL = False
     items = merge_items(m) + res.items
@@ -366,7 +367,8 @@ def merge_and_validate(paths: dict, quiet: bool = False) -> tuple[int, list]:
 
 def case_paths(case: Path) -> dict:
     return {"batches": case / "batches", "reasons": case / "verification_exceptions.csv",
-            "out": case / "vendors_classified.csv", "report": case / "validation_report.md"}
+            "out": case / "vendors_classified.csv", "report": case / "validation_report.md",
+            "savings": case / "savings.csv", "savings_report": case / "savings.md"}
 
 
 def write_rows(path: Path, rows: list[list[str]]) -> None:
@@ -492,7 +494,7 @@ def self_test() -> bool:
                           key=lambda r: (-float(r["spend_12m"]), id_key(r["vendor_id"])))
         verdict(low_ids == [r["vendor_id"] for r in want_low],
                 f"the low-confidence list holds the {len(want_low)} low-confidence rows, largest spend first")
-        rerun = check_outputs.run(p["out"], p["report"])
+        rerun = check_outputs.run(p["out"], p["report"], p["savings"], p["savings_report"])
         verdict([i[:2] for i in rerun.items] == [i[:2] for i in items if not i[0].startswith("M")],
                 "qa/check_outputs.py run again on the files as written gives the same results")
         first = (p["out"].read_bytes(), p["report"].read_bytes())
@@ -534,7 +536,8 @@ def main(argv: list[str]) -> int:
     if "--self-test" in argv:
         return 0 if self_test() else 1
     code, _ = merge_and_validate({"batches": BATCH_DIR, "reasons": REASONS, "out": check_outputs.CLASSIFIED,
-                                  "report": check_outputs.VALIDATION_REPORT})
+                                  "report": check_outputs.VALIDATION_REPORT, "savings": check_outputs.SAVINGS_CSV,
+                                  "savings_report": check_outputs.SAVINGS_MD})
     return code
 
 

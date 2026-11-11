@@ -22,6 +22,8 @@ Structural checks run now. The classification checks run once outputs/vendors_cl
 until then they are reported as pending. C17 reads only the "Verification exceptions" heading of
 qa/validation_report.md, which scripts/merge_validate.py writes from qa/verification_exceptions.csv; this
 script never writes it. scripts/merge_validate.py runs these checks through run(), with full details.
+The savings checks V1 to V8 (step 4) run once outputs/analysis/savings.csv exists: they read it against
+the classification, the register docs/savings_assumptions.md and the roll-up tables of savings.md.
 
 Usage:
     python qa/check_outputs.py              check the real files
@@ -43,11 +45,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
+from savings_model import (  # noqa: E402
+    MNA_CLUSTER, MONEY_COLUMNS, ROLLUP_HEADINGS, SAVING_COLUMNS, SAVINGS_COLUMNS, format_row, load_register,
+    render_rollup_sections, rollup, saving_row, to_float, totals as savings_totals,
+)
 from vsa_common import (  # noqa: E402
-    EM_DASH, EN_DASH, LINK_GROUPS, MERGE_GROUPS, names_group, rel, section_rows, strip_accents,
+    EM_DASH, EN_DASH, LINK_GROUPS, MERGE_GROUPS, money, names_group, rel, section_rows, strip_accents,
 )
 
 CLASSIFIED = ROOT / "outputs" / "vendors_classified.csv"
+SAVINGS_CSV = ROOT / "outputs" / "analysis" / "savings.csv"
+SAVINGS_MD = ROOT / "outputs" / "analysis" / "savings.md"
 CLEAN = ROOT / "outputs" / "vendors_clean.csv"
 GROUPS = ROOT / "qa" / "vendor_groups.csv"
 TAXONOMY = ROOT / "docs" / "taxonomy.md"
@@ -55,8 +63,10 @@ CLUSTERS = ROOT / "docs" / "clusters.md"
 VALIDATION_REPORT = ROOT / "qa" / "validation_report.md"
 EXCEPTIONS_HEADING = "Verification exceptions"
 SAVINGS_ASSUMPTIONS = ROOT / "docs" / "savings_assumptions.md"
-# The levers named in step 2f as purely vendor actions: their assumptions carry depends_on none.
-VENDOR_ACTION_LEVERS = ["Salesforce licence audit", "AWS savings plans", "Navan policy", "Insurance re-broke"]
+# The levers that are purely vendor actions: their assumptions carry depends_on none. Step 2f named the Salesforce
+# licence audit, AWS savings plans, Navan policy and the insurance re-broke; step 4 restated the licence audit as the
+# platform agreement and folded the re-broke into the without-decision case of the commercial insurance lever.
+VENDOR_ACTION_LEVERS = ["Salesforce platform agreement", "AWS", "Navan"]
 
 # The columns of the classification spec, in its order (docs/decisions.md, step 2d-fix).
 REQUIRED_COLUMNS = ["vendor_id", "vendor_name_original", "vendor_name_clean", "spend_12m", "department",
@@ -477,6 +487,7 @@ SYNTHETIC_VALIDATION_REPORT = "\n".join([
     "- V0004 BDO LLP is mentioned here, outside the heading, and does not count.",
 ])
 SYNTHETIC_UNVERIFIED = ["V0009", "V0160", "V0325"]
+SYNTHETIC_MNA = ["V0013", "V0031", "V0035", "V0036"]   # the M&A rows, so that the savings checks meet that cluster
 
 
 def synthetic(clean: list[dict]) -> list[dict]:
@@ -524,6 +535,8 @@ def synthetic(clean: list[dict]) -> list[dict]:
     for vid in SYNTHETIC_UNVERIFIED:
         by_id[vid]["verified"] = "FALSE"
         by_id[vid]["source_url"] = ""
+    for vid in SYNTHETIC_MNA:
+        by_id[vid]["cost_cluster"] = MNA_CLUSTER
     return rows
 
 
@@ -659,10 +672,13 @@ def retag(lever: str, tag: str):
     """Edit docs/savings_assumptions.md text: give the lever's row this depends_on cell."""
     def mutate(text: str) -> str:
         lines = text.splitlines()
+        col = None
         for i, line in enumerate(lines):
-            if line.startswith(f"| {lever} |"):
+            if line.startswith("| Lever |"):
+                col = [c.strip() for c in line.strip().strip("|").split("|")].index("depends_on")
+            elif col is not None and line.startswith(f"| {lever} |"):
                 cells = line.strip().strip("|").split("|")
-                cells[-1] = f" {tag} "
+                cells[col] = f" {tag} "
                 lines[i] = "|" + "|".join(cells) + "|"
                 return "\n".join(lines) + "\n"
         raise AssertionError(f"self-test lever not found: {lever}")
@@ -671,11 +687,251 @@ def retag(lever: str, tag: str):
 
 # Planted errors in the real docs/savings_assumptions.md text, each to be caught by S6.
 DOC_MUTATIONS = [
-    ("Assumption without a depends_on tag", retag("Law firms", "")),
-    ("Tag that is not a registered decision", retag("Insurers", "`group_finance`")),
-    ("none together with a decision name", retag("Tail spend", "`none`, `group_systems`")),
-    ("Lever named as a vendor action tagged with a decision", retag("Navan policy", "`remote_operating_model`")),
+    ("Assumption without a depends_on tag", retag("Law firms and legal resourcing", "")),
+    ("Tag that is not a registered decision", retag("Commercial insurance through brokers", "`group_finance`")),
+    ("none together with a decision name", retag("Unidentified and individual payees", "`none`, `group_systems`")),
+    ("Lever named as a vendor action tagged with a decision", retag("Navan", "`remote_operating_model`")),
 ]
+
+
+# ---------------------------------------------------------------- savings checks (step 4)
+
+def savings_checks(res: Results, srows: list[dict], rows: list[dict], register_text: str,
+                   savings_text: str | None) -> None:
+    """V1 to V8 on outputs/analysis/savings.csv, read against the classification, the register and savings.md."""
+    decisions, levers, register_problems = load_register(register_text)
+    cols = set(srows[0].keys()) if srows else set()
+    missing_cols = [c for c in SAVINGS_COLUMNS if c not in cols]
+    if missing_cols or not srows:
+        for cid in ("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"):
+            res.add(cid, "Savings check", False, f"savings file unusable; missing columns: {', '.join(missing_cols) or 'none'}"
+                    + ("; no rows" if not srows else ""))
+        return
+    by_id = {r["vendor_id"]: r for r in rows}
+    tol = 1e-6
+
+    bad = [f"{s['vendor_id']}: {s['pct_low']} / {s['pct_base']} / {s['pct_high']}" for s in srows
+           if not (0 <= to_float(s["pct_low"]) <= to_float(s["pct_base"]) <= to_float(s["pct_high"]) <= 100)]
+    res.add("V1", "pct_low <= pct_base <= pct_high on every row, all within 0 and 100", not bad,
+            f"bad: {sample(bad) or 'none'}")
+
+    bad = [f"{s['vendor_id']}: without {s['pct_without_decision']} against base {s['pct_base']}" for s in srows
+           if not (0 <= to_float(s["pct_without_decision"]) <= to_float(s["pct_base"]))
+           or (s["depends_on"].strip() == "none" and to_float(s["pct_without_decision"]) != to_float(s["pct_base"]))]
+    res.add("V2", "pct_without_decision <= pct_base on every row, and equal to it on untagged rows", not bad,
+            f"bad: {sample(bad) or 'none'}")
+
+    bad = [f"{s['vendor_id']}: year 1 {s['saving_year1']} against base {s['saving_base']} at factor {s['year1_factor']}"
+           for s in srows
+           if not (0 <= to_float(s["year1_factor"]) <= 1) or to_float(s["saving_year1"]) > to_float(s["saving_base"]) + tol
+           or abs(to_float(s["saving_year1"]) - to_float(s["saving_base"]) * to_float(s["year1_factor"])) > tol]
+    res.add("V3", "The year-1 saving is the base saving times a factor between 0 and 1, so never above the base", not bad,
+            f"bad: {sample(bad) or 'none'}")
+
+    bad = []
+    for s in srows:
+        c = by_id.get(s["vendor_id"])
+        if c and (c["is_addressable"] == "FALSE" or c["cost_cluster"] == MNA_CLUSTER) \
+                and any(to_float(s[col]) != 0 for col in SAVING_COLUMNS):
+            bad.append(f"{s['vendor_id']} ({'not addressable' if c['is_addressable'] == 'FALSE' else 'M&A'}): "
+                       f"base {s['saving_base']}")
+    res.add("V4", "No saving on a row that is not addressable or in the M&A cluster", not bad, f"bad: {sample(bad) or 'none'}")
+
+    bad = [f"{s['vendor_id']}: spend {s['spend_12m']}, high {s['saving_high']}" for s in srows
+           if to_float(s["spend_12m"]) < 0 or math.isnan(to_float(s["spend_12m"]))
+           or any(to_float(s[col]) > to_float(s["spend_12m"]) + tol for col in SAVING_COLUMNS)]
+    res.add("V5", "No saving above the row's spend, and spend is a non-negative number", not bad,
+            f"bad: {sample(bad) or 'none'}")
+
+    unregistered = [f"{s['vendor_id']}: {s['lever']}" for s in srows if s["lever"] not in levers]
+    inconsistent = []
+    for s in srows:
+        f = levers.get(s["lever"])
+        if f is None:
+            continue
+        spend = to_float(s["spend_12m"])
+        wrong = [c for c in ("pct_low", "pct_base", "pct_high", "pct_without_decision", "year1_factor")
+                 if abs(to_float(s[c]) - f[c]) > tol]
+        wrong += [c for c, p in zip(SAVING_COLUMNS[:4], ("pct_low", "pct_base", "pct_high", "pct_without_decision"))
+                  if abs(to_float(s[c]) - spend * f[p] / 100) > tol]
+        if s["opportunity"] != f["opportunity"]:
+            wrong.append("opportunity")
+        if s["depends_on"] != ", ".join(f["depends_on"]):
+            wrong.append("depends_on")
+        if wrong:
+            inconsistent.append(f"{s['vendor_id']}: {', '.join(wrong)} differ from the register")
+    unused = sorted(set(levers) - {s["lever"] for s in srows})
+    seen: dict[str, int] = defaultdict(int)
+    for s in srows:
+        seen[s["vendor_id"]] += 1
+    dupes = sorted(v for v, n in seen.items() if n > 1)
+    missing = [v for v in by_id if v not in seen]
+    extra = [v for v in seen if v not in by_id]
+    mismatched = [f"{s['vendor_id']}: {', '.join(c for c in ('spend_12m', 'cost_cluster', 'vendor_name_clean') if s[c] != by_id[s['vendor_id']][c])}"
+                  for s in srows if s["vendor_id"] in by_id
+                  and any(s[c] != by_id[s["vendor_id"]][c] for c in ("spend_12m", "cost_cluster", "vendor_name_clean"))]
+    other_register = [p for p in register_problems if "decision" not in p]
+    ok6 = not (unregistered or inconsistent or unused or dupes or missing or extra or mismatched or other_register)
+    res.add("V6", "Every row has one registered lever with the register's values, every lever is used, and the rows "
+                  "are the classification's rows with their spend, cluster and name", ok6,
+            f"{len(levers)} levers, {len(srows)} rows; unregistered: {sample(unregistered) or 'none'}; differing from the "
+            f"register: {sample(inconsistent) or 'none'}; unused levers: {sample(unused) or 'none'}; duplicated: "
+            f"{sample(dupes) or 'none'}; missing: {sample(missing) or 'none'}; extra: {sample(extra) or 'none'}; "
+            f"spend, cluster or name mismatches: {sample(mismatched) or 'none'}; register problems: "
+            f"{sample(other_register) or 'none'}")
+
+    bad = []
+    for s in srows:
+        tags = [t.strip().strip("`") for t in s["depends_on"].split(",") if t.strip()]
+        if not tags or ("none" in tags and len(tags) > 1) or any(t != "none" and t not in decisions for t in tags):
+            bad.append(f"{s['vendor_id']}: {s['depends_on']!r}")
+    bad += [f"register: {p}" for p in register_problems if "decision" in p]
+    res.add("V7", "Every depends_on tag, on the rows and in the register, is none or a registered decision", not bad,
+            f"{len(decisions)} decisions; bad: {sample(bad) or 'none'}")
+
+    bad = []
+    if savings_text is None:
+        bad.append(f"{rel(SAVINGS_MD)} not found")
+    else:
+        tot = savings_totals(srows)
+        for key, heading in ROLLUP_HEADINGS.items():
+            try:
+                rows_md = section_rows(savings_text, heading)
+            except SystemExit:
+                bad.append(f"no section {heading!r}")
+                continue
+            if not rows_md:
+                bad.append(f"{heading}: no table")
+                continue
+            header = rows_md[0]
+            if any(c not in header for c in MONEY_COLUMNS):
+                bad.append(f"{heading}: columns missing")
+                continue
+            idx = {c: header.index(c) for c in MONEY_COLUMNS}
+            expected = rollup(srows, key)
+            listed = {}
+            for r in rows_md[1:]:
+                if len(r) != len(header):
+                    bad.append(f"{heading}: a row with {len(r)} cells")
+                    continue
+                listed[r[0]] = {c: r[i] for c, i in idx.items()}
+            for name, sums in expected.items():
+                if name not in listed:
+                    bad.append(f"{heading}: {name} missing")
+                    continue
+                wrong = [c for c, col in MONEY_COLUMNS.items() if listed[name][c] != money(sums[col])]
+                if wrong:
+                    bad.append(f"{heading}: {name} differs on {', '.join(wrong)}")
+            for name in listed:
+                if name not in expected and name != "Total":
+                    bad.append(f"{heading}: {name} is not a group in the file")
+            if "Total" not in listed:
+                bad.append(f"{heading}: no Total row")
+            elif any(listed["Total"][c] != money(tot[col]) for c, col in MONEY_COLUMNS.items()):
+                bad.append(f"{heading}: the Total row differs from the vendor rows")
+    res.add("V8", f"The roll-ups by opportunity, cluster and lever in {rel(SAVINGS_MD)} equal the sums of the vendor rows, "
+                  "and their totals equal the file's total", not bad, f"bad: {sample(bad) or 'none'}")
+
+
+def synthetic_savings(rows: list[dict], levers: dict[str, dict]) -> list[dict]:
+    """Savings rows for the synthetic classification that satisfy every savings check: rows outside the savings
+    base and in the M&A cluster take 0% levers, every other row cycles through the whole register."""
+    names = list(levers)
+    zero = [n for n in names if levers[n]["pct_high"] == 0]
+    out = []
+    for k, r in enumerate(rows):
+        if r["is_addressable"] == "FALSE" or r["cost_cluster"] == MNA_CLUSTER:
+            name = zero[k % len(zero)]
+        else:
+            name = names[k % len(names)]
+        out.append(format_row(saving_row(r, name, levers[name])))
+    return out
+
+
+def set_saving(vid: str, col: str, value):
+    def mutate(srows, rows, text):
+        for s in srows:
+            if s["vendor_id"] == vid:
+                s[col] = str(value(s) if callable(value) else value)
+        return srows, rows, text
+    return mutate
+
+
+def reassign(vid: str, lever_name: str, levers: dict[str, dict], cluster: str | None = None):
+    """Give the row this lever with values consistent with the register (and this cluster, in both files)."""
+    def mutate(srows, rows, text):
+        for r in rows:
+            if r["vendor_id"] == vid and cluster:
+                r["cost_cluster"] = cluster
+        for i, s in enumerate(srows):
+            if s["vendor_id"] == vid:
+                r = next(r for r in rows if r["vendor_id"] == vid)
+                srows[i] = format_row(saving_row(r, lever_name, levers[lever_name]))
+        return srows, rows, text
+    return mutate
+
+
+def move_lever(old: str, new: str, levers: dict[str, dict]):
+    def mutate(srows, rows, text):
+        by_id = {r["vendor_id"]: r for r in rows}
+        for i, s in enumerate(srows):
+            if s["lever"] == old:
+                srows[i] = format_row(saving_row(by_id[s["vendor_id"]], new, levers[new]))
+        return srows, rows, text
+    return mutate
+
+
+def drop_saving_row(vid: str):
+    def mutate(srows, rows, text):
+        return [s for s in srows if s["vendor_id"] != vid], rows, text
+    return mutate
+
+
+def edit_rollup(line_start: str, heading: str, change):
+    """Edit the first table line under `heading` in savings.md that starts with `line_start`."""
+    def mutate(srows, rows, text):
+        assert text is not None
+        head, sep, tail = text.partition(f"## {heading}\n")
+        assert sep, f"self-test section not found: {heading}"
+        lines = tail.split("\n")
+        for i, line in enumerate(lines):
+            if line.startswith("## "):
+                break
+            if line.startswith(line_start):
+                lines[i] = change(line)
+                return srows, rows, head + sep + "\n".join(lines)
+        raise AssertionError(f"self-test row not found: {line_start}")
+    return mutate
+
+
+def first_row_base_above_zero(srows: list[dict]) -> dict:
+    return next(s for s in srows if to_float(s["saving_base"]) > 0)
+
+
+# (title, change, the check that must fail, whether savings.md is rendered again after the change)
+def savings_mutations(levers: dict[str, dict]) -> list[tuple]:
+    names = list(levers)
+    nonzero = next(n for n in names if levers[n]["pct_base"] > 0)
+    return [
+        ("pct_low above pct_base", set_saving("V0005", "pct_low", "99"), "V1", True),
+        ("pct_without_decision above pct_base", set_saving("V0005", "pct_without_decision", "99"), "V2", True),
+        ("Year-1 saving above the base saving",
+         set_saving(None, "saving_year1", None), "V3", True),   # filled in below
+        ("A saving on a row outside the savings base", set_saving("V0015", "saving_base", "1"), "V4", True),
+        ("A saving on an M&A row", reassign("V0013", nonzero, levers), "V4", True),
+        ("A saving above the row's spend", set_saving("V0005", "saving_high", lambda s: to_float(s["spend_12m"]) * 2),
+         "V5", True),
+        ("A lever that is not in the register", set_saving("V0005", "lever", "Synthetic lever"), "V6", True),
+        ("A registered lever left unused", move_lever(names[0], names[1], levers), "V6", True),
+        ("A vendor row missing from the savings file", drop_saving_row("V0387"), "V6", True),
+        ("spend_12m that differs from the classification", set_saving("V0005", "spend_12m", "1"), "V6", True),
+        ("A depends_on tag that is not a registered decision", set_saving("V0005", "depends_on", "group_finance"), "V7",
+         True),
+        ("A roll-up figure edited in the lever table",
+         edit_rollup(f"| {names[0]} |", ROLLUP_HEADINGS["lever"], lambda line: line.replace("$", "$9", 1)), "V8", False),
+        ("An opportunity row removed from its roll-up",
+         edit_rollup("| Office exit |", ROLLUP_HEADINGS["opportunity"], lambda line: ""), "V8", False),
+    ]
 
 
 def self_test(clean: list[dict]) -> bool:
@@ -711,22 +967,59 @@ def self_test(clean: list[dict]) -> bool:
         _, _, problems = tag_problems(mutate(doc))
         all_ok &= bool(problems)
         print(f"{'PASS' if problems else 'FAIL'}    planted error caught by S6: {title} ({'; '.join(problems) or 'none'})")
-    print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus {len(MUTATIONS) + len(DOC_MUTATIONS)} "
-          "planted errors")
+
+    # The savings checks, on savings rows built from the synthetic classification and the real register.
+    decisions, levers, register_problems = load_register(doc)
+    base_savings = synthetic_savings(base_rows, levers)
+    base_text = render_rollup_sections(base_savings, levers)
+    res = Results()
+    savings_checks(res, copy.deepcopy(base_savings), copy.deepcopy(base_rows), doc, base_text)
+    clean_ok = not res.failed() and not register_problems
+    all_ok &= clean_ok
+    print(f"{'PASS' if clean_ok else 'FAIL'}    synthetic savings rows that follow the register pass all {len(res.items)} "
+          f"savings checks ({len(levers)} levers, {len(decisions)} decisions)"
+          + ("" if clean_ok else f" (failed: {', '.join(res.failed())}; register: {'; '.join(register_problems)})"))
+    if not clean_ok:
+        res.show()
+    mutations = savings_mutations(levers)
+    year1_row = first_row_base_above_zero(base_savings)
+    mutations[2] = ("Year-1 saving above the base saving",
+                    set_saving(year1_row["vendor_id"], "saving_year1", lambda s: to_float(s["saving_base"]) * 2), "V3",
+                    True)
+    for title, mutate, expected, rerender in mutations:
+        srows, rows, text = mutate(copy.deepcopy(base_savings), copy.deepcopy(base_rows), base_text)
+        if rerender:
+            text = render_rollup_sections(srows, levers)
+        res = Results()
+        savings_checks(res, srows, rows, doc, text)
+        caught = expected in res.failed()
+        all_ok &= caught
+        print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
+              f" (checks failing: {', '.join(res.failed()) or 'none'})")
+    print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus "
+          f"{len(MUTATIONS) + len(DOC_MUTATIONS) + len(mutations)} planted errors")
     return all_ok
 
 
 # ---------------------------------------------------------------- main
 
-def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT) -> Results:
-    """The structural checks, then the classification checks once `classified` exists. main() calls it on the
-    real files; scripts/merge_validate.py calls it on the files it has just written."""
+def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT, savings: Path = SAVINGS_CSV,
+        savings_report: Path = SAVINGS_MD) -> Results:
+    """The structural checks, then the classification checks once `classified` exists, then the savings checks once
+    `savings` exists. main() calls it on the real files; scripts/merge_validate.py calls it on the files it has just
+    written, and scripts/03_savings.py runs the savings checks on its own output."""
     clean = read_csv(CLEAN)
     res = Results()
     structural_checks(res, clean)
     if classified.exists():
         validation_text = report.read_text(encoding="utf-8") if report.exists() else None
-        classification_checks(res, read_csv(classified), clean, validation_text)
+        rows = read_csv(classified)
+        classification_checks(res, rows, clean, validation_text)
+        if savings.exists():
+            savings_text = savings_report.read_text(encoding="utf-8") if savings_report.exists() else None
+            savings_checks(res, read_csv(savings), rows, SAVINGS_ASSUMPTIONS.read_text(encoding="utf-8"), savings_text)
+        else:
+            res.add("V*", "Savings checks V1 to V8", None, f"{rel(savings)} not produced yet")
     else:
         res.add("C*", "Classification checks C1 to C18", None, f"{rel(classified)} not produced yet")
     return res

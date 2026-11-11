@@ -2,7 +2,7 @@
 
 Written by `scripts/merge_validate.py`, which merged the batch files in `outputs/batches/` into `outputs/vendors_classified.csv`, sorted by `vendor_id` (the original sheet order), and ran `qa/check_outputs.py` on it. The report is rebuilt on every run and is not edited by hand: the reason for a row with `verified` FALSE goes in `qa/verification_exceptions.csv`.
 
-**Result: PASS.** All 31 checks passed.
+**Result: PASS.** All 39 checks passed.
 
 ## Counts
 
@@ -291,7 +291,7 @@ Every row with `verified` FALSE, by `vendor_id`, with a one-line reason, as kept
 
 ## Checks
 
-The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6 and classification checks C1 to C18.
+The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C18 and, once `outputs/analysis/savings.csv` exists, the savings checks V1 to V8 on it (step 4).
 
 | Check | Result | Rule |
 |---|---|---|
@@ -326,7 +326,15 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | C16 | PASS | Every Terminate and Consolidate row has a risk_note; Optimize rows have none, except V0002 (step 3b) |
 | C17 | PASS | Every row is verified TRUE, or FALSE and listed with a reason under "Verification exceptions" in qa/validation_report.md; every listed id is FALSE in the file |
 | C18 | PASS | vendor_name_original and vendor_name_clean match outputs/vendors_clean.csv by vendor_id, and the rows are in the original sheet order (vendor_id ascending) |
+| V1 | PASS | pct_low <= pct_base <= pct_high on every row, all within 0 and 100 |
+| V2 | PASS | pct_without_decision <= pct_base on every row, and equal to it on untagged rows |
+| V3 | PASS | The year-1 saving is the base saving times a factor between 0 and 1, so never above the base |
+| V4 | PASS | No saving on a row that is not addressable or in the M&A cluster |
+| V5 | PASS | No saving above the row's spend, and spend is a non-negative number |
+| V6 | PASS | Every row has one registered lever with the register's values, every lever is used, and the rows are the classification's rows with their spend, cluster and name |
+| V7 | PASS | Every depends_on tag, on the rows and in the register, is none or a registered decision |
+| V8 | PASS | The roll-ups by opportunity, cluster and lever in outputs/analysis/savings.md equal the sums of the vendor rows, and their totals equal the file's total |
 
 ## Failures
 
-None: all 31 checks passed.
+None: all 39 checks passed.

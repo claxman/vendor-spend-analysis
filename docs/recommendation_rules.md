@@ -63,7 +63,7 @@ Every row carries `is_addressable` (decision of 2026-11-10):
 - FALSE for statutory payees (taxes, government and municipal fees, regulators and statutory registrations, statutory workers' compensation and occupational health) and for customer-mandated fees, the Telefónica payments included. They are excluded from the savings base.
 - TRUE for everything else, student labour included.
 
-A savings assumption is the share of addressable spend the savings script counts as saved, written next to the figure it produces (`CLAUDE.md`). Two are fixed now; the rest are set lever by lever in the savings step.
+A savings assumption is the share of addressable spend the savings script counts as saved, written next to the figure it produces (`CLAUDE.md`). Two were fixed here first; the rest were set lever by lever in step 4, as low, base and high cases with a without-decision case and a year-1 factor (`docs/savings_assumptions.md`, `outputs/analysis/savings.md`).
 
 | Spend | `is_addressable` | Savings assumption | Rationale |
 |---|---|---|---|
@@ -74,7 +74,7 @@ Every assumption is also entered in `docs/savings_assumptions.md` with its `depe
 
 ## Savings that depend on the acquirer's decisions
 
-Decided in steps 2e and 2f (prompts 13 and 14). A savings assumption that holds only if the acquirer makes a particular choice is tagged with that decision's name in a `depends_on` column, in `docs/savings_assumptions.md` and in `outputs/analysis/savings.md` next to the figure. There are nine decisions: the remote operating model, the group talent function, the group insurance programme, the group auditor, the parent CRM instance and group IT procurement (step 2e), and group payroll, group systems and group legal (step 2f). A lever that is purely a vendor action carries `none`; the cases named are the Salesforce licence audit, AWS savings plans, Navan policy and the insurance re-broke. `docs/savings_assumptions.md` gives the tag names and the tag of every lever.
+Decided in steps 2e and 2f (prompts 13 and 14). A savings assumption that holds only if the acquirer makes a particular choice is tagged with that decision's name in a `depends_on` column, in `docs/savings_assumptions.md` and in `outputs/analysis/savings.md` next to the figure. There are ten decisions: the remote operating model, the group talent function, the group insurance programme, the group auditor, the parent CRM instance and group IT procurement (step 2e), group payroll, group systems and group legal (step 2f), and group engineering sourcing (step 4). A lever that is purely a vendor action carries `none`; the cases named in step 2f were the Salesforce licence audit, AWS savings plans, Navan policy and the insurance re-broke, and from step 4 the licence audit is restated as the Salesforce platform agreement lever while the re-broke is the without-decision case of the commercial insurance lever. `docs/savings_assumptions.md` gives the tag names, and the tag, the percentages and the year-1 factor of every lever.
 
 The memo presents the Top 3 as decisions with their value, not as facts about the parent: what the CEO and CFO would decide, what it is worth a year under the stated assumption, and which decision the value depends on. The spend file shows what the company spends, not what the parent has or runs.
 
