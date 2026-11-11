@@ -188,3 +188,99 @@ Then make these changes and record each one in docs/decisions.md under a new hea
 
 Re-run scripts/merge_validate.py and both self-tests; everything must pass. Print the new department distribution by spend. Commit as "Step 3b: platform reclassification and housekeeping" and push.
 ```
+
+## Prompt 17 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 17. It has two parts, one commit each.
+
+PART A: department reading for "SaaS" (step 3c)
+
+The Config list names the functions of a software company: Engineering, Product, Support, Professional Services, SaaS, Sales, Marketing, G&A, Finance, Legal, Facilities, M&A. Read that way, "SaaS" is the function that runs the hosted product, not a label for any software subscription. Rewrite the rule in docs/taxonomy.md:
+- SaaS holds the platform and hosting the product runs on and the tools that keep it running: platform and ISV licences, cloud hosting, monitoring and logging, DNS and domains, and third-party components delivered with the product.
+- Company-wide software with no single owning function (productivity suites, messaging, meetings, e-signature, password management, automation and work-management tools) goes to G&A, with a sub_function that starts "Corporate IT".
+- Software used by one function stays with that function. Developer tools stay in Engineering.
+
+Reclassify by that rule and list every row you move:
+- V0002 Salesforce UK and V0006 PDF Butler to SaaS.
+- AWS (V0014, V0103) and the hosting, monitoring, logging, DNS and domain rows now in Engineering to SaaS.
+- The rows now in SaaS to G&A or to the function that uses them. The Google reseller moves to SaaS only if its verified description shows cloud hosting rather than Workspace licences.
+Change a description only where it names the owning team. Record the decision in docs/decisions.md as "SaaS department reading (prompt 17, step 3c)" with this reasoning, the alternative reading (SaaS as a bucket for subscriptions), and the point that platform and hosting rows fit SaaS under either reading. Update the fixed-outcome checks, re-run scripts/merge_validate.py and both self-tests, print the department distribution by spend, and commit as "Step 3c: SaaS department reading".
+
+PART B: savings model and insights (step 4)
+
+Read docs/savings_assumptions.md and the two open points in the step 3b decisions entry first.
+
+1. Register
+- Add a tenth acquirer decision, group_engineering_sourcing: contractor consultancies are replaced by the group's own engineering sourcing.
+- Restate the Salesforce levers for the platform reading: the lever on V0002 is the platform agreement renegotiated at change of control, with internal seats trued down separately. It is a vendor action and carries no tag.
+- Every lever carries pct_low, pct_base and pct_high (run-rate saving as a share of 12-month spend), pct_without_decision (what vendor action alone achieves if the tagged acquirer decision is not taken; equal to pct_base for untagged levers), year1_factor (the share of the first 12 months in which the saving is live), depends_on, and one sentence of reasoning. Convention for year1_factor: 0.5 where the renewal or notice date is unknown, higher for policy changes that start within 90 days, lower where the change waits for a year-end or a migration.
+
+2. Assumptions, written as low / base / high; without decision; year-1 factor; tag. Map them onto the registered levers by each row's cluster and sub_function, splitting or adding levers where needed. Every row ends with exactly one lever. If the data contradicts an assumption, keep the assumption, and say so with your proposed change in the final summary.
+
+Salesforce platform
+- Salesforce UK (V0002): 10 / 15 / 25; 0.5; no tag. The base sits below the usual licence-audit range because part of this spend is platform and ISV fees that do not shrink with a seat count, and the contract is not visible.
+- PDF Butler (V0006): 10 / 20 / 30; 0.5; no tag.
+- Kimble: 5 / 10 / 15; 0.5; no tag.
+- Slack and Yoxel: 0, negotiated inside the Salesforce renewal.
+
+Office
+- Office footprint: 60 / 75 / 90; without decision 25 (right-size onto one flexible provider); 0.5; remote_operating_model. The base keeps a quarter of the spend for a touchdown space at the engineering hub and registered addresses.
+- Office running costs: 50 / 70 / 80; without decision 20; 0.5; remote_operating_model.
+
+Back office
+- Audit, tax and accounting firms: 25 / 35 / 45; without decision 10 (tender); 0.4 because an auditor changes at the financial year-end; group_auditor.
+- Corporate secretarial, registered agent and share registry: 10 / 20 / 30; 0.5; no tag.
+- R&D tax credit adviser paid as a share of the claim: 0. The fee is contingent on cash recovered, so cutting it reduces cash.
+- Law firms and legal resourcing: 20 / 30 / 40; without decision 10; 0.6; group_legal.
+- Employment-law firms paid small one-off sums that fit settlement-agreement advice for departing employees (V0230, V0231, V0241 and any other row the same test fits): 0. These are one payment per leaver, not a vendor relationship.
+- Recruitment agencies and job boards: 80 / 100 / 100; without decision 30 (preferred suppliers and a fee cap); 0.9; group_talent_function. Say in the reasoning that this spend follows hiring volume.
+- LinkedIn: 20 / 30 / 50; without decision 20; 0.6; group_talent_function.
+- Employer-of-record providers: 10 / 15 / 25; without decision 0; 0.5; group_payroll. These invoices usually carry the employees' pay as a pass-through, so only the service fee is addressable.
+- Payroll processing providers: 25 / 40 / 60; without decision 10; 0.5; group_payroll.
+- Commercial insurance placed through brokers: 15 / 25 / 35; without decision 10 (re-broke); 0.5; group_insurance_programme.
+- Employee health and life insurance: 5 / 10 / 15; without decision 5; 0.5; group_insurance_programme. Benefits are part of pay, so the lever is broking and scheme terms, not cover.
+- Statutory workers' compensation, salary-sacrifice schemes, meal cards and gym schemes: 0. Pay and statutory cover are people decisions outside a vendor model.
+- Finance and HR systems the group would replace (accounting, planning, engagement, performance) and HubSpot: 60 / 80 / 100; without decision 10; 0.25 because the saving starts after migration; group_systems, and parent_crm_instance for HubSpot. The base nets off extra seats on the group's systems.
+
+Second wave
+- Navan: 15 / 25 / 35; 0.75; no tag.
+- Other travel, hotels, restaurants and food through AP: 30 / 50 / 70; 0.75; no tag. Part of this spend returns through expenses.
+- Team events, perks and wellness: 40 / 60 / 75; 0.75; no tag. The rest stays as a per-head culture budget.
+- Other software subscriptions: 15 / 25 / 35; 0.6; no tag.
+- AWS: 10 / 20 / 30; 0.6; no tag.
+- Telecom and internet providers: 25 / 40 / 60; without decision 15; 0.5; remote_operating_model.
+- Other cloud and IT, including employee hardware: 5 / 10 / 20; 0.6; no tag.
+- Marketing agencies: 30 / 50 / 70; 0.75; no tag.
+- TM Forum: 0 / 0 / 100; no tag. It is a go-to-market credential; the high case applies only if the parent holds a membership that covers subsidiaries.
+- Other marketing, media and events: 20 / 30 / 50; 0.75; no tag.
+- Outsourced engineering and contractors: 20 / 30 / 40; without decision 10; 0.5; group_engineering_sourcing. The work continues, so the saving is the rate difference.
+- Unidentified and individual payees: 30 / 50 / 70; 0.75; no tag.
+
+Excluded, each on its own line in the report
+- M&A and transaction costs: 0, non-recurring, falls away without action.
+- Customer-mandated platform fees, Statutory and government, Student labour: 0.
+- Any other row with is_recurring FALSE gets 0 and is reported as one-off spend that falls away, except in "Travel and entertainment" and "Team events, perks and wellness", where the category recurs even when the payee does not.
+
+3. Opportunities. Each lever belongs to one: "Salesforce platform agreement" (the Salesforce platform levers), "Office exit" (the two office levers), "Back office into group shared services" (the levers under Back office), "Second wave", or "Excluded".
+
+4. scripts/03_savings.py reads outputs/vendors_classified.csv and the register, hard-codes no spend figure, and writes:
+- outputs/analysis/savings.csv, one row per vendor: vendor_id, name, spend, cluster, lever, opportunity, the four percentages, year1_factor, depends_on, run-rate saving low, base and high, saving without the decision, year-1 saving.
+- outputs/analysis/savings.md: total spend; recurring base; excluded spend by reason; savings by opportunity and by cluster (run-rate low, base and high, without decision, year 1, share of spend); one table of acquirer decisions with the saving with each, without it, and the difference as the value of that decision; the 15 largest vendor savings; the savings that sit on non-recurring rows; and a reconciliation showing vendor rows sum to levers, clusters and opportunities to the cent. Whole dollars in the markdown, full precision in the CSV.
+
+5. QA. Add checks to qa/check_outputs.py, each with a planted error: low <= base <= high; without decision <= base; year 1 <= base; no saving on a non-addressable or M&A row; no saving above spend; every row has one registered lever and every lever is used; every tag is a registered decision; the roll-ups reconcile. Re-run both self-tests.
+
+6. outputs/analysis/insights.md, built only from files in the repository, one short section each with figures and vendor_ids:
+- platform dependency and concentration (top 1, 10 and 50; the Salesforce platform share);
+- what falls away without action, the recurring base, and the sale-related share that may sit inside BDO, Bisley Law and Grant Thornton;
+- vendors that must not be cut: customer-mandated fees, escrow, certification, statutory payees, salary-sacrifice schemes, the contingent-fee tax adviser;
+- control findings: duplicate vendor records and the duplicate-payment review they call for; individual and unnamed payees; the law firm filed as non-trading (V0018); sole traders paid at contractor scale; retail merchants in the vendor master and the vendor count once a card policy removes them;
+- the country and legal-entity footprint shown by statutory, payroll, secretarial and insurance vendors, and the audit, payroll and secretarial cost that follows it;
+- software overlap, as a count of tools per function;
+- signs of leavers in the last 12 months and what they imply for seat and space counts;
+- retention risk at the engineering hub (perks, contractors and student labour in Croatia);
+- timing constraints: insurance renewals, audit year-end, lease notice, system migration;
+- data limits and the requests that follow: monthly AP ledger, contract register with renewal and notice dates, the Salesforce contract and usage, headcount by site and entity.
+
+Do not write the Top 3, methodology, memo or README yet. Commit as "Step 4: savings model and insights" and push. Then print savings.md in full, the lever table, every row where you chose the lever yourself, and every assumption you would change.
+```

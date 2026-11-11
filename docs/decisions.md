@@ -2,13 +2,78 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-11: SaaS department reading (prompt 17, step 3c)
+
+### 1. The reading
+
+- The workbook's `Config` list names the functions of a software company: Engineering, Product, Support, Professional Services, SaaS, Sales, Marketing, G&A, Finance, Legal, Facilities, M&A. Read that way, SaaS is the function that runs the hosted product, not a label for any software subscription. A department answers "whose budget is this", and the platform the product runs on, its hosting and the tools that keep it running are the SaaS function's budget.
+- The alternative reading, SaaS as a bucket for subscriptions with no single owning function, was the rule from prompt 6 until this step. It put $151,092 of company-wide tools (Google Workspace, Microsoft 365, Slack, Atlassian and the rest) under SaaS and left the platform, hosting and monitoring in Engineering. It answers "what kind of purchase is this" rather than "whose budget is this", which is the question the department column asks.
+- Under either reading the platform and hosting rows fit SaaS: Salesforce, PDF Butler, AWS, Papertrail, SolarWinds, UptimeRobot, GoDaddy and DNSimple are subscriptions to hosted services and the cost of running a hosted product. Only the company-wide tools move with the choice of reading, and they go to G&A as corporate IT.
+
+### 2. The rule
+
+`docs/taxonomy.md` rule 2 is rewritten, and rules 1, 7 and 9, the departments table and tie-breaks T2 and T5 follow it:
+
+- SaaS holds the platform and hosting the product runs on and the tools that keep it running: platform and ISV licences, cloud hosting, monitoring and logging, DNS and domains, and third-party components delivered with the product.
+- Company-wide software with no single owning function (productivity suites, messaging, meetings, e-signature, password management, automation and work-management tools) goes to G&A, with a `sub_function` that starts "Corporate IT".
+- Software used by one function stays with that function. Developer tools stay in Engineering.
+
+`docs/clusters.md` changes only its sentences on Slack and PDF Butler; no cluster moves.
+
+### 3. Rows moved
+
+23 rows. A description changed only where it named the owning team (seven rows, where "engineering" becomes "SaaS operations"); every other column is kept.
+
+| Row | From | To | Other change |
+|---|---|---|---|
+| Salesforce UK Ltd (`V0002`) | Engineering | SaaS | none |
+| Cloudcrossing BVBA, PDF Butler (`V0006`) | Product | SaaS | none |
+| Amazon Web Services (`V0014`, `V0103`) | Engineering | SaaS | description ends "for SaaS operations" in place of "run by engineering" |
+| Papertrail (`V0130`), SolarWinds (`V0311`), UptimeRobot (`V0350`) | Engineering | SaaS | description ends "used by SaaS operations" in place of the engineering team |
+| GoDaddy (`V0214`), DNSimple (`V0278`) | Engineering | SaaS | description: "used by SaaS operations for the company's domains" |
+| Cloud Technology Solutions (`V0023`), Microsoft Ireland (`V0081`) | SaaS | G&A | sub_function "Corporate IT: productivity suite (Google Workspace, resold)" and "(Microsoft 365)" |
+| Veniture (`V0032`), Trello (`V0091`), Smartsheet (`V0145`), Atlassian (`V0297`) | SaaS | G&A | sub_function "Corporate IT: work management ..." or "Corporate IT: Atlassian licences and partner services" |
+| Workato (`V0060`), Zapier (`V0310`) | SaaS | G&A | sub_function "Corporate IT: integration platform (Workato)" and "Corporate IT: workflow automation (Zapier)" |
+| GoTo (`V0089`), Slack (`V0173`) | SaaS | G&A | sub_function "Corporate IT: meetings, calling and remote access (GoTo)" and "Corporate IT: workplace messaging (Slack)" |
+| Adobe (`V0117`), DocuSign (`V0194`), FormSwift (`V0281`), LastPass (`V0288`) | SaaS | G&A | sub_function "Corporate IT: design and document software", "e-signature", "online document forms", "password manager" |
+
+- The Google reseller (`V0023`) goes to G&A, not SaaS: its verified description and its log entry show Google Workspace licences for all staff, not cloud hosting.
+- Rows considered and left where they are: NCC software escrow (`V0144`, Engineering: a customer-contract safeguard, not hosting); Click Send (`V0363`, Engineering: nothing shows the SMS API is delivered with the product, T5); the developer tools JetBrains, npm, AG Grid and GitKraken, with Backoffice Associates and Make And Grow (Engineering); Kimble (Professional Services, rule 1); Yoxel (Sales, internal-CRM tooling); Aha! and Figma (Product); Epignosis and Pluralsight (G&A as HR and training software, not corporate IT); Google Ireland (`V0043`, Marketing, most likely Google Ads).
+
+### 4. Where it is implemented
+
+- `outputs/batches/batch_01.csv` to `batch_09.csv`, merged by `scripts/merge_validate.py` into `outputs/vendors_classified.csv` and `qa/validation_report.md`; `docs/taxonomy.md`, `docs/clusters.md` and this file.
+- `qa/check_outputs.py`: C13 expects SaaS for `V0002`, `V0006`, the two AWS rows and the five hosting, logging, domain and monitoring rows, and G&A for Slack and the two productivity suites; C14 expects a `sub_function` that starts "Corporate IT" on `V0023`, `V0081` and `V0173`; S4 confirms the six new ids. Three planted errors are added, 53 in all.
+- All 31 checks pass, and both self-tests pass, with 53 and 16 planted errors. `scripts/02_clean.py` was re-run as the docs check and passed with unchanged outputs.
+
+### 5. Result
+
+From `qa/validation_report.md`:
+
+| Department | Vendors | Spend | Share of spend | Share before step 3c |
+|---|---|---|---|---|
+| SaaS | 9 | $3,442,832 | 43.6% | 1.9% |
+| G&A | 221 | $1,714,984 | 21.7% | 19.8% |
+| Facilities | 51 | $973,386 | 12.3% | 12.3% |
+| Finance | 24 | $645,242 | 8.2% | 8.2% |
+| Engineering | 16 | $285,673 | 3.6% | 44.6% |
+| M&A | 4 | $226,932 | 2.9% | 2.9% |
+| Marketing | 24 | $201,520 | 2.6% | 2.6% |
+| Legal | 24 | $197,752 | 2.5% | 2.5% |
+| Sales | 8 | $138,344 | 1.8% | 1.8% |
+| Professional Services | 2 | $56,367 | 0.7% | 0.7% |
+| Product | 2 | $4,149 | 0.1% | 2.7% |
+| Support | 1 | $178 | 0.0% | 0.0% |
+
+Recommendations, clusters, confidence and addressability are unchanged: 124 Optimize, 108 Consolidate, 154 Terminate.
+
 ## 2026-11-10: platform reclassification (prompt 16, step 3b)
 
 ### 1. Salesforce is the product platform, not the sales team's CRM
 
 - The evidence is in the ledger. Salesforce UK Ltd (`V0002`) is 39.5% of all third-party spend, which no company pays for sales seats. Around it sit Salesforce-native vendors: a document-generation app at $209K (Cloudcrossing's PDF Butler, `V0006`), a PSA on the Salesforce platform (Kimble, `V0027`), a Salesforce consultancy supplying developers (Weking, `V0009`), a Salesforce-specialist recruiter (Mason Frank, `V0034`) and a Salesforce email-sync tool (Yoxel, `V0170`). And the company sells to telecoms, where Salesforce-native products are common.
 - The Salesforce spend is therefore platform and ISV licence cost for a product built on Salesforce, with a smaller internal CRM component. Finance question 2 stays open for the split between the two.
-- `docs/taxonomy.md`: rule 1 is amended. Salesforce platform licences, and Salesforce-ecosystem vendors that supply product engineering or embedded product components, go to Engineering, or to Product for an embedded component; only internal-CRM tooling goes to Sales. The departments table, rules 9 and 10 and tie-breaks T1 and T2 follow. Kimble stays in Professional Services as PSA software, and Yoxel stays in Sales as internal-CRM tooling.
+- `docs/taxonomy.md`: rule 1 is amended. Salesforce platform licences, and Salesforce-ecosystem vendors that supply product engineering or embedded product components, go to Engineering, or to Product for an embedded component; only internal-CRM tooling goes to Sales. The departments table, rules 9 and 10 and tie-breaks T1 and T2 follow. Kimble stays in Professional Services as PSA software, and Yoxel stays in Sales as internal-CRM tooling. Superseded in step 3c: the platform licences and the components embedded in or delivered with the product go to SaaS.
 - `docs/clusters.md`: Salesforce platform (cluster 1) describes Salesforce as platform and ISV licences plus internal CRM seats, and Salesforce-specialist services go to the cluster of the lever that captures their saving (C1). NSDL moves to Statutory and government (cluster 16 and C8).
 
 ### 2. Rows reclassified
@@ -217,9 +282,9 @@ The exception proposed in step 2c is approved, and the rule is restated:
 
 ### 4. The QA check
 
-Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`. Extended in step 2f (prompt 14): S6 checks the `depends_on` tags. Extended in step 3b (prompt 16): C13 and C14 cover the platform reclassification, C14 also reads risk notes and descriptions, and C16 fails an Optimize row with a risk note, except `V0002`.
+Updated in step 2d-fix (prompt 10): the expected columns follow the classification spec, and checks C16 and C17 are added. Corrected in step 2d-fix2 (prompt 11): C17 enforces the verification-exceptions rule below, and C18 checks the names. Changed in step 2d-fix3 (prompt 12): C18 matches the names by `vendor_id` and confirms the original sheet order. Extended in step 2e (prompt 13): C13 and C14 cover the hardware rule and the advisers kept in the recurring base, and `scripts/merge_validate.py` runs the checks and writes `qa/validation_report.md`. Extended in step 2f (prompt 14): S6 checks the `depends_on` tags. Extended in step 3b (prompt 16): C13 and C14 cover the platform reclassification, C14 also reads risk notes and descriptions, and C16 fails an Optimize row with a risk note, except `V0002`. Extended in step 3c (prompt 17): C13 and C14 cover the SaaS department reading, and C14 also reads sub_functions.
 
-`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, and S6 on the savings register, clean and then with 50 planted errors, and shows each error caught.
+`qa/check_outputs.py` enforces these rules. Its structural checks run now; its classification checks run once `outputs/vendors_classified.csv` exists. `python qa/check_outputs.py` checks the real files; `python qa/check_outputs.py --self-test` runs the classification checks on a synthetic classification and validation report, and S6 on the savings register, clean and then with 53 planted errors, and shows each error caught.
 
 | Check | Rule |
 |---|---|
@@ -230,7 +295,7 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 | C10 | total `spend_12m` equals the clean file's total exactly |
 | C11 | the rows of each merge group and of each shared link group carry one recommendation |
 | C12 | every grouped row's rationale names its group, per-row links included; where the row's own name already contains the group's name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
-| C13, C14 | the outcomes, and the wording of rationales, risk notes and descriptions, fixed by decisions (steps 2b to 3b) |
+| C13, C14 | the outcomes, and the wording of rationales, risk notes, descriptions and sub_functions, fixed by decisions (steps 2b to 3c) |
 | C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
 | C16 | `risk_note` is non-empty for every Terminate and Consolidate row, and empty for every Optimize row except `V0002` (step 3b) |
 | C17 | every row has `verified` TRUE, except rows with `verified` FALSE listed under "Verification exceptions" in `qa/validation_report.md`; a FALSE row not listed there fails, and a listed `vendor_id` that is not FALSE in the file fails |

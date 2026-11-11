@@ -12,8 +12,9 @@ Where each rule comes from:
                                 classification spec and the risk-note check (step 2d-fix), the verification
                                 exceptions (step 2d-fix2), names matched by vendor_id with the rows in the
                                 original sheet order (step 2d-fix3), the hardware rule and the advisers
-                                kept in the recurring base (step 2e), and the platform reclassification with
-                                the one Optimize row allowed a risk note (step 3b)
+                                kept in the recurring base (step 2e), the platform reclassification with the
+                                one Optimize row allowed a risk note (step 3b), and the SaaS department
+                                reading (step 3c)
   scripts/vsa_common.py         the merge and link groups, their recommendation scope and the names a
                                 rationale may use for each group
 
@@ -106,15 +107,18 @@ DECISION_EXPECTATIONS = [
     (["V0034"], "department", "G&A", "step 2b: Mason Frank"),
     (["V0034"], "cost_cluster", "Recruiting and HR outsourcing",
      "step 3b: Mason Frank, whose lever is ending the agency, not the Salesforce contract"),
-    (["V0173"], "department", "SaaS", "step 2b: Slack"),
+    (["V0173"], "department", "G&A", "step 3c: Slack is corporate IT, company-wide messaging"),
     (["V0173"], "cost_cluster", "Salesforce platform", "step 2b: Slack"),
     (HARDWARE_IDS, "recommendation", "Consolidate", "step 2e: employee hardware, into group IT procurement"),
     (RECURRING_ADVISER_IDS, "is_recurring", "TRUE",
      "step 2e: advisers whose spend may include sale-related work stay in the recurring base"),
-    (["V0002"], "department", "Engineering", "step 3b: Salesforce is the product platform"),
+    (["V0002"], "department", "SaaS", "step 3c: Salesforce is the platform the hosted product runs on"),
     (["V0002", "V0006"], "recommendation", "Optimize", "step 3b: commercial terms for the platform and PDF Butler"),
     (["V0002", "V0006"], "cost_cluster", "Salesforce platform", "step 3b: Salesforce platform"),
-    (["V0006"], "department", "Product", "step 3b: PDF Butler, a component of the product"),
+    (["V0006"], "department", "SaaS", "step 3c: PDF Butler, a component delivered with the product"),
+    (["V0014", "V0103", "V0130", "V0214", "V0278", "V0311", "V0350"], "department", "SaaS",
+     "step 3c: hosting, logging, domains, DNS and monitoring run the hosted product"),
+    (["V0023", "V0081"], "department", "G&A", "step 3c: the two productivity suites are corporate IT"),
     (["V0009"], "department", "Engineering", "step 3b: Weking, outsourced engineering"),
     (["V0009"], "cost_cluster", "Outsourced engineering and contractors", "step 3b: Weking"),
     (["V0009", "V0018"], "recommendation", "Consolidate",
@@ -136,6 +140,8 @@ WORDING_EXPECTATIONS = [
     (["V0009"], "risk_note", ["product knowledge"], "step 3b: Weking, product knowledge transferred first"),
     (["V0009"], "description", ["confirm with finance"], "step 3b: Weking keeps \"confirm with Finance\""),
     (["V0018"], "risk_note", ["companies house", "non-trading"], "step 3b: Bisley Law control finding"),
+    (["V0023", "V0081", "V0173"], "sub_function", ["corporate it"],
+     "step 3c: company-wide software carries a sub_function that starts Corporate IT"),
 ]
 # Each fixed row's clean name must contain this, so a mistyped id cannot test the wrong vendor.
 EXPECTED_NAMES = {"V0014": "Amazon Web Services", "V0103": "Amazon Web Services", "V0203": "Amazon",
@@ -146,7 +152,8 @@ EXPECTED_NAMES = {"V0014": "Amazon Web Services", "V0103": "Amazon Web Services"
                   "V0167": "HP", "V0172": "Apple", "V0175": "Apple", "V0229": "Apple", "V0260": "E-Disti",
                   "V0378": "Currys", "V0004": "BDO", "V0018": "Bisley Law", "V0029": "Grant Thornton",
                   "V0002": "Salesforce", "V0006": "Cloudcrossing", "V0009": "Weking",
-                  "V0284": "National Securities Depository"}
+                  "V0284": "National Securities Depository", "V0023": "Cloud Technology", "V0130": "Papertrail",
+                  "V0214": "GoDaddy", "V0278": "DNSimple", "V0311": "SolarWinds", "V0350": "Uptime Robot"}
 
 
 # ---------------------------------------------------------------- helpers
@@ -615,6 +622,11 @@ MUTATIONS = [
      set_field("V0018", "risk_note", "open legal matters must move first"), "C14"),
     ("Weking description without confirm with Finance",
      set_field("V0009", "description", "Zagreb Salesforce consultancy supplying developers"), "C14"),
+    # Step 3c: the SaaS department reading
+    ("AWS back in Engineering", set_field("V0014", "department", "Engineering"), "C13"),
+    ("Slack back in SaaS as a cross-functional subscription", set_field("V0173", "department", "SaaS"), "C13"),
+    ("Microsoft 365 without the Corporate IT sub_function", set_field("V0081", "sub_function", "Productivity suite"),
+     "C14"),
     # C17: verification exceptions
     ("Unverified row not listed", set_field("V0010", "verified", "FALSE"), "C17"),
     ("Listed row is TRUE in the file", set_field("V0009", "verified", "TRUE"), "C17"),
