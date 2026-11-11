@@ -8,7 +8,7 @@ Written by `scripts/03_savings.py` with `outputs/analysis/savings.md`. These are
 |---|---|
 | Total spend, 12 months (the sum of the opportunity lines below) | $7,887,000 |
 | Largest vendor, Salesforce UK, and its share of spend | $3,117,000 (40%) |
-| Run-rate saving, low | $1,566,000 |
+| Run-rate saving, low | $1,410,000 |
 | Run-rate saving, base | $2,229,000 |
 | Run-rate saving, high | $3,097,000 |
 | Base saving as a share of spend | 28% |
@@ -18,6 +18,9 @@ Written by `scripts/03_savings.py` with `outputs/analysis/savings.md`. These are
 | Saving from vendor action alone, with no group decision | $1,264,000 |
 | Vendor action alone as a share of spend | 16% |
 | Value of the group decisions together (base minus vendor action alone) | $965,000 |
+| Spend outside the Salesforce platform (total less the Salesforce platform agreement line) | $4,504,000 |
+| Base saving outside the Salesforce platform (base less that line's base) | $1,714,000 |
+| Base saving outside the platform as a share of the spend outside it (the saving rate outside the platform) | 38% |
 
 ## Opportunities
 
@@ -25,12 +28,12 @@ Base is the run-rate saving the documents quote. Year 1 is the share of the base
 
 | Opportunity | Spend | Low | Base | High | Year 1 | Without the decision | Value of the decision |
 |---|---|---|---|---|---|---|---|
-| Salesforce platform agreement | $3,383,000 | $335,000 | $515,000 | $850,000 | $257,000 | $515,000 | $0 |
+| Salesforce platform agreement | $3,383,000 | $179,000 | $515,000 | $850,000 | $257,000 | $515,000 | $0 |
 | Office exit | $896,000 | $532,000 | $669,000 | $801,000 | $335,000 | $221,000 | $448,000 |
 | Back office into group shared services | $1,750,000 | $459,000 | $653,000 | $830,000 | $359,000 | $198,000 | $455,000 |
 | Second wave | $1,411,000 | $240,000 | $392,000 | $616,000 | $258,000 | $330,000 | $62,000 |
 | Excluded | $447,000 | $0 | $0 | $0 | $0 | $0 | $0 |
-| Total | $7,887,000 | $1,566,000 | $2,229,000 | $3,097,000 | $1,209,000 | $1,264,000 | $965,000 |
+| Total | $7,887,000 | $1,410,000 | $2,229,000 | $3,097,000 | $1,209,000 | $1,264,000 | $965,000 |
 
 ## Decisions for the group
 
@@ -98,6 +101,20 @@ Rounded to the nearest $1,000: $669,000.
 | Total | $1,750,394 |  | $653,456 |
 
 Rounded to the nearest $1,000: $653,000.
+
+## Office exit check
+
+A check of the office assumption from the rows (step 11): what closing every site except the Zagreb lease saves on the Office footprint line, against the share the base case takes.
+
+| Measure | Rows | Figure | Share of the line |
+|---|---|---|---|
+| Leases and coworking, the Office footprint line | 10 | $837,043 | 100% |
+| The Zagreb lease (`V0007` Zagrebtower d.o.o.) | 1 | $183,754 | 22% |
+| Every other site, adviser and charge on the line: what closing every site except the Zagreb lease saves | 9 | $653,289 | 78% |
+| The base case, 75% of the line |  | $627,782 | 75% |
+| Kept at the base case beyond the Zagreb lease, for registered addresses |  | $25,507 | 3% |
+
+Rounded to the nearest $1,000: closing every site except the Zagreb lease saves $653,000 on leases alone, against $628,000 at 75%, so the 75% equals keeping Zagreb whole.
 
 ## People-linked spend not counted
 

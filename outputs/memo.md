@@ -3,9 +3,9 @@
 **To:** group CEO and CFO   **From:** Chaitanya Laxman, VP Operations, the acquired business   **Date:** November 11, 2026
 **Subject:** Vendor review: $2,229,000 a year in savings, $1,209,000 of it in year 1
 
-**Bottom line.** 386 vendors, $7,887,000 of accounts-payable spend over 12 months: the base case saves $2,229,000 a year, 28% of spend, $1,209,000 of it in year 1. The high case, $3,097,000, needs every decision and negotiation at the top of its range.
+**Bottom line.** 386 vendors, $7,887,000 of accounts-payable spend over 12 months: the base case saves $2,229,000 a year, $1,209,000 of it in year 1. The high case, $3,097,000, needs every decision and negotiation at the top of its range.
 
-**Context.** Salesforce alone is $3,117,000, about 40% of spend, because our product runs on its platform.
+**Context.** Salesforce is $3,117,000, 40% of spend, because our product runs on its platform.
 
 | Move | Per year | Year 1 | What it needs |
 |---|---|---|---|
@@ -19,10 +19,10 @@
 - A remote operating model, keeping one hub space: $448,000 a year more than one flexible provider and trimmed office costs.
 - Group shared functions for audit, hiring, legal, payroll, insurance and finance systems: $455,000 a year more than tenders, re-broking and seat reviews.
 - Both by December 15, 2026, so notices go out in the first quarter; each month's delay costs $75,000.
-- Salesforce needs no decision, only the contract, the usage data and group procurement at the table.
+- Salesforce needs no decision, only the contract, usage data and group procurement at the table.
 
 **Plan**
-- 0 to 30 days: collect contracts, notice dates and Salesforce usage data; confirm with Finance the 67 vendors not verified online.
+- 0 to 30 days: collect contracts, notice dates, Salesforce usage data; Finance confirms the 67 vendors not verified online.
 - 30 to 90 days: serve office notices, open the Salesforce and insurance negotiations, put the travel and expense policy in place.
 - 90 to 180 days: exit the offices, move hiring and legal work to the group, consolidate software.
 - 6 to 12 months: move the audit and the HR and finance systems at year-end.
@@ -36,4 +36,4 @@
 
 **Not counted:** $274,000 of deal and one-off costs that fall away on their own, and people-linked spend that moves only with the workforce plan.
 
-**Scale.** $2,229,000 a year is 28% of this business's third-party spend; it falls straight to operating profit, and the same review repeats on every acquisition.
+**Scale.** $2,229,000 a year is 28% of this business's third-party spend and falls straight to operating profit; the saving rate outside the Salesforce platform is 38%, and the same review repeats on every acquisition.

@@ -12,7 +12,7 @@ Written 2026-11-11 by `scripts/03_savings.py` from `outputs/vendors_classified.c
 | Non-recurring spend (`is_recurring` FALSE) | 117 rows, $345,186 (4.4%) |
 | Addressable spend (`is_addressable` TRUE) | 369 rows, $7,765,704 (98.5%) |
 | Spend on levers with a base above 0% | 300 rows, $7,309,070 (92.7%) |
-| Run-rate saving, low / base / high | $1,565,930 / $2,229,687 / $3,095,673 |
+| Run-rate saving, low / base / high | $1,410,069 / $2,229,687 / $3,095,673 |
 | Base saving as a share of total spend | 28.3% |
 | Saving without any acquirer decision (vendor action alone) | $1,263,566 (16.0%) |
 | Year-1 saving (base times each lever's year-1 factor) | $1,208,570 (15.3%) |
@@ -40,18 +40,18 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 
 | Opportunity | Rows | Spend | Low | Base | High | Without decision | Year 1 | Base share of spend |
 |---|---|---|---|---|---|---|---|---|
-| Salesforce platform agreement | 5 | $3,382,759 | $335,231 | $514,601 | $849,833 | $514,601 | $257,301 | 15.2% |
+| Salesforce platform agreement | 5 | $3,382,759 | $179,370 | $514,601 | $849,833 | $514,601 | $257,301 | 15.2% |
 | Office exit | 32 | $896,340 | $531,874 | $669,290 | $800,776 | $221,120 | $334,645 | 74.7% |
 | Back office into group shared services | 84 | $1,750,394 | $458,590 | $653,457 | $829,563 | $198,236 | $358,720 | 37.3% |
 | Second wave | 200 | $1,411,273 | $240,234 | $392,339 | $615,501 | $329,609 | $257,904 | 27.8% |
 | Excluded | 65 | $446,594 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Total | 386 | $7,887,360 | $1,565,930 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
+| Total | 386 | $7,887,360 | $1,410,069 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
 
 ## Savings by cost cluster
 
 | Cost cluster | Rows | Spend | Low | Base | High | Without decision | Year 1 | Base share of spend |
 |---|---|---|---|---|---|---|---|---|
-| Salesforce platform | 5 | $3,382,759 | $335,231 | $514,601 | $849,833 | $514,601 | $257,301 | 15.2% |
+| Salesforce platform | 5 | $3,382,759 | $179,370 | $514,601 | $849,833 | $514,601 | $257,301 | 15.2% |
 | Office footprint | 10 | $837,043 | $502,226 | $627,782 | $753,338 | $209,261 | $313,891 | 75.0% |
 | Audit, tax, accounting and corporate services | 24 | $590,674 | $140,218 | $197,389 | $254,561 | $58,979 | $79,317 | 33.4% |
 | Travel and entertainment | 50 | $465,303 | $77,204 | $128,673 | $180,142 | $128,673 | $96,505 | 27.7% |
@@ -69,13 +69,13 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | Unidentified and individual payees | 36 | $46,622 | $9,483 | $15,804 | $22,126 | $15,804 | $11,853 | 33.9% |
 | Team events, perks and wellness | 35 | $44,812 | $11,165 | $16,747 | $20,934 | $16,747 | $12,560 | 37.4% |
 | Statutory and government | 6 | $15,646 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Total | 386 | $7,887,360 | $1,565,930 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
+| Total | 386 | $7,887,360 | $1,410,069 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
 
 ## Savings by lever
 
 | Lever | Opportunity | depends_on | Rows | Spend | Low | Base | High | Without decision | Year 1 | Base share of spend |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Salesforce platform agreement | Salesforce platform agreement | none | 1 | $3,117,226 | $311,723 | $467,584 | $779,306 | $467,584 | $233,792 | 15.0% |
+| Salesforce platform agreement | Salesforce platform agreement | none | 1 | $3,117,226 | $155,861 | $467,584 | $779,306 | $467,584 | $233,792 | 15.0% |
 | PDF Butler OEM pricing | Salesforce platform agreement | none | 1 | $208,675 | $20,868 | $41,735 | $62,603 | $41,735 | $20,868 | 20.0% |
 | Kimble PSA licences | Salesforce platform agreement | none | 1 | $52,825 | $2,641 | $5,283 | $7,924 | $5,283 | $2,641 | 10.0% |
 | Slack and Yoxel inside the Salesforce renewal | Salesforce platform agreement | none | 2 | $4,033 | $0 | $0 | $0 | $0 | $0 | 0.0% |
@@ -116,7 +116,7 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | Student labour | Excluded | none | 3 | $54,117 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | One-off spend that falls away | Excluded | none | 46 | $47,199 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Bank, payment and certification fees | Excluded | none | 3 | $5,299 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Total |  |  | 386 | $7,887,360 | $1,565,930 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
+| Total |  |  | 386 | $7,887,360 | $1,410,069 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
 
 ## Assumptions behind each lever
 
@@ -124,11 +124,11 @@ The register, repeated next to the figures it produces. Percentages are of each 
 
 | Lever | Applies to | Low / base / high | Without decision | Year-1 factor | depends_on | Reasoning |
 |---|---|---|---|---|---|---|
-| Salesforce platform agreement | Salesforce UK (`V0002`) | 10% / 15% / 25% | 15% | 0.5 | none | The platform agreement is renegotiated at change of control, with internal seats trued down separately; the base sits below the usual licence-audit range because part of this spend is platform and ISV fees that do not shrink with a seat count, and the contract is not visible, so the figure is the value of a negotiation that starts when the contract and usage data arrive (step 4b). |
+| Salesforce platform agreement | Salesforce UK (`V0002`) | 5% / 15% / 25% | 15% | 0.5 | none | Two readings until the contract is read (step 11). A product that runs on the Salesforce platform normally pays Salesforce a share of its product revenue under a partner distribution agreement, not per-seat licences; Salesforce's own partner pages give 15% of net revenue for an ISVforce app sold to its existing customers, 25% for an embedded (OEM) app, 25% as the standard rate before May 2017, and marginal rates that fall with annual order value to 10% (ISVforce) and 15% (OEM) above $20 million ("The Salesforce platform bill" below). If the bill is mostly that revenue share, it moves with revenue and seat counts do not reduce it; the levers are the rate tier in the partner agreement, what counts as net revenue, and the seats the company uses itself, and the saving is small if the agreement is already on the best tier and large if it still carries an older rate. If the bill is mostly licences, the levers are a seat true-down and the renewal terms (co-terming with any Salesforce agreement the group holds, a multi-year commitment). The first question for the contract is which reading applies and which rate tier the agreement is on. The low case, 5%, is the internal seats only, with the revenue share already on the best tier; the base, 15%, is a placeholder between the two readings until the contract is read; the high case, 25%, is an older rate brought to the best tier plus the seats. Year 1 is 0.5 because the renewal date is unknown. |
 | PDF Butler OEM pricing | Cloudcrossing's PDF Butler (`V0006`) | 10% / 20% / 30% | 20% | 0.5 | none | OEM or volume pricing for a document app delivered with the product is renegotiated inside the platform review, at a renewal date the file does not show. |
 | Kimble PSA licences | Kimble (`V0027`) | 5% / 10% / 15% | 10% | 0.5 | none | PSA seats on the Salesforce platform are right-sized at a renewal whose date is unknown. |
 | Slack and Yoxel inside the Salesforce renewal | Slack (`V0173`) and Yoxel (`V0170`) | 0% / 0% / 0% | 0% | 0.5 | none | Both are negotiated inside the Salesforce renewal, so no separate saving is counted. |
-| Office footprint | cluster Office footprint | 60% / 75% / 90% | 25% | 0.5 | remote_operating_model | The base keeps a quarter of the spend for a touchdown space at the engineering hub and registered addresses; without the decision the company right-sizes onto one flexible provider; the lease notice dates are unknown. |
+| Office footprint | cluster Office footprint | 60% / 75% / 90% | 25% | 0.5 | remote_operating_model | The base keeps a quarter of the spend, which equals keeping the Zagreb lease whole: closing every site except the Zagrebtower lease (`V0007`) saves a little more than 75% of the line, so the 75% keeps Zagreb with a margin for registered addresses (the figures are in `outputs/analysis/savings_summary.md`, "Office exit check", step 11); without the decision the company right-sizes onto one flexible provider; the lease notice dates are unknown. |
 | Office running costs | cluster Office running costs, recurring rows, except couriers and postage (step 4b) | 50% / 70% / 80% | 20% | 0.5 | remote_operating_model | Utilities, cleaning, parking, supplies and catering fall with the space; without the decision only consumables and catering are cut; the timing follows the leases. |
 | Audit, tax and accounting firms | the auditors, accountants and tax advisers in cluster Audit, tax, accounting and corporate services, and the actuarial valuations (`V0351`) | 25% / 35% / 45% | 10% | 0.4 | group_auditor | The group auditor takes over entity by entity at the financial year-end, so year 1 is 0.4; without the decision a tender across the firms is worth 10%. |
 | Corporate secretarial, registered agent and share registry | `V0088`, `V0099`, `V0105`, `V0334`, `V0305` | 10% / 20% / 30% | 20% | 0.5 | none | One provider across the entities at renewals whose dates are unknown; a vendor action that needs no group decision. |
@@ -190,7 +190,7 @@ The 15 rows with the largest base saving.
 
 | vendor_id | Vendor | Cost cluster | Lever | Spend | Low | Base | High | Without decision | Year 1 | depends_on |
 |---|---|---|---|---|---|---|---|---|---|---|
-| V0002 | Salesforce UK Ltd | Salesforce platform | Salesforce platform agreement | $3,117,226 | $311,723 | $467,584 | $779,306 | $467,584 | $233,792 | none |
+| V0002 | Salesforce UK Ltd | Salesforce platform | Salesforce platform agreement | $3,117,226 | $155,861 | $467,584 | $779,306 | $467,584 | $233,792 | none |
 | V0005 | TOG UK Properties Limited | Office footprint | Office footprint | $263,821 | $158,293 | $197,866 | $237,439 | $65,955 | $98,933 | remote_operating_model |
 | V0007 | Zagrebtower d.o.o. | Office footprint | Office footprint | $183,754 | $110,253 | $137,816 | $165,379 | $45,939 | $68,908 | remote_operating_model |
 | V0004 | BDO LLP | Audit, tax, accounting and corporate services | Audit, tax and accounting firms | $343,081 | $85,770 | $120,078 | $154,387 | $34,308 | $48,031 | group_auditor |
@@ -243,7 +243,7 @@ The vendor rows sum to the levers, the clusters and the opportunities. Largest d
 |---|---|---|---|---|---|
 | Rows | 386 | 386 | 386 | 386 | 0 |
 | Spend | $7,887,360.40 | $7,887,360.40 | $7,887,360.40 | $7,887,360.40 | $0.00 |
-| Low | $1,565,929.90 | $1,565,929.90 | $1,565,929.90 | $1,565,929.90 | $0.00 |
+| Low | $1,410,068.61 | $1,410,068.61 | $1,410,068.61 | $1,410,068.61 | $0.00 |
 | Base | $2,229,687.31 | $2,229,687.31 | $2,229,687.31 | $2,229,687.31 | $0.00 |
 | High | $3,095,672.71 | $3,095,672.71 | $3,095,672.71 | $3,095,672.71 | $0.00 |
 | Without decision | $1,263,565.97 | $1,263,565.97 | $1,263,565.97 | $1,263,565.97 | $0.00 |

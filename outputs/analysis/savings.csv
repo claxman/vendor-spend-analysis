@@ -1,5 +1,5 @@
 vendor_id,vendor_name_clean,spend_12m,cost_cluster,lever,opportunity,pct_low,pct_base,pct_high,pct_without_decision,year1_factor,depends_on,saving_low,saving_base,saving_high,saving_without_decision,saving_year1
-V0002,Salesforce UK Ltd,3117225.8877216,Salesforce platform,Salesforce platform agreement,Salesforce platform agreement,10,15,25,15,0.5,none,311722.58877216,467583.88315824,779306.4719304,467583.88315824,233791.94157912
+V0002,Salesforce UK Ltd,3117225.8877216,Salesforce platform,Salesforce platform agreement,Salesforce platform agreement,5,15,25,15,0.5,none,155861.29438608,467583.88315824,779306.4719304,467583.88315824,233791.94157912
 V0003,Navan (TripActions Inc),357983.6164072,Travel and entertainment,Navan,Second wave,15,25,35,25,0.75,none,53697.542461080004,89495.9041018,125294.26574252,89495.9041018,67121.92807635
 V0004,BDO LLP,343081.3853496,"Audit, tax, accounting and corporate services","Audit, tax and accounting firms",Back office into group shared services,25,35,45,10,0.4,group_auditor,85770.3463374,120078.48487236,154386.62340732,34308.13853496,48031.393948944
 V0005,TOG UK Properties Limited,263821.1593744,Office footprint,Office footprint,Office exit,60,75,90,25,0.5,remote_operating_model,158292.69562463998,197865.86953079997,237439.04343695997,65955.2898436,98932.93476539999

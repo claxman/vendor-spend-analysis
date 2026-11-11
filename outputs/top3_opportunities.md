@@ -4,7 +4,7 @@ The three largest savings in the acquired business's third-party spend, ranked b
 
 ## 1. Exit the offices under a remote operating model, keeping one hub space
 
-The acquired business pays $896,000 a year for offices and coworking from seven providers in six countries (The Office Group, Zagrebtower, IndiQube, GPT Space&Co, WeWork, WorkEZ, Common Desk) and running costs. The model assumes a remote operating model that keeps one touchdown space at the Zagreb engineering hub and ends 75% of the $837,043 of leases and coworking ($627,782) and 70% of the $59,297 of running costs ($41,508): $669,290 a year, $669,000 rounded, in a range of $532,000 to $801,000. Year 1 is $335,000, as notice dates are unknown and half a year is assumed. Without the decision, consolidating onto one flexible provider is worth $221,000. Main risk: notice periods and exit costs are not yet known.
+The acquired business pays $896,000 a year for offices and coworking from seven providers in six countries (The Office Group, Zagrebtower, IndiQube, GPT Space&Co, WeWork, WorkEZ, Common Desk) and running costs. The model assumes a remote operating model that ends 75% of the $837,043 of leases and coworking ($627,782) and 70% of the $59,297 of running costs ($41,508): $669,290 a year, $669,000 rounded ($532,000 to $801,000). The 75% equals keeping the Zagreb lease whole: closing every other site saves the $653,000 the rows give on leases alone. Year 1 is $335,000, half a year, as notice dates are unknown. Without the decision, consolidating onto one flexible provider is worth $221,000. Main risk: notice periods and exit costs are unknown.
 
 Estimated annual saving (USD, base case): $669,000
 
@@ -16,7 +16,7 @@ Estimated annual saving (USD, base case): $653,000
 
 ## 3. Renegotiate the Salesforce platform agreement at change of control
 
-Salesforce UK is $3,117,000, 40% of spend, because the product runs on its platform; with add-ons the platform spend is $3,383,000. The product cannot leave the platform: the negotiation is price and terms, never exit. The model assumes, at change of control, co-termed with any Salesforce agreement the group holds and with internal seats trued down separately, 15% off the $3,117,226 platform agreement ($467,584), 20% off the $208,675 document app ($41,735) and 10% off the $52,825 PSA tool ($5,283): $514,602 a year, $515,000 rounded ($335,000 to $850,000). Year 1 is $257,000, as the renewal date is unknown. The figure is the value of a negotiation that starts once the contract and usage data arrive; main risk: the platform dependency.
+Salesforce UK is $3,117,000, 40% of spend: the product runs on its platform ($3,383,000 with add-ons). Such products normally pay Salesforce a partner revenue share, not per-seat licenses; the contract's first question is which applies and on which rate tier. A revenue share moves with revenue, not seats; the questions are the rate tier, what counts as net revenue and the company's own seats; the saving is small on the best tier, large on an older rate. Licenses would mean a seat true-down and renewal terms. The base is a placeholder between the readings: 15% off the $3,117,226 platform agreement ($467,584), 20% off the $208,675 document app ($41,735) and 10% off the $52,825 PSA tool ($5,283): $514,602 a year, $515,000 rounded ($179,000 to $850,000). Year 1 is $257,000 (renewal date unknown). Main risk: the platform dependency, so terms, never exit.
 
 Estimated annual saving (USD, base case): $515,000
 

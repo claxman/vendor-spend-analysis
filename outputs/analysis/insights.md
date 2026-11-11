@@ -6,7 +6,7 @@ Written 2026-11-11 by `scripts/04_insights.py` from `outputs/vendors_classified.
 
 - The product runs on Salesforce. `V0002` Salesforce UK Ltd is $3,117,226, 39.5% of all spend, and the Salesforce platform cluster (the platform, PDF Butler, Kimble, Yoxel and Slack: `V0002`, `V0006`, `V0027`, `V0170`, `V0173`) is $3,382,759, 42.9%. Salesforce-specialist labour adds $182,241 (`V0009`, `V0034`).
 - Concentration on the merged view: the top vendor is 39.5% of spend, the top 10 are 64.7%, the top 50 are 89.0%; the other 331 vendors share 11.0%.
-- The platform agreement is the largest single lever in the model, $467,584 base run-rate ($311,723 to $779,306), and the largest dependency: the lever is commercial terms at change of control, never exit, and the figure is the value of a negotiation that starts when the contract and usage data arrive (Finance question 2).
+- The platform agreement is the largest single lever in the model, $467,584 base run-rate ($155,861 to $779,306), and the largest dependency: the lever is commercial terms at change of control, never exit, and the figure is the value of a negotiation that starts when the contract and usage data arrive (Finance question 2). The bill is most likely a partner revenue share on the product plus internal seats, so the first question for the contract is which reading applies and which rate tier it is on (step 11).
 
 ## 2. What falls away without action, the recurring base, and the sale-related share
 
@@ -117,7 +117,7 @@ The year-1 saving is $1,208,570 against a base run-rate of $2,229,687, because t
 - Requests, in the order they unlock the figures:
   1. The monthly AP ledger for the 12 months, with invoice number, date, paying entity, cost centre and approver: it settles the duplicate-payment review, the one-off against recurring split, the leavers question and the identification of the payees in section 4.
   2. The contract register with renewal and notice dates for insurance, the leases and coworking, the Salesforce agreement, the HR and finance systems and the telecom lines: it turns the year-1 factors in section 9 from conventions into dates.
-  3. The Salesforce contract and usage: licence counts by product, the split between platform and ISV fees and internal CRM seats, the OEM terms for PDF Butler, and any change-of-control clause.
+  3. The Salesforce contract and usage: which reading applies (a partner revenue share on the product, or licences) and the rate tier, licence counts by product, the split between platform fees and internal CRM seats, the OEM terms for PDF Butler, and any change-of-control clause.
   4. Headcount by site and entity, now and 12 months ago: it sizes the seats, the space, the payroll and the insurance cover, and it tests the leavers reading in section 7.
 
 ## 11. People-linked spend the review does not count

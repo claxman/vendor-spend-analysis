@@ -258,7 +258,9 @@ def main() -> int:
         f"- The platform agreement is the largest single lever in the model, {money(saving(['V0002']))} base run-rate "
         f"({money(saving(['V0002'], 'saving_low'))} to {money(saving(['V0002'], 'saving_high'))}), and the largest "
         "dependency: the lever is commercial terms at change of control, never exit, and the figure is the value of a "
-        "negotiation that starts when the contract and usage data arrive (Finance question 2).",
+        "negotiation that starts when the contract and usage data arrive (Finance question 2). The bill is most likely a "
+        "partner revenue share on the product plus internal seats, so the first question for the contract is which reading "
+        "applies and which rate tier it is on (step 11).",
         "",
         "## 2. What falls away without action, the recurring base, and the sale-related share",
         "",
@@ -398,8 +400,9 @@ def main() -> int:
         "  2. The contract register with renewal and notice dates for insurance, the leases and coworking, the Salesforce "
         "agreement, the HR and finance systems and the telecom lines: it turns the year-1 factors in section 9 from "
         "conventions into dates.",
-        "  3. The Salesforce contract and usage: licence counts by product, the split between platform and ISV fees and "
-        "internal CRM seats, the OEM terms for PDF Butler, and any change-of-control clause.",
+        "  3. The Salesforce contract and usage: which reading applies (a partner revenue share on the product, or licences) "
+        "and the rate tier, licence counts by product, the split between platform fees and internal CRM seats, the OEM terms "
+        "for PDF Butler, and any change-of-control clause.",
         "  4. Headcount by site and entity, now and 12 months ago: it sizes the seats, the space, the payroll and the "
         "insurance cover, and it tests the leavers reading in section 7.",
         "",

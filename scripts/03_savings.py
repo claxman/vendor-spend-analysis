@@ -102,6 +102,48 @@ def people_linked_table(srows: list[dict]) -> list[str]:
             f"savings counted on these lines."]
 
 
+ZAGREB_LEASE = ("V0007", "Zagrebtower")   # the Zagreb lease row and a fragment of its name, as VENDOR_LEVERS guards ids
+OFFICE_LEVER = "Office footprint"
+
+
+def outside_platform_rows(opp_lines: list[tuple[str, dict]], tot: dict) -> list[list[str]]:
+    """Step 11 (prompt 24): the spend and the base saving outside the Salesforce platform line (total less that line, both
+    from the rounded figures above), and the saving as a share of that spend: the memo's saving rate outside the platform."""
+    sf = next((k for n, k in opp_lines if n == OPPORTUNITIES[0]), None)
+    if sf is None:
+        return []
+    spend, base = tot["spend"] - sf["spend"], tot["saving_base"] - sf["saving_base"]
+    return [["Spend outside the Salesforce platform (total less the Salesforce platform agreement line)", money(spend)],
+            ["Base saving outside the Salesforce platform (base less that line's base)", money(base)],
+            ["Base saving outside the platform as a share of the spend outside it (the saving rate outside the platform)",
+             whole_pct(base, spend)]]
+
+
+def office_check_table(srows: list[dict]) -> list[str]:
+    """Step 11 (prompt 24): a check of the office assumption from the rows. The Office footprint line's spend, the Zagreb
+    lease, and every other site, adviser and charge on the line (what closing every site except the Zagreb lease saves),
+    in whole dollars, against the share the base case takes; the line is the lease plus the rest."""
+    sel = [s for s in srows if s["lever"] == OFFICE_LEVER]
+    zagreb = [s for s in sel if s["vendor_id"] == ZAGREB_LEASE[0]]
+    if len(zagreb) != 1 or ZAGREB_LEASE[1].lower() not in zagreb[0]["vendor_name_clean"].lower():
+        raise SystemExit(f"{ZAGREB_LEASE[0]} is not the {ZAGREB_LEASE[1]} row on the {OFFICE_LEVER} line")
+    exact = math.fsum(to_float(s["spend_12m"]) for s in sel)
+    line, lease = dollars(exact), dollars(to_float(zagreb[0]["spend_12m"]))
+    others = line - lease
+    pct_base = int(float(zagreb[0]["pct_base"]))
+    base = dollars(exact * pct_base / 100)
+    body = [[f"Leases and coworking, the {OFFICE_LEVER} line", str(len(sel)), money(line), "100%"],
+            [f"The Zagreb lease (`{ZAGREB_LEASE[0]}` {zagreb[0]['vendor_name_clean']})", "1", money(lease), whole_pct(lease, line)],
+            ["Every other site, adviser and charge on the line: what closing every site except the Zagreb lease saves",
+             str(len(sel) - 1), money(others), whole_pct(others, line)],
+            [f"The base case, {pct_base}% of the line", "", money(base), f"{pct_base}%"],
+            ["Kept at the base case beyond the Zagreb lease, for registered addresses", "", money(others - base),
+             whole_pct(others - base, line)]]
+    return [*table(["Measure", "Rows", "Figure", "Share of the line"], body), "",
+            f"Rounded to the nearest $1,000: closing every site except the Zagreb lease saves {money(thousands(others))} on "
+            f"leases alone, against {money(thousands(base))} at {pct_base}%, so the {pct_base}% equals keeping Zagreb whole."]
+
+
 def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], levers: dict[str, dict]) -> str:
     """The figures the documents may quote: rounded to the nearest $1,000, every total the sum of the rounded lines it
     shows, so that parts always add to totals."""
@@ -148,6 +190,7 @@ def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], le
             ["Saving from vendor action alone, with no group decision", money(tot["saving_without_decision"])],
             ["Vendor action alone as a share of spend", whole_pct(tot["saving_without_decision"], spend_total)],
             ["Value of the group decisions together (base minus vendor action alone)", money(tot["value"])],
+            *outside_platform_rows(opp_lines, tot),
         ]),
         "",
         "## Opportunities",
@@ -193,6 +236,10 @@ def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], le
               "Opportunities table shows.", ""]
     for n, opp in enumerate(OPPORTUNITIES[:3]):
         lines += ([""] if n else []) + calculation_table(srows, opp)
+    lines += ["", "## Office exit check", "",
+              "A check of the office assumption from the rows (step 11): what closing every site except the Zagreb lease "
+              "saves on the Office footprint line, against the share the base case takes.", "",
+              *office_check_table(srows)]
     lines += ["", "## People-linked spend not counted", "",
               "Vendor spend that moves only with the workforce plan, which this review does not count: health and life "
               "cover, statutory cover and benefit schemes, employer-of-record pay and student labor. Each line's rows, spend, "

@@ -250,6 +250,8 @@ WORDING_EXPECTATIONS = [
     (HARDWARE_IDS, "rationale", ["group it procurement"], "step 2e: hardware rationale names group IT procurement"),
     (["V0002"], "rationale", ["change of control"], "step 3b: renegotiate the platform agreement at change of control"),
     (["V0002"], "risk_note", ["never exit"], "step 3b: the product depends on the platform"),
+    (["V0002"], "rationale", ["revenue share", "rate tier"],
+     "step 11: the two readings of the platform bill, the rate tier the first question for the contract"),
     (["V0006"], "rationale", ["oem"], "step 3b: PDF Butler, OEM or volume pricing"),
     (["V0006"], "description", ["oem terms unconfirmed"], "steps 3b and 5: PDF Butler, OEM terms unconfirmed"),
     (["V0009"], "rationale", ["engineering sourcing model"], "step 3b: Weking, the group's engineering sourcing model"),
@@ -963,6 +965,10 @@ MUTATIONS = [
     ("NSDL back in the savings base", set_field("V0284", "is_addressable", "TRUE"), "C13"),
     ("Bisley Law risk note without the invoicing-entity check",
      set_field("V0018", "risk_note", "open legal matters must move first"), "C14"),
+    # Step 11: the two readings of the platform bill
+    ("Salesforce rationale without the two readings of the platform bill",
+     set_field("V0002", "rationale", "Renegotiate the platform agreement at change of control, with Slack in the same renewal."),
+     "C14"),
     # Step 4b: the assumption decisions
     ("Gym4You back to Terminate", set_field("V0121", "recommendation", "Terminate"), "C13"),
     ("Weking description without confirm with Finance",

@@ -8,7 +8,7 @@ Deliverables: the Google Sheet, https://docs.google.com/spreadsheets/d/1LBowVBvW
 
 ## Results in five lines
 
-- Base-case run-rate saving of $2,229,000 a year, 28% of spend, in a range of $1,566,000 to $3,097,000; $1,209,000 lands in year 1.
+- Base-case run-rate saving of $2,229,000 a year, 28% of spend, in a range of $1,410,000 to $3,097,000; $1,209,000 lands in year 1.
 - Three moves carry most of it: the office exit under a remote operating model ($669,000), back-office services to the group's shared functions ($653,000) and the Salesforce platform agreement renegotiated at change of control ($515,000).
 - $1,264,000 of the base is vendor action the acquired business can take alone; the rest is the value of decisions only the group can take.
 - 319 of 386 rows (99% of spend) were verified from the vendor's own site or a reliable directory; a second pass re-verified 142 rows (95% of spend) fresh and agreed with the first pass on 96% of them.
@@ -34,7 +34,8 @@ Deliverables: the Google Sheet, https://docs.google.com/spreadsheets/d/1LBowVBvW
 | 7 | 20 | `6db69ff` | Final corrections: the memo on one page, decision-led rationales, the workbook's saving columns, the manual review |
 | 8 | 21 | `07ab5fb` | Wording corrections: the memo's subject line, how the classification lines were written, the manual review as done, the prompt count |
 | 9 | 22 | `dd65944` | Calculations that reproduce: each Top 3 calculation written out in whole dollars and recomputed by a check, the memo's Scale line, the department rule in the methodology, the deliverable links |
-| 10 | 23 | this commit | Spelling: the -ise and -isation forms added to the British-forms check and every reader-facing text rescanned; what is not counted: the people-linked spend in the Top 3, the memo and the insights |
+| 10 | 23 | `c1c6467` | Spelling: the -ise and -isation forms added to the British-forms check and every reader-facing text rescanned; what is not counted: the people-linked spend in the Top 3, the memo and the insights |
+| 11 | 24 | this commit | What the platform bill is: Salesforce's published partner rates verified and logged, the fee read as a partner revenue share or licenses with the low case at 5%, the office assumption made checkable, the memo's saving rate outside the platform |
 
 The decisions behind each step are in `docs/decisions.md`; the prompts are in `prompts/log.md`, in the order given.
 
@@ -65,7 +66,7 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are in `p
 - `qa/manual_review.md`: the VP Operations' own check of the 25 largest rows (13 against their source links, 12 well-known vendors against the reviewer's own knowledge), and of the Top 3 and the memo, before submission.
 - `qa/research/`: the research inputs, findings, logs and failed attempts of step 3, with a README; `qa/classification_lines/`: the per-batch classification lines the builder read.
 - `docs/taxonomy.md`, `clusters.md`, `recommendation_rules.md`, `vendor_hints.md`, `savings_assumptions.md`: the rules the classification and the model follow. `docs/decisions.md`: every decision, newest first, with the open questions for Finance.
-- `prompts/log.md`: the 23 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
+- `prompts/log.md`: the 24 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
 
 ## How to re-run
 

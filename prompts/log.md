@@ -464,3 +464,22 @@ Append this prompt to prompts/log.md as prompt 23. Run it after prompt 22 is com
 
 Rebuild, run all checks, both self-tests and the page check, commit as "Step 10: spelling and what is not counted" and push. Print the changed lines.
 ```
+
+## Prompt 24 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 24. Run it after prompt 23 is committed. It sharpens the reasoning behind the largest line.
+
+1. What the Salesforce bill most likely is. A vendor whose product runs on the Salesforce platform normally pays Salesforce a share of its product revenue under a partner distribution agreement, not a per-seat subscription. Verify the public program terms from Salesforce's own partner pages (the standard revenue share for apps sold to existing Salesforce customers, the rate for embedded apps, the older standard rate, and the lower marginal rates at scale), log the lookups and sources in qa/verification_log.csv, and record them in docs/savings_assumptions.md next to the lever.
+2. Restate the lever on V0002 as two readings, in the register, the Top 3 and the row's rationale:
+   - If the bill is mostly a partner revenue share, it moves with revenue and seat counts do not reduce it. The levers are the rate tier in the partner agreement, what counts as net revenue, and the seats the company uses itself. The saving is small if the agreement is already on the best tier and large if it still carries an older rate.
+   - If the bill is mostly licenses, the levers are a seat true-down and the renewal terms.
+   The first question for the contract is which reading applies and which rate tier the agreement is on. Remove "co-term" and "multi-year commitment" as the lead mechanism; keep them only under the license reading. The Salesforce explanation in the Top 3 may run to 140 words.
+3. Low case for V0002 becomes 5% (internal seats only, if the revenue share is already on the best tier); base stays 15% and high 25%. Say in the reasoning that the base is a placeholder between the two readings until the contract is read. Re-run the model; every total and document follows from the scripts.
+4. V0002 description: say that the fees are most likely a partner revenue share on the company's product, plus internal seats, in 25 words or fewer.
+5. Office opportunity, one added sentence that lets a reader check the assumption: closing every site except the Zagreb lease saves the figure the rows give (about $653,000 on leases alone), so the 75% assumption equals keeping Zagreb whole.
+6. Memo, the Scale line from prompt 22: also give the base saving as a share of spend outside the Salesforce platform, computed in savings_summary.md. Keep 380 words and one page.
+7. Update the prompt count wherever it is stated and add this step to the README table.
+
+Rebuild everything, run all checks, both self-tests and the page check, commit as "Step 11: what the platform bill is" and push. Print the Salesforce explanation, the V0002 row, the new range and totals, the office sentence and the Scale line.
+```

@@ -11,6 +11,8 @@ Reviewer: Chaitanya Laxman, VP Operations of the acquired business, on November 
 
 Changes made by the reviewer: none.
 
+After the review, prompt 24 (step 11) restated row 2's description and rationale (Salesforce UK Ltd) for the two readings of the platform bill, at the reviewer's instruction; the recommendation and the source link in the table below are unchanged.
+
 ## The rows reviewed
 
 | Row | Vendor | Spend (USD) | Recommendation | Source link (column K) |
