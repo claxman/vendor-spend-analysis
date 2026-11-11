@@ -21,18 +21,18 @@ Python 3.11 with openpyxl and python-docx; Pages rendered the memo to PDF.
 Web search and page fetch; git and GitHub, one commit per step.
 
 ## Prompts
-Twenty-two prompts directed the analysis; they are logged in prompts/log.md in the order given.
+Twenty-three prompts directed the analysis; they are logged in prompts/log.md in the order given.
 Prompt 6: taxonomy, recommendation rules, cost groups, 79 analyst notes.
 Prompt 15: classify all rows, a web search and lookup log per vendor.
 Prompt 16: Salesforce as the product platform; URLs naming individuals withheld.
 Prompt 17: the savings assumptions, line by line.
 Prompt 18: the second-pass review; reader-facing text.
-Prompts 19 to 22: documents, workbook, manual review, corrections, reproducible calculations.
+Prompts 19 to 23: documents, workbook, manual review, corrections, reproducible calculations.
 Research brief: prompts/research_brief.md.
 
 ## Validation and evidence
 50 automated checks per build: merge, rule documents, classification, savings, documents, workbook.
-Planted-error self-tests: 86 errors in the QA script, 16 in the merge script, each caught.
+Planted-error self-tests: 88 errors in the QA script, 16 in the merge script, each caught.
 Web verification: 319 of 386 rows, 99% of spend; 67 unconfirmed listed with reasons.
 Second pass: 386 rows read, 142 (95% of spend) re-verified, 96% agreement, 25 changed.
 Manual review: 25 largest rows (78.5% of spend), 13 checked against source links, 12 well-known vendors read against the reviewer's own knowledge; Top 3 and memo read line by line; no changes.

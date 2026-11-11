@@ -449,3 +449,18 @@ Append this prompt to prompts/log.md as prompt 22. Last corrections; the rules o
 
 Rebuild the documents and the workbook, run all checks and both self-tests and the memo page check, commit as "Step 9: calculations that reproduce" and push. Print the three Top 3 explanations, the new Scale line, the new methodology lines, and the memo word count and page result.
 ```
+
+## Prompt 23 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 23. Run it after prompt 22 is committed. Two small corrections.
+
+1. Spelling: V0174's risk note says "notarisation"; make it "notarization". Add the -isation and -ise forms to the British-forms check and re-scan every reader-facing text.
+2. What the review leaves out, made visible:
+   - Top 3 file, one more closing line: the people-linked vendor spend that this review does not count (health and life cover, statutory cover, benefit schemes, employer-of-record pay, student labor, less the small savings already counted on those lines), as one figure from savings.csv, with the reason: it moves only with the workforce plan.
+   - Memo, the "Not counted" line: add ", and people-linked spend that moves only with the workforce plan" with no new figure. Keep the word limit of 380 and one page.
+   - insights.md: the same figure with its vendor_ids.
+3. Update the prompt count wherever it is stated and add this step to the README table.
+
+Rebuild, run all checks, both self-tests and the page check, commit as "Step 10: spelling and what is not counted" and push. Print the changed lines.
+```

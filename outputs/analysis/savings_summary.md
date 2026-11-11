@@ -99,6 +99,20 @@ Rounded to the nearest $1,000: $669,000.
 
 Rounded to the nearest $1,000: $653,000.
 
+## People-linked spend not counted
+
+Vendor spend that moves only with the workforce plan, which this review does not count: health and life cover, statutory cover and benefit schemes, employer-of-record pay and student labor. Each line's rows, spend, the small saving the model does count on it (the insurers' rate, the employer-of-record fee) and the rest, in whole dollars; the Total is the sum of the rows, and the rounded figure is the one the Top 3 and the insights quote.
+
+| Saving line | Rows | Spend | Saving counted | Not counted |
+|---|---|---|---|---|
+| Employee health and life insurance | 10 | $237,127 | $23,713 | $213,414 |
+| Statutory cover and benefit schemes | 13 | $54,004 | $0 | $54,004 |
+| Employer-of-record providers | 3 | $89,532 | $13,430 | $76,102 |
+| Student labour | 3 | $54,117 | $0 | $54,117 |
+| Total | 29 | $434,780 | $37,143 | $397,637 |
+
+Rounded to the nearest $1,000: $398,000 not counted, after $37,000 of savings counted on these lines.
+
 ## Spend that falls away without action
 
 Deal and one-off costs that end on their own; they carry no saving in the model.

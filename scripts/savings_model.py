@@ -22,6 +22,10 @@ from vsa_common import ROOT, money, pct, section_rows, strip_accents, table
 REGISTER = ROOT / "docs" / "savings_assumptions.md"
 OPPORTUNITIES = ["Salesforce platform agreement", "Office exit", "Back office into group shared services",
                  "Second wave", "Excluded"]
+# The people-linked lines the review does not count beyond the small savings it models on them: they move only with the
+# workforce plan (step 10, prompt 23).
+PEOPLE_LINKED_LEVERS = ["Employee health and life insurance", "Statutory cover and benefit schemes",
+                        "Employer-of-record providers", "Student labour"]
 PCT_COLUMNS = ["pct_low", "pct_base", "pct_high", "pct_without_decision"]
 SAVING_COLUMNS = ["saving_low", "saving_base", "saving_high", "saving_without_decision", "saving_year1"]
 SAVINGS_COLUMNS = ["vendor_id", "vendor_name_clean", "spend_12m", "cost_cluster", "lever", "opportunity",

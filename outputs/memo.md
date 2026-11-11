@@ -30,10 +30,10 @@
 
 **Risks**
 - Platform dependency: the product runs on Salesforce, so we negotiate terms, never exit.
-- Retention at the Zagreb engineering hub: contractors and the office change at once; benefits and a hub space stay.
+- Retention of the Zagreb engineers: contractors and the office change at once; benefits and a hub space stay.
 - Notice periods and exit costs are unknown; the office figure assumes half a year.
 - $171,000 of mandated fees, statutory payments, benefit schemes and a contingent-fee adviser must stay.
 
-**Not counted:** $274,000 of deal and one-off costs that fall away on their own.
+**Not counted:** $274,000 of deal and one-off costs that fall away on their own, and people-linked spend that moves only with the workforce plan.
 
 **Scale.** $2,229,000 a year is 28% of this business's third-party spend; it falls straight to operating profit, and the same review repeats on every acquisition.

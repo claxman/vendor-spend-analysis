@@ -23,3 +23,5 @@ Estimated annual saving (USD, base case): $515,000
 Second wave: $1,411,000 of travel, software, cloud, telecom, marketing, contractor and unidentified spend carries a base saving of $392,000 (range $240,000 to $616,000; $258,000 in year 1), mostly vendor action the acquired business can take itself.
 
 Spend that falls away without action: $274,000 of deal and one-off costs end on their own ($227,000 of M&A advisers and the data room, $47,000 of one-off payments) and are not counted above.
+
+People-linked spend that this review does not count: $398,000 of health and life cover, statutory cover, benefit schemes, employer-of-record pay and student labor, less the small savings already counted on those lines; it moves only with the workforce plan.

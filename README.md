@@ -33,7 +33,8 @@ Deliverables: the Google Sheet, https://docs.google.com/spreadsheets/d/1LBowVBvW
 | 6 | 19 | `2c3abf2` | Presentation figures, the Top 3, the memo, this README, the methodology and the sheet workbook |
 | 7 | 20 | `6db69ff` | Final corrections: the memo on one page, decision-led rationales, the workbook's saving columns, the manual review |
 | 8 | 21 | `07ab5fb` | Wording corrections: the memo's subject line, how the classification lines were written, the manual review as done, the prompt count |
-| 9 | 22 | this commit | Calculations that reproduce: each Top 3 calculation written out in whole dollars and recomputed by a check, the memo's Scale line, the department rule in the methodology, the deliverable links |
+| 9 | 22 | `dd65944` | Calculations that reproduce: each Top 3 calculation written out in whole dollars and recomputed by a check, the memo's Scale line, the department rule in the methodology, the deliverable links |
+| 10 | 23 | this commit | Spelling: the -ise and -isation forms added to the British-forms check and every reader-facing text rescanned; what is not counted: the people-linked spend in the Top 3, the memo and the insights |
 
 The decisions behind each step are in `docs/decisions.md`; the prompts are in `prompts/log.md`, in the order given.
 
@@ -47,7 +48,7 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are in `p
 - `outputs/batches/batch_01.csv` to `batch_10.csv`: the classification in groups of 40, merged into the file above.
 - `outputs/analysis/00_data_profile.md`, `01_forensics.md`, `01_forensic_flags.csv`, `02_cleaning_report.md`: the profile, the forensic pass and the cleaning report.
 - `outputs/analysis/savings.csv`, `savings.md`, `savings_summary.md`: the savings model per vendor, its report, and the rounded figures the documents quote.
-- `outputs/analysis/insights.md`: ten short findings with figures and vendor ids.
+- `outputs/analysis/insights.md`: eleven short findings with figures and vendor ids.
 - `outputs/top3_opportunities.md`, `outputs/memo.md`, `outputs/memo.docx`, `outputs/memo.pdf`, `outputs/methodology.md`: the documents; the PDF is the Word file as Pages rendered it on this machine (`qa/memo_page_check.md`).
 - `outputs/sheet/Vendor Analysis Assessment - Chaitanya Laxman.xlsx`: the filled copy of the workbook.
 - `scripts/vsa_common.py`: shared helpers (workbook access, name repair, the merge and link groups, the no-dash guard).
@@ -64,7 +65,7 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are in `p
 - `qa/manual_review.md`: the VP Operations' own check of the 25 largest rows (13 against their source links, 12 well-known vendors against the reviewer's own knowledge), and of the Top 3 and the memo, before submission.
 - `qa/research/`: the research inputs, findings, logs and failed attempts of step 3, with a README; `qa/classification_lines/`: the per-batch classification lines the builder read.
 - `docs/taxonomy.md`, `clusters.md`, `recommendation_rules.md`, `vendor_hints.md`, `savings_assumptions.md`: the rules the classification and the model follow. `docs/decisions.md`: every decision, newest first, with the open questions for Finance.
-- `prompts/log.md`: the 22 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
+- `prompts/log.md`: the 23 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
 
 ## How to re-run
 

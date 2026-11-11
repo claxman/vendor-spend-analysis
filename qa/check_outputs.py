@@ -86,6 +86,28 @@ BRITISH_FORMS = [
     "centralise", "decentralised", "labour", "per cent",
 ]
 BRITISH = re.compile(r"\b(" + "|".join(sorted(BRITISH_FORMS, key=len, reverse=True)) + r")\b", re.I)
+# Step 10 (prompt 23): any -ise, -ises, -ised, -ising, -isation or -isations word is a British form unless its base is
+# spelled -ise in American English too (advertise, enterprise, premise, ...) or it ends in -wise.
+ISE_RE = re.compile(r"\b([a-z]+)(ise|ises|ised|ising|isation|isations)\b", re.I)
+AMERICAN_ISE = {
+    "advertise", "advise", "anise", "appraise", "apprise", "arise", "braise", "bruise", "chastise", "chemise", "circumcise",
+    "comprise", "compromise", "concise", "cruise", "demise", "despise", "devise", "disguise", "enterprise", "excise",
+    "exercise", "exorcise", "expertise", "franchise", "guise", "improvise", "incise", "liaise", "malaise", "mayonnaise",
+    "merchandise", "moonrise", "mortise", "noise", "paradise", "poise", "praise", "precise", "premise", "promise", "raise",
+    "reprise", "revise", "rise", "sunrise", "supervise", "surmise", "surprise", "televise", "tortoise", "treatise",
+    "turquoise", "valise", "vise",
+}
+
+
+def british_forms(text: str) -> list[str]:
+    """The listed British forms and, from step 10, every -ise or -isation word whose base American English does not
+    spell -ise as well; each form once, in order of appearance."""
+    found = [m.group(0) for m in BRITISH.finditer(text)]
+    for m in ISE_RE.finditer(text):
+        base = m.group(1).lower() + "ise"
+        if base not in AMERICAN_ISE and not base.endswith("wise"):
+            found.append(m.group(0))
+    return list(dict.fromkeys(found))
 VOCAB = re.compile(r"\b(" + "|".join(PROJECT_VOCABULARY) + r")\b", re.I)
 FIGURE = re.compile(r"\$\d{1,3}(?:,\d{3})*(?:\.\d+)?|\b\d+(?:\.\d+)?%")
 CLEAN = ROOT / "outputs" / "vendors_clean.csv"
@@ -570,9 +592,10 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
     res.add("C19", "Descriptions, rationales and risk notes never refer to the project's own workings: hints, lists, rules, "
                    "searches, sources, steps, prompts or files (step 5)", not bad, f"bad: {sample(bad) or 'none'}")
 
-    bad = [f"{r['vendor_id']} {col}: {', '.join(m.group(0) for m in BRITISH.finditer(r[col]))}"
-           for r in rows for col in ("description", "rationale", "risk_note") if BRITISH.search(r[col])]
-    res.add("C20", "Descriptions, rationales and risk notes are in American English: none of the common British forms (step 6)",
+    bad = [f"{r['vendor_id']} {col}: {', '.join(british_forms(r[col]))}"
+           for r in rows for col in ("description", "rationale", "risk_note") if british_forms(r[col])]
+    res.add("C20", "Descriptions, rationales and risk notes are in American English: none of the common British forms (step 6), "
+                   "nor any -ise or -isation form that American English spells -ize (step 10)",
             not bad, f"bad: {sample(bad) or 'none'}")
 
 
@@ -736,10 +759,10 @@ def document_checks(res: Results, docs: dict[Path, str], allowed: set[str], srow
            for p, t in docs.items() if p in SHEET_DOCUMENTS and VOCAB.search(t)]
     res.add("D3", "No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the methodology",
             not bad, f"bad: {sample(bad) or 'none'}")
-    bad = [f"{rel(p)}: {', '.join(sorted({m.group(0).lower() for m in BRITISH.finditer(t)}))}"
-           for p, t in docs.items() if BRITISH.search(t)]
-    res.add("D4", "The four documents are in American English: none of the common British forms", not bad,
-            f"bad: {sample(bad) or 'none'}")
+    bad = [f"{rel(p)}: {', '.join(sorted({f.lower() for f in british_forms(t)}))}"
+           for p, t in docs.items() if british_forms(t)]
+    res.add("D4", "The four documents are in American English: none of the common British forms, nor any -ise or -isation "
+                  "form that American English spells -ize (step 10)", not bad, f"bad: {sample(bad) or 'none'}")
     top3 = next((t for p, t in docs.items() if p.name == TOP3_NAME), None)
     title = ("Every calculation in the Top 3 reproduces from savings.csv: each rate of a spend names one saving line's "
              "spend to the dollar, its product is spend times rate to the dollar, and the products and the other lines add "
@@ -931,6 +954,8 @@ MUTATIONS = [
     ("Rationale that cites a search", set_field("V0005", "rationale", "Search shows flexible offices in London."), "C19"),
     ("Risk note that names the lever", set_field("V0203", "risk_note", "the lever is price"), "C19"),
     ("Description in British English", set_field("V0005", "description", "Flexible office licences in London"), "C20"),
+    ("Risk note with an -isation form outside the listed ones",
+     set_field("V0005", "risk_note", "documents awaiting notarisation need another route"), "C20"),
     # Step 3b: the platform reclassification
     ("Salesforce back in Sales as the sales team's CRM", set_field("V0002", "department", "Sales"), "C13"),
     ("Mason Frank back in the Salesforce platform cluster", set_field("V0034", "cost_cluster", "Salesforce platform"),
@@ -1439,6 +1464,8 @@ def self_test(clean: list[dict]) -> bool:
         ("Project vocabulary in the memo", doc_set(calc_doc, clean_doc.replace("base saving", "lever")), calc_rows, "D3"),
         ("British form in a document", doc_set(calc_doc, clean_doc.replace("Spend was", "Spend was optimised at")),
          calc_rows, "D4"),
+        ("-isation form outside the listed ones in a document",
+         doc_set(calc_doc, clean_doc.replace("Spend was", "Spend after categorisation was")), calc_rows, "D4"),
         ("Calculation whose product is not spend times rate",
          doc_set(calc_doc.replace("($627,782)", "($627,783)"), clean_doc), calc_rows, "D5"),
         ("Calculation whose spend is no saving line's", doc_set(calc_doc.replace("$837,043", "$837,044"), clean_doc),

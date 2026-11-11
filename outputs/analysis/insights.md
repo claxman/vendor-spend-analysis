@@ -119,3 +119,7 @@ The year-1 saving is $1,208,570 against a base run-rate of $2,229,687, because t
   2. The contract register with renewal and notice dates for insurance, the leases and coworking, the Salesforce agreement, the HR and finance systems and the telecom lines: it turns the year-1 factors in section 9 from conventions into dates.
   3. The Salesforce contract and usage: licence counts by product, the split between platform and ISV fees and internal CRM seats, the OEM terms for PDF Butler, and any change-of-control clause.
   4. Headcount by site and entity, now and 12 months ago: it sizes the seats, the space, the payroll and the insurance cover, and it tests the leavers reading in section 7.
+
+## 11. People-linked spend the review does not count
+
+- $397,638 of people-linked vendor spend is not counted ($398,000 rounded): health and life cover, statutory cover and benefit schemes, employer-of-record pay and student labor, $434,781 across 29 rows less the $37,143 of savings the model counts on those lines (the insurers' rate and the employer-of-record fee). It moves only with the workforce plan, not with a vendor action: `V0012`, `V0016`, `V0030`, `V0042`, `V0045`, `V0047`, `V0054`, `V0057`, `V0069`, `V0071`, `V0086`, `V0090`, `V0094`, `V0095`, `V0098`, `V0100`, `V0128`, `V0143`, `V0179`, `V0186`, `V0195`, `V0201`, `V0212`, `V0273`, `V0300`, `V0328`, `V0382`, `V0383`, `V0384`.

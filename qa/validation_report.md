@@ -346,7 +346,7 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | C17 | PASS | Every row is verified TRUE, or FALSE and listed with a reason under "Verification exceptions" in qa/validation_report.md; every listed id is FALSE in the file |
 | C18 | PASS | vendor_name_original and vendor_name_clean match outputs/vendors_clean.csv by vendor_id, and the rows are in the original sheet order (vendor_id ascending) |
 | C19 | PASS | Descriptions, rationales and risk notes never refer to the project's own workings: hints, lists, rules, searches, sources, steps, prompts or files (step 5) |
-| C20 | PASS | Descriptions, rationales and risk notes are in American English: none of the common British forms (step 6) |
+| C20 | PASS | Descriptions, rationales and risk notes are in American English: none of the common British forms (step 6), nor any -ise or -isation form that American English spells -ize (step 10) |
 | V1 | PASS | pct_low <= pct_base <= pct_high on every row, all within 0 and 100 |
 | V2 | PASS | pct_without_decision <= pct_base on every row, and equal to it on untagged rows |
 | V3 | PASS | The year-1 saving is the base saving times a factor between 0 and 1, so never above the base |
@@ -361,7 +361,7 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | D1 | PASS | Every dollar figure and percentage in the four documents appears in a file under outputs/analysis or qa (savings_summary.md first) |
 | D2 | PASS | Every table with a Total row in the documents adds up |
 | D3 | PASS | No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the methodology |
-| D4 | PASS | The four documents are in American English: none of the common British forms |
+| D4 | PASS | The four documents are in American English: none of the common British forms, nor any -ise or -isation form that American English spells -ize (step 10) |
 | D5 | PASS | Every calculation in the Top 3 reproduces from savings.csv: each rate of a spend names one saving line's spend to the dollar, its product is spend times rate to the dollar, and the products and the other lines add to the stated total, which rounds to the opportunity's base saving (step 9) |
 | W1 | PASS | outputs/sheet/Vendor Analysis Assessment - Chaitanya Laxman.xlsx matches its sources cell by cell, keeps the raw row order and the Department dropdown, uses only Config departments, and its saving column sums to the base saving |
 

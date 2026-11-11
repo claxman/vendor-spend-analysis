@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from savings_model import MUST_NOT_CUT, REGISTER, load_register, to_float  # noqa: E402
+from savings_model import MUST_NOT_CUT, PEOPLE_LINKED_LEVERS, REGISTER, load_register, thousands, to_float  # noqa: E402
 from vsa_common import money, pct, rel, section_rows, table, write_text  # noqa: E402
 
 CLASSIFIED = ROOT / "outputs" / "vendors_classified.csv"
@@ -232,6 +232,12 @@ def main() -> int:
         if word not in by_id[vid]["description"]:
             raise SystemExit(f"{vid} does not name {word} in its description")
 
+    # 11. people-linked spend the review does not count (step 10)
+    people_rows = [r for r in rows if srows[r["vendor_id"]]["lever"] in PEOPLE_LINKED_LEVERS]
+    people_spend = spend_of(people_rows)
+    people_counted = saving([r["vendor_id"] for r in people_rows])
+    people_rest = people_spend - people_counted
+
     L = [
         "# Insights",
         "",
@@ -396,6 +402,14 @@ def main() -> int:
         "internal CRM seats, the OEM terms for PDF Butler, and any change-of-control clause.",
         "  4. Headcount by site and entity, now and 12 months ago: it sizes the seats, the space, the payroll and the "
         "insurance cover, and it tests the leavers reading in section 7.",
+        "",
+        "## 11. People-linked spend the review does not count",
+        "",
+        f"- {money(people_rest)} of people-linked vendor spend is not counted ({money(thousands(people_rest))} rounded): health "
+        f"and life cover, statutory cover and benefit schemes, employer-of-record pay and student labor, {money(people_spend)} "
+        f"across {len(people_rows)} rows less the {money(people_counted)} of savings the model counts on those lines (the "
+        "insurers' rate and the employer-of-record fee). It moves only with the workforce plan, not with a vendor action: "
+        f"{ids(people_rows)}.",
     ]
     write_text(OUT, "\n".join(L).rstrip("\n") + "\n")
     print(f"Wrote {rel(OUT)}: {len(L)} lines; top 1 {share(top(1))}, top 10 {share(top(10))}, top 50 {share(top(50))}; "

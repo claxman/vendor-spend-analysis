@@ -35,9 +35,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "qa"))
 import check_outputs  # noqa: E402
 from savings_model import (  # noqa: E402
-    ANALYST_CALLS, FALLS_AWAY_LEVERS, MONEY_COLUMNS, MUST_NOT_CUT, OPPORTUNITIES, PCT_COLUMNS, REGISTER, SAVING_COLUMNS,
-    SAVINGS_COLUMNS, build, decision_values, dollars, money_k, reconciliation, render_rollup_sections, rollup, thousands,
-    to_float, totals,
+    ANALYST_CALLS, FALLS_AWAY_LEVERS, MONEY_COLUMNS, MUST_NOT_CUT, OPPORTUNITIES, PCT_COLUMNS, PEOPLE_LINKED_LEVERS,
+    REGISTER, SAVING_COLUMNS, SAVINGS_COLUMNS, build, decision_values, dollars, money_k, reconciliation,
+    render_rollup_sections, rollup, thousands, to_float, totals,
 )
 from vsa_common import money, pct, rel, table, write_text  # noqa: E402
 
@@ -82,6 +82,24 @@ def calculation_table(srows: list[dict], opp: str) -> list[str]:
     out.append(["Total", money(sum(b[1] for b in body)), "", money(sum(b[3] for b in body))])
     return [f"### {opp}", "", *table(["Saving line", "Spend", "Rate", "Saving"], out), "",
             f"Rounded to the nearest $1,000: {money(thousands(exact))}."]
+
+
+def people_linked_table(srows: list[dict]) -> list[str]:
+    """Step 10 (prompt 23): the people-linked lines (PEOPLE_LINKED_LEVERS), each with its rows, spend, the saving the
+    model counts on it and the rest, in whole dollars; a Total that is the sum of the rows; and the rest rounded to the
+    nearest $1,000, the figure the Top 3 and the insights quote."""
+    body = []
+    for lever in PEOPLE_LINKED_LEVERS:
+        sel = [s for s in srows if s["lever"] == lever]
+        spend = dollars(math.fsum(to_float(s["spend_12m"]) for s in sel))
+        counted = dollars(math.fsum(to_float(s["saving_base"]) for s in sel))
+        body.append([lever, len(sel), spend, counted, spend - counted])
+    tot = [sum(b[i] for b in body) for i in (1, 2, 3, 4)]
+    out = [[n, str(r), money(sp), money(c), money(nc)] for n, r, sp, c, nc in body]
+    out.append(["Total", str(tot[0]), money(tot[1]), money(tot[2]), money(tot[3])])
+    return [*table(["Saving line", "Rows", "Spend", "Saving counted", "Not counted"], out), "",
+            f"Rounded to the nearest $1,000: {money(thousands(tot[3]))} not counted, after {money(thousands(tot[2]))} of "
+            f"savings counted on these lines."]
 
 
 def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], levers: dict[str, dict]) -> str:
@@ -175,7 +193,14 @@ def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], le
               "Opportunities table shows.", ""]
     for n, opp in enumerate(OPPORTUNITIES[:3]):
         lines += ([""] if n else []) + calculation_table(srows, opp)
-    falls =[(name, thousands(by_lever[name]["spend"]), by_lever[name]["rows"]) for name in FALLS_AWAY_LEVERS if name in by_lever]
+    lines += ["", "## People-linked spend not counted", "",
+              "Vendor spend that moves only with the workforce plan, which this review does not count: health and life "
+              "cover, statutory cover and benefit schemes, employer-of-record pay and student labor. Each line's rows, spend, "
+              "the small saving the model does count on it (the insurers' rate, the employer-of-record fee) and the rest, in "
+              "whole dollars; the Total is the sum of the rows, and the rounded figure is the one the Top 3 and the insights "
+              "quote.", "",
+              *people_linked_table(srows)]
+    falls = [(name, thousands(by_lever[name]["spend"]), by_lever[name]["rows"]) for name in FALLS_AWAY_LEVERS if name in by_lever]
     lines += ["", "## Spend that falls away without action", "",
               "Deal and one-off costs that end on their own; they carry no saving in the model.", "",
               *table(["Spend", "Rows", "Figure"], [[n, r, money(s)] for n, s, r in falls]
