@@ -50,6 +50,17 @@ For each decision only the group can take: the base saving of the moves that dep
 | `group_engineering_sourcing` | $212,000 | $64,000 | $21,000 | $43,000 | $32,000 |
 | Total | $2,893,000 | $1,417,000 | $450,000 | $967,000 | $741,000 |
 
+## Cost of delay
+
+The two decisions the memo asks for, valued as in the Opportunities table (base minus without the decision), and what each month of delay costs: one twelfth of their value together.
+
+| Measure | Figure |
+|---|---|
+| Value of the remote operating model (the Office exit line) | $448,000 |
+| Value of the group shared functions (the Back office line) | $455,000 |
+| The two decisions together | $903,000 |
+| Cost of each month of delay, one twelfth of the two together | $75,000 |
+
 ## Spend that falls away without action
 
 Deal and one-off costs that end on their own; they carry no saving in the model.

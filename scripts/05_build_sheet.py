@@ -6,7 +6,9 @@ file (it is opened from a binary handle, read-only, and saved under the new name
 fills:
   Vendor Analysis Assessment  rows 2 to 387 in the original order: B department, D description, E recommendation,
                               and new headed columns F Rationale, G Key risk, H Estimated annual saving (USD, base
-                              case), I Savings opportunity, J Verified online (Yes or No), K Source
+                              case, shown in whole dollars), I Savings opportunity (or "No saving counted: " and the
+                              reason where the base saving is zero, step 7), J Vendor identified online (Yes/No),
+                              K Source
   Top 3 Opportunities         titles in B, explanations in C, D headed "Estimated annual savings (USD)"
   Methodology                 the lines of outputs/methodology.md from row 2 down, one per row
   CEOCFO Recommendations      row 2 "Memo (Google Doc): [link to be added]", then the memo text, one line per row,
@@ -44,7 +46,23 @@ METHODOLOGY = ROOT / "outputs" / "methodology.md"
 MEMO = ROOT / "outputs" / "memo.md"
 TOP3_SHEET, METHOD_SHEET, MEMO_SHEET = "Top 3 Opportunities", "Methodology", "CEOCFO Recommendations"
 NEW_HEADERS = {"F": "Rationale", "G": "Key risk", "H": "Estimated annual saving (USD, base case)",
-               "I": "Savings opportunity", "J": "Verified online (Yes or No)", "K": "Source"}
+               "I": "Savings opportunity", "J": "Vendor identified online (Yes/No)", "K": "Source"}
+# Column I for a row whose base saving is zero: "No saving counted: " and the reason, by saving line (step 7). Every
+# saving line that carries a zero base must be here; the build stops on one that is not.
+ZERO_SAVING_REASONS = {
+    "Slack and Yoxel inside the Salesforce renewal": "negotiated inside the Salesforce renewal",
+    "R&D tax credit adviser (contingent fee)": "fee contingent on cash recovered",
+    "Employment-law settlement advice": "one payment per leaver, not a vendor relationship",
+    "Statutory cover and benefit schemes": "statutory cover or pay-linked benefit",
+    "TM Forum": "go-to-market credential customers expect",
+    "M&A and transaction costs": "deal cost that ends with the sale",
+    "Customer-mandated platform fees": "fee a customer requires",
+    "Statutory and government": "tax, government fee or regulator",
+    "Student labour": "workforce cost set by the hiring plan",
+    "One-off spend that falls away": "one-off payment that falls away on its own",
+    "Bank, payment and certification fees": "fee set by transaction volume or customer certification",
+}
+NO_SAVING = "No saving counted: "
 WIDTHS = {"F": 60, "G": 45, "H": 18, "I": 32, "J": 14, "K": 50}
 TOP3_HEADER = "Estimated annual savings (USD)"
 MEMO_LINK = "Memo (Google Doc): [link to be added]"
@@ -113,9 +131,18 @@ def sources() -> dict:
             "memo": memo_rows(MEMO.read_text(encoding="utf-8"))}
 
 
+def opportunity_cell(s: dict) -> str:
+    if float(s["saving_base"]) > 0:
+        return s["opportunity"]
+    reason = ZERO_SAVING_REASONS.get(s["lever"])
+    if reason is None:
+        raise SystemExit(f"{s['vendor_id']}: no reason recorded for a zero saving on {s['lever']!r}")
+    return NO_SAVING + reason
+
+
 def vendor_cells(r: dict, s: dict) -> dict[str, object]:
     return {"B": r["department"], "D": r["description"], "E": r["recommendation"], "F": r["rationale"],
-            "G": r["risk_note"], "H": float(s["saving_base"]), "I": s["opportunity"],
+            "G": r["risk_note"], "H": float(s["saving_base"]), "I": opportunity_cell(s),
             "J": "Yes" if r["verified"] == "TRUE" else "No", "K": r["source_url"]}
 
 
@@ -137,7 +164,7 @@ def build(out: Path = OUT) -> Path:
             cell = ws[f"{col}{n}"]
             cell.value = value
             if col == "H":
-                cell.number_format = "#,##0.00"
+                cell.number_format = "#,##0"   # whole dollars shown; the value stays exact so the column sums to the base
             elif col in ("D", "F", "G"):
                 cell.alignment = Alignment(wrap_text=True, vertical="top")
 

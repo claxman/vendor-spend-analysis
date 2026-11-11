@@ -2,6 +2,41 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-11: final corrections (prompt 20, step 7)
+
+### 1. The memo fits one page
+
+- `outputs/memo.md` is rewritten to 358 words outside the table (limit 360): To, From and Date on one line, the Subject on the next; the decision values tie to the table (the remote operating model is worth the Office exit line's base minus its fallback, $448,000, not the $466,000 of the decision table, which also carries the telecom lines; the shared functions $455,000 as before, with the bracketed breakdown dropped); one date for both decisions, December 15, 2026, and the cost of each month of delay, $75,000, one twelfth of the two values together, written by `scripts/03_savings.py` in a new "Cost of delay" section of `savings_summary.md`; the Salesforce bullet names the contract, the usage data and group procurement; the 30-to-90-day line puts the travel and expense policy in place instead of stopping perks and card spend; the retention risk says benefits and a hub space stay; the words around every figure were checked against what the figure contains (the 67 are the rows not verified online, the $171,000 names every kind of payee in it, the high case is every decision and negotiation at the top of its range).
+- `scripts/06_build_memo_docx.py` sets single spacing with 2 points after each paragraph and no blank lines, the table columns at 3.4, 1.0, 1.0 and 1.6 inches in the table grid and in every cell with a fixed layout, 9.5-point cells, "What it needs" cells of at most five words and no count of landlords; the row labels were shortened so that each row is one line (widths measured in Calibri from Word's own font files before building).
+- `qa/memo_page_check.py` renders the file to `outputs/memo.pdf` and measures it. Microsoft Word on this machine refuses the AppleScript save-as command (error -1708 for every format, also in its own container folder), so Pages exports the PDF (Calibri and Calibri Bold embedded) and macOS PDFKit reads it back: one US Letter page, 36 text lines, the lowest line 139.6 points (1.94 inches) above the bottom margin, 9.4 lines to spare at 14.8 points a line, the header on one line, the four table rows 17.4 points apart (one line each). Result in `qa/memo_page_check.md`. A probe copy with eight extra lines was tried first; Pages opened the probe files only intermittently, so the check measures the rendered page instead.
+
+### 2. Top 3
+
+- Assumptions in the present tense. The office line counts providers and countries from the rows: seven providers in six countries (The Office Group, Zagrebtower, IndiQube, GPT Space & Co, WeWork, WorkEZ, Common Desk; the UK, Croatia, India, Australia, Singapore and the US); JLL, CBRE and the Zagrebtower charges are on the same saving line but are not providers. "Any Salesforce agreement the group holds" replaces "the group's Salesforce relationship" there and in `V0002`'s rationale, which is a fact about the group the file does not show.
+
+### 3. Sheet text: 174 cells on 172 rows
+
+- Decision-led rationales: every row whose saving rests on a group decision (118 rows: a saving line tagged with a decision and a base saving above zero) leads with the group function it moves to and gives the vendor-only fallback second; the four named (Jensten, 4i, Infosys, Weking) and 114 others reworded. Check V10, with the decision phrases listed in `qa/check_outputs.py`, fails when the phrase is missing, the fallback is missing on a line that has a without-decision case, or the fallback comes first.
+- Corporate-group wording removed (AWS, LinkedIn, Microsoft 365, npm, the Amazon marketplaces, PDF Butler, Slack, Trello and Atlassian, Papertrail and SolarWinds, the ICICI insurers). C12 now requires naming only for duplicate records of one vendor: the five merge groups and the same-brand link groups (Telefónica, HR Solution International, Bupa, Allianz Australia, Acclime, Apple, GRT Hotels, DHL); `groups()` marks them `duplicate`.
+- "of not acting:" replaced by a plain clause (`V0015`, `V0030`); "excluded from the savings base" by "no saving counted" (17 rows; C15 updated); "the parent's" by "the group's" (7 cells).
+- `V0022`'s risk note no longer cites WeWork's reported Singapore cuts: the log mentions a report but records no source for it. `V0018`'s note keeps the Gordons Partnership merger, whose source (the firm's announcement, fetched in the second pass) is now in `qa/verification_log.csv` and `qa/research/logs/claude_log.csv`.
+- Every Terminate row whose base saving is under half its spend (57 rows) says why in a clause: the pay passed through on employer-of-record rows, the processing fee on payroll rows, "stopped until Finance confirms" on unidentified payees, no saving counted on deal and one-off costs, and the budget line's rate on small marketing and software rows. Check V11, with a cent of tolerance for 50% lines.
+- Office rows labeled Consolidate start "Consolidate the offices into one hub space under a remote operating model: exit this space" (JLL and CBRE, property advice rather than space, use the same opening and say the advice ends with the exits); the hub's own lease (`V0007`, Optimize) says keep and right-size.
+- Weking's rationale starts with Finance confirming the contract and the work, since a company founded in 2023 is the eighth-largest vendor.
+
+### 4. Workbook
+
+- Column I reads "No saving counted: " and the reason for every row whose base saving is zero, by saving line (`ZERO_SAVING_REASONS` in `scripts/05_build_sheet.py`; the build stops on a zero without a reason); column J is headed "Vendor identified online (Yes/No)"; column H shows whole dollars through its number format, while the values stay exact so that the column still sums to the base saving to the cent.
+
+### 5. Methodology, README and the manual review
+
+- The methodology opens with the repository address and says "Twenty prompts directed the analysis; they are logged in prompts/log.md in the order given": the log is not called verbatim, because one housekeeping omission is marked in it. The README says the same. Both record the manual review in one line.
+- `qa/manual_review.md` records the reviewer's check of the 25 largest rows (rows 2 to 26, $6,194,521 of $7,887,360, 78.5% of spend) against their source links and the line-by-line read of the Top 3 and the memo: no changes.
+
+### 6. Where it is implemented and checked
+
+- `qa/check_outputs.py`: C12 and C15 reworded, V10 and V11 added with three planted errors (82 in the self-test); `scripts/merge_validate.py` (the check list); `scripts/03_savings.py` (cost of delay); `scripts/05_build_sheet.py`; `scripts/06_build_memo_docx.py`; `qa/memo_page_check.py` (new); `outputs/batches/*.csv`; the documents, the README and `docs/recommendation_rules.md`. All 49 checks pass; both self-tests pass, with 82 and 16 planted errors.
+
 ## 2026-11-11: Top 3, memo, methodology, README and sheet workbook (prompt 19, step 6)
 
 ### 1. Rules for everything a reader sees
@@ -455,18 +490,20 @@ Updated in step 2d-fix (prompt 10): the expected columns follow the classificati
 | C7 to C9 | one-line descriptions without the banned phrases; one-sentence rationales; no em or en dashes |
 | C10 | total `spend_12m` equals the clean file's total exactly |
 | C11 | the rows of each merge group and of each shared link group carry one recommendation |
-| C12 | every grouped row's rationale names its group, per-row links included; where the row's own name already contains the group's name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
+| C12 | every row that is a duplicate record of one vendor (a merge group or a same-brand link group) names the other record in its rationale, while rows linked only through a corporate parent need not (step 7); where the row's own name already contains the shared name, the rationale must also show the grouping with a word such as "group", "both" or "entities" |
 | C13, C14 | the outcomes, and the wording of rationales, risk notes, descriptions and sub_functions, fixed by decisions (steps 2b to 3c) |
-| C15 | rows outside the savings base say "non-discretionary, excluded from the savings base" |
+| C15 | rows outside the savings base say "non-discretionary, no saving counted" (step 7; "excluded from the savings base" until then) |
 | C16 | `risk_note` is non-empty for every Terminate and Consolidate row and for every Optimize row at or above $25,000 (step 5), and empty for every smaller Optimize row |
 | C17 | every row has `verified` TRUE, except rows with `verified` FALSE listed under "Verification exceptions" in `qa/validation_report.md`; a FALSE row not listed there fails, and a listed `vendor_id` that is not FALSE in the file fails |
 | C18 | `vendor_name_original` and `vendor_name_clean` match `outputs/vendors_clean.csv` by `vendor_id`, and the rows are in the original sheet order, `vendor_id` ascending |
 | C19 | descriptions, rationales and risk notes never refer to the project's own workings: hints, lists, rules, searches, sources, steps, prompts or files (step 5), nor to the project vocabulary lever, cluster, depends_on or batch (step 6) |
 | C20 | descriptions, rationales and risk notes are in American English: none of the common British forms (step 6) |
 | D1 to D4 | the four documents (step 6): every dollar figure and percentage appears in a file under `outputs/analysis` or `qa`; every table with a Total row adds up; no project vocabulary in the Top 3, the memo or the methodology; American English |
-| W1 | the sheet workbook matches its sources cell by cell, keeps the raw row order and the Department dropdown, uses only Config departments, and its saving column sums to the base saving (step 6) |
+| W1 | the sheet workbook matches its sources cell by cell (column I reads "No saving counted: " and the reason where the base saving is zero, column J is headed "Vendor identified online (Yes/No)" and column H shows whole dollars, step 7), keeps the raw row order and the Department dropdown, uses only Config departments, and its saving column sums to the base saving (step 6) |
 | V1 to V8 | the savings file (step 4): low <= base <= high; without decision <= base; year 1 is the base times a factor between 0 and 1; no saving on a non-addressable or M&A row; no saving above spend; every row has one registered lever and every lever is used; every tag is a registered decision; the roll-ups in `savings.md` reconcile to the cent |
 | V9 | every Terminate row on a lever with a base below 50% outside the Excluded opportunity, and every Optimize row on a lever above 50%, is fixed or has a recorded reason (step 5) |
+| V10 | every row whose saving rests on a group decision (a lever tagged with a decision, base saving above zero) leads its rationale with the group function it moves to and gives the vendor-only fallback second (step 7) |
+| V11 | every Terminate row whose base saving is under half its spend says why in a clause: pay passed through, a processing fee, stopped until confirmed, or no saving counted (step 7) |
 
 Columns of `outputs/vendors_classified.csv`, as in the classification spec: `vendor_id`, `vendor_name_original`, `vendor_name_clean`, `spend_12m`, `department`, `sub_function`, `description`, `recommendation`, `rationale`, `risk_note`, `cost_cluster`, `is_addressable`, `is_recurring`, `confidence`, `verified`, `source_url`. `spend_12m` replaces the earlier `cost_usd`. Other columns may be added.
 

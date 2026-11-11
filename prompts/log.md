@@ -374,3 +374,43 @@ Add a check that reads the workbook back and confirms every cell against the sou
 
 Run every check and both self-tests, commit as "Step 6: Top 3, memo, methodology, README and sheet workbook", push, and print the Top 3, the memo and the methodology in full with the memo's word count.
 ```
+
+## Prompt 20 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 20. Final corrections before submission. The rules of prompt 19 still apply.
+
+PART A: the memo must fit one page
+memo.docx renders to two pages. Rebuild it to fit one US Letter page with at least eight lines to spare:
+- To, From and Date on one line; Subject on the next; 2 point spacing after paragraphs; no blank lines.
+- Table columns sized so every row fits on one line (first column about 3.4 inches, the two number columns about 1 inch, the last about 1.6), set in the table grid as well as the cells; "What it needs" at most five words per cell; no count of landlords.
+- At most 360 words outside the table.
+- Render it to PDF with whatever this machine has, confirm the page count and the spare lines, and say how it was checked. If nothing here can render it, say so.
+Content changes:
+- Decision values must tie to the table. The remote operating model is worth the office row's saving minus its fallback ($448,000 on the current figures), not the wider figure that includes telecom lines.
+- One date for both decisions (December 15, 2026) and the cost of delay: one twelfth of the two decision values for each month, as a figure in savings_summary.md. Drop the breakdown in brackets.
+- Salesforce bullet: no decision needed; it needs the contract, the usage data and group procurement at the table.
+- Plan, 30 to 90 days: "put the travel and expense policy in place" instead of stopping perks and card spend, which contradicts the retention risk and the model.
+- Retention risk: say that benefits and a hub space stay.
+- Check that the words describing every figure match what the figure contains.
+
+PART B: Top 3
+- Assumptions in the present tense ("assumes", not "assumed").
+- Count office providers and countries from the rows instead of "five cities".
+- "Any Salesforce agreement the group holds", not "the group's Salesforce relationship": that is a fact about the group we do not have. Same change in the Salesforce row's rationale.
+
+PART C: sheet text
+1. Where a row's saving rests on a group decision, its rationale leads with that base case (the group function it moves to) and gives the vendor-only fallback second. Jensten, 4i, Infosys and Weking do not do this now; check every such row.
+2. Only duplicate records of one vendor need to name the other record. Remove the wording about corporate groups ("part of the Microsoft group but a separate service", "apart from the Amazon marketplaces in the same group", "not a consulting partner") and relax C12 to match.
+3. Replace "of not acting:" with a plain sentence, and "excluded from the savings base" with "no saving counted".
+4. A risk note states no fact about a vendor that the verification log does not support. V0022's note about site cuts goes unless a logged source supports it.
+5. Where a Terminate row's saving is under half its spend, the rationale says why in a clause (pay passed through, stopped until confirmed).
+6. Office rows labeled Consolidate start "Consolidate the offices into one hub space under a remote operating model: exit this space", so label and text agree.
+7. Weking: the rationale starts with confirming the contract and the work, since a company founded in 2023 is the eighth-largest vendor.
+8. Workbook: when a row's base saving is zero, column I reads "No saving counted: " plus the reason, in place of the opportunity name or "Excluded"; column J is headed "Vendor identified online (Yes/No)"; column H shows whole dollars.
+
+PART D: methodology and manual review
+- First line: the repository address.
+- The prompts line: "Twenty prompts directed the analysis; they are logged in prompts/log.md in the order given." Do not call the log verbatim there: one housekeeping omission is marked in it.
+- MANUAL REVIEW. I checked each of the 25 largest rows (rows 2 to 26, 78.5% of spend) against its source link and read the Top 3 and the memo line by line. My changes: [NONE]. Record this in qa/manual_review.md, apply any changes, and add one line to the methodology and the README.Rebuild every output, run all checks and both self-tests, commit as "Step 7: final corrections" and push. Print the memo, its word count and how its page count was checked; the changed Top 3 sentences; and the number of sheet cells changed.
+```

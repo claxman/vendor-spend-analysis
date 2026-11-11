@@ -15,7 +15,7 @@ Outputs
                                    whole dollars
 
 No spend figure is hard-coded: the dollars come from the classification and the percentages from the register
-(scripts/savings_model.py). After writing, the savings checks V1 to V8 of qa/check_outputs.py run on the files
+(scripts/savings_model.py). After writing, the savings checks V1 to V11 of qa/check_outputs.py run on the files
 just written. Exit code 1 if the register does not load, a row has no lever, or a check fails.
 
 Usage:
@@ -124,6 +124,19 @@ def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], le
                    + [["Total", money(sum(x[1] for x in dec_lines)), money(sum(x[2] for x in dec_lines)),
                        money(sum(x[3] for x in dec_lines)), money(sum(x[4] for x in dec_lines)),
                        money(sum(x[5] for x in dec_lines))]])
+    office = next((k for n, k in opp_lines if n == "Office exit"), None)
+    back = next((k for n, k in opp_lines if n == "Back office into group shared services"), None)
+    if office and back:
+        two = office["value"] + back["value"]
+        lines += ["", "## Cost of delay", "",
+                  "The two decisions the memo asks for, valued as in the Opportunities table (base minus without the "
+                  "decision), and what each month of delay costs: one twelfth of their value together.", "",
+                  *table(["Measure", "Figure"], [
+                      ["Value of the remote operating model (the Office exit line)", money(office["value"])],
+                      ["Value of the group shared functions (the Back office line)", money(back["value"])],
+                      ["The two decisions together", money(two)],
+                      ["Cost of each month of delay, one twelfth of the two together", money(thousands(two / 12))],
+                  ])]
     falls = [(name, thousands(by_lever[name]["spend"]), by_lever[name]["rows"]) for name in FALLS_AWAY_LEVERS if name in by_lever]
     lines += ["", "## Spend that falls away without action", "",
               "Deal and one-off costs that end on their own; they carry no saving in the model.", "",

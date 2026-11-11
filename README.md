@@ -28,9 +28,10 @@ A review of the acquired business's third-party vendor spend for an acquisition 
 | 4 | 17 | `620f2ce` | Savings model (41 saving lines, low, base and high, decision tags) and the insights |
 | 4b | 18 | `876b70c` | The open assumptions decided (hardware and courier lines, MultiSport kept, Bisley Law reworded) |
 | 5 | 18 | `13e3708` | Second-pass review (all rows, then 142 fresh web checks), the working files kept, reader-facing text |
-| 6 | 19 | this commit | Presentation figures, the Top 3, the memo, this README, the methodology and the sheet workbook |
+| 6 | 19 | `2c3abf2` | Presentation figures, the Top 3, the memo, this README, the methodology and the sheet workbook |
+| 7 | 20 | this commit | Final corrections: the memo on one page, decision-led rationales, the workbook's saving columns, the manual review |
 
-The decisions behind each step are in `docs/decisions.md`; the prompts are verbatim in `prompts/log.md`.
+The decisions behind each step are in `docs/decisions.md`; the prompts are in `prompts/log.md`, in the order given.
 
 ## Repository map
 
@@ -43,7 +44,7 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are verba
 - `outputs/analysis/00_data_profile.md`, `01_forensics.md`, `01_forensic_flags.csv`, `02_cleaning_report.md`: the profile, the forensic pass and the cleaning report.
 - `outputs/analysis/savings.csv`, `savings.md`, `savings_summary.md`: the savings model per vendor, its report, and the rounded figures the documents quote.
 - `outputs/analysis/insights.md`: ten short findings with figures and vendor ids.
-- `outputs/top3_opportunities.md`, `outputs/memo.md`, `outputs/memo.docx`, `outputs/methodology.md`: the documents.
+- `outputs/top3_opportunities.md`, `outputs/memo.md`, `outputs/memo.docx`, `outputs/memo.pdf`, `outputs/methodology.md`: the documents; the PDF is the Word file as Pages rendered it on this machine (`qa/memo_page_check.md`).
 - `outputs/sheet/Vendor Analysis Assessment - Chaitanya Laxman.xlsx`: the filled copy of the workbook.
 - `scripts/vsa_common.py`: shared helpers (workbook access, name repair, the merge and link groups, the no-dash guard).
 - `scripts/00_data_profile.py`, `01_forensics.py`, `02_clean.py`: the profile, the forensic pass, the cleaning.
@@ -51,14 +52,15 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are verba
 - `scripts/merge_validate.py`: merges the batches, runs every check, writes `qa/validation_report.md`.
 - `scripts/savings_model.py`, `03_savings.py`: the savings model and its outputs. `04_insights.py`: the insights.
 - `scripts/05_build_sheet.py`: the workbook and its read-back check. `06_build_memo_docx.py`: the memo as a Word file.
-- `qa/check_outputs.py`: the checks (M1 to M7, S1 to S6, C1 to C20, V1 to V9, D1 to D4, W1) and the planted-error self-test.
+- `qa/check_outputs.py`: the checks (M1 to M7, S1 to S6, C1 to C20, V1 to V11, D1 to D4, W1) and the planted-error self-test. `qa/memo_page_check.py`: renders the memo to PDF with Pages, reads it back with macOS PDFKit and confirms the page count and the lines to spare (`qa/memo_page_check.md`).
 - `qa/validation_report.md`: the result of every check, the distributions and the cross-tab of recommendation by saving line.
 - `qa/verification_log.csv`, `qa/verification_exceptions.csv`: every web lookup, and the reason for each unconfirmed row.
 - `qa/vendor_groups.csv`, `qa/name_changes.csv`: the merge map and the name repairs.
 - `qa/second_pass_review.csv`, `qa/second_pass_report.md`: the second-pass review, row by row and as a report.
+- `qa/manual_review.md`: the VP Operations' own check of the 25 largest rows against their sources, and of the Top 3 and the memo, before submission.
 - `qa/research/`: the research inputs, findings, logs and failed attempts of step 3, with a README; `qa/classification_lines/`: the per-batch classification lines the builder read.
 - `docs/taxonomy.md`, `clusters.md`, `recommendation_rules.md`, `vendor_hints.md`, `savings_assumptions.md`: the rules the classification and the model follow. `docs/decisions.md`: every decision, newest first, with the open questions for Finance.
-- `prompts/log.md`: the 19 prompts, verbatim. `prompts/research_brief.md`: the brief the research agents worked from.
+- `prompts/log.md`: the 20 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
 
 ## How to re-run
 
@@ -77,17 +79,20 @@ python -m venv .venv && .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python qa/check_outputs.py
 .venv/bin/python qa/check_outputs.py --self-test
 .venv/bin/python scripts/merge_validate.py --self-test
+.venv/bin/python qa/memo_page_check.py
 ```
 
-The classification itself was written by hand in `qa/classification_lines/` and built with `scripts/classify_tools.py build NN`; re-running the scripts above rebuilds every output from those lines and the raw workbook without touching the raw file.
+The classification itself was written by hand in `qa/classification_lines/` and built with `scripts/classify_tools.py build NN`; re-running the scripts above rebuilds every output from those lines and the raw workbook without touching the raw file. The last line needs a Mac with Pages; without it the page check says so and changes nothing.
 
 ## Quality checks and evidence
 
-- Every build runs 47 checks: the merge (M1 to M7), the rule documents (S1 to S6), the classification (C1 to C20: allowed values, one-sentence rationales, banned phrases, risk notes, every recorded decision, no project workings in the reader-facing text, American English), the savings model (V1 to V9: ranges, tags, one saving line per row, roll-ups to the cent, recommendation against saving rate), the documents (D1 to D4: every figure traceable, every table adds up, no project vocabulary, American English) and the workbook (W1). Results: `qa/validation_report.md`.
+- Every build runs 49 checks: the merge (M1 to M7), the rule documents (S1 to S6), the classification (C1 to C20: allowed values, one-sentence rationales, banned phrases, risk notes, every recorded decision, no project workings in the reader-facing text, American English), the savings model (V1 to V11: ranges, tags, one saving line per row, roll-ups to the cent, recommendation against saving rate, the group function first in every rationale that rests on a group decision, a reason on every Terminate row that saves under half its spend), the documents (D1 to D4: every figure traceable, every table adds up, no project vocabulary, American English) and the workbook (W1). Results: `qa/validation_report.md`.
 - Planted-error self-tests show that each check catches what it should (`qa/check_outputs.py --self-test`, `scripts/merge_validate.py --self-test`).
 - Web verification: `qa/verification_log.csv` (every lookup), `qa/verification_exceptions.csv` (the 67 unconfirmed rows), `qa/research/` (the agents' findings).
 - Second-pass review: `qa/second_pass_review.csv` and `qa/second_pass_report.md`.
 - The savings figures reconcile to the cent across vendors, saving lines, cost groups and opportunities (`outputs/analysis/savings.md`, "Reconciliation").
+- Manual review before submission: the 25 largest rows (78.5% of spend) checked against their source links, and the Top 3 and the memo read line by line, with no changes (`qa/manual_review.md`).
+- The memo renders to one US Letter page with lines to spare (`qa/memo_page_check.md`: Pages renders it, PDFKit measures it).
 
 ## Assumptions and limits
 

@@ -2,7 +2,7 @@
 
 Written by `scripts/merge_validate.py`, which merged the batch files in `outputs/batches/` into `outputs/vendors_classified.csv`, sorted by `vendor_id` (the original sheet order), and ran `qa/check_outputs.py` on it. The report is rebuilt on every run and is not edited by hand: the reason for a row with `verified` FALSE goes in `qa/verification_exceptions.csv`.
 
-**Result: PASS.** All 47 checks passed.
+**Result: PASS.** All 49 checks passed.
 
 ## Counts
 
@@ -310,7 +310,7 @@ Rows per recommendation on each savings lever, with the lever's base saving perc
 
 ## Checks
 
-The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C20, the savings checks V1 to V9 once `outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D4 and the sheet check W1 once the documents and the workbook exist (step 6).
+The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C20, the savings checks V1 to V11 once `outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D4 and the sheet check W1 once the documents and the workbook exist (step 6).
 
 | Check | Result | Rule |
 |---|---|---|
@@ -338,10 +338,10 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | C9 | PASS | No em or en dash in any field |
 | C10 | PASS | Total spend_12m equals the clean file's total exactly |
 | C11 | PASS | Rows of each merge group and each shared link group carry one recommendation |
-| C12 | PASS | Every grouped row's rationale names its group (per-row links included) |
+| C12 | PASS | Every row that is a duplicate record of one vendor (a merge group or a same-brand link group) names the other record in its rationale; rows linked only through a corporate parent need not (step 7) |
 | C13 | PASS | Outcomes fixed by recorded decisions |
 | C14 | PASS | Rationale, risk-note and description wording fixed by recorded decisions |
-| C15 | PASS | Rows outside the savings base say "non-discretionary, excluded from the savings base" |
+| C15 | PASS | Rows outside the savings base say "non-discretionary, no saving counted" (step 7) |
 | C16 | PASS | Every Terminate and Consolidate row, and every Optimize row at or above $25,000 (step 5), has a risk_note; smaller Optimize rows have none |
 | C17 | PASS | Every row is verified TRUE, or FALSE and listed with a reason under "Verification exceptions" in qa/validation_report.md; every listed id is FALSE in the file |
 | C18 | PASS | vendor_name_original and vendor_name_clean match outputs/vendors_clean.csv by vendor_id, and the rows are in the original sheet order (vendor_id ascending) |
@@ -356,6 +356,8 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | V7 | PASS | Every depends_on tag, on the rows and in the register, is none or a registered decision |
 | V8 | PASS | The roll-ups by opportunity, cluster and lever in outputs/analysis/savings.md equal the sums of the vendor rows, and their totals equal the file's total |
 | V9 | PASS | Every Terminate row on a lever with a base below 50% outside the Excluded opportunity, and every Optimize row on a lever above 50%, is fixed or has a recorded reason (step 5) |
+| V10 | PASS | Every row whose saving rests on a group decision leads its rationale with the group function it moves to and gives the vendor-only fallback second (step 7) |
+| V11 | PASS | Every Terminate row whose base saving is under half its spend says why in a clause: pay passed through, a processing fee, stopped until confirmed, or no saving counted (step 7) |
 | D1 | PASS | Every dollar figure and percentage in the four documents appears in a file under outputs/analysis or qa (savings_summary.md first) |
 | D2 | PASS | Every table with a Total row in the documents adds up |
 | D3 | PASS | No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the methodology |
@@ -364,4 +366,4 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 
 ## Failures
 
-None: all 47 checks passed.
+None: all 49 checks passed.

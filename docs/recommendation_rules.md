@@ -48,7 +48,7 @@ Essential sole vendors where the lever is price, volume or policy:
 - insurance broker: re-broke under the group programme
 - LinkedIn: seat review
 
-Statutory payees and customer-mandated fees are also Optimize, with the rationale "non-discretionary, excluded from the savings base". Neither is addressable.
+Statutory payees and customer-mandated fees are also Optimize, with the rationale "non-discretionary, no saving counted" (step 7; "excluded from the savings base" until then). Neither is addressable.
 
 The Telefónica payments (`V0015`, `V0093`) are a question for Finance: fees, rebates or connectivity. Until Finance answers they are classified Sales, Optimize, not addressable, and the rationale says that if they are rebates they belong against revenue rather than in vendor spend (decision of 2026-11-10).
 
@@ -68,7 +68,7 @@ A savings assumption is the share of addressable spend the savings script counts
 | Spend | `is_addressable` | Savings assumption | Rationale |
 |---|---|---|---|
 | Student labour (cluster Student labour) | TRUE | 0% | workforce cost, set by the hiring plan, not a vendor action |
-| Statutory payees, customer-mandated fees, Telefónica | FALSE | none: outside the savings base | non-discretionary, excluded from the savings base |
+| Statutory payees, customer-mandated fees, Telefónica | FALSE | none: outside the savings base | non-discretionary, no saving counted |
 
 Every assumption is also entered in `docs/savings_assumptions.md` with its `depends_on` tag (next section).
 
@@ -89,7 +89,7 @@ The sheet is filled per row (step 2c): all 386 rows get their own department, de
 - One recommendation per merge group, the same vendor relationship: Navan, AWS, TM Forum, 4i and Pluxee. The web verification of step 3 confirmed the 4i merge and found Sodexo SVC India to be Pluxee India's former name.
 - One recommendation per link group whose products are the same kind of service: the same-brand groups (Apple, Bupa, HR Solution International, Acclime, DHL, Telefónica, Allianz Australia, GRT Hotels & Resorts) and the shared-parent groups Salesforce with Slack, Atlassian with Trello, SolarWinds with Papertrail, and the two ICICI insurers. These are marked `shared` in the `link_recommendation` column of `qa/vendor_groups.csv`.
 - A recommendation per row for shared-parent or same-lineage links whose rows are different services: Amazon (AWS and the two marketplaces) and Microsoft (Microsoft 365, LinkedIn and npm). These are marked `per row`.
-- In every case each grouped row's rationale names its group, for example "one of two Navan entities" or "part of the Microsoft group". Where the row's own name already contains the group's name, the rationale also shows the grouping in words such as "both", "group" or "entities".
+- A row that is a duplicate record of one vendor (a merge group, or a same-brand link through separate entities) names the other record in its rationale, for example "one of two Navan entities" or "both Bupa entities"; where the row's own name already contains the shared name, the rationale also shows the pairing with a word such as "both", "two" or "entities". Rows linked only through a corporate parent (Salesforce and Slack, Atlassian and Trello, SolarWinds and Papertrail, the ICICI insurers, the Amazon and Microsoft rows) do not mention the group (step 7; until then every grouped row named its group).
 - Size tests such as the under-$1,000 rule use the group total for a group that shares a recommendation, and the row otherwise.
 
 Outcomes fixed for the per-row groups (step 2d): AWS is Optimize (Optimize list); Amazon.co.uk and Amazon (Aus) are Terminate (marketplace purchases through AP); Microsoft 365 is Consolidate (two productivity suites); LinkedIn is Optimize (seat review); npm follows the developer-tool rule: department Engineering, cluster Software subscriptions (non-Salesforce), and a recommendation from the order of application below, like any other developer tool.
@@ -98,7 +98,7 @@ Outcomes fixed for the per-row groups (step 2d): AWS is Optimize (Optimize list)
 
 The rules above can point two ways for the same vendor; for example, Navan is paid through two entities (Consolidate) but is named under Optimize. The first step that applies decides. For a group that shares a recommendation the steps are applied once, to the group; the rows of a per-row link group are taken one by one. Step 4 was added in step 2e.
 
-1. Statutory payee, customer-mandated fee or Telefónica payment: Optimize, not addressable, "non-discretionary, excluded from the savings base"; for Telefónica the rationale adds that rebates would belong against revenue. This comes first so that nothing non-discretionary is terminated or consolidated.
+1. Statutory payee, customer-mandated fee or Telefónica payment: Optimize, not addressable, "non-discretionary, no saving counted"; for Telefónica the rationale adds that rebates would belong against revenue. This comes first so that nothing non-discretionary is terminated or consolidated.
 2. Student labour: Optimize, addressable, 0% savings assumption, rationale "workforce cost, set by the hiring plan, not a vendor action". Label confirmed 2026-11-10 (step 2c).
 3. Named in the Optimize list (Salesforce, AWS, Navan, the insurance broker, LinkedIn): Optimize. Where the vendor is paid through two entities, the rationale names the one entity to keep.
 4. Employee hardware (the four Apple entities, HP, Currys, Magazin Računalni Sistemi, Sniper Systems, E-Disti): Consolidate into group IT procurement, whatever the amount. It comes before the size test so that the small hardware rows are consolidated too.
@@ -119,7 +119,9 @@ The description, rationale and risk_note columns go into the sheet and are read 
 
 - None of the three refers to the project's own workings: hints, the Optimize or Terminate lists, rules, searches, sources, steps, prompts or files. They state the fact or the action directly (check C19).
 - Where what a vendor does is not established, the description gives the best reading and ends with "(unconfirmed)" in place of "confirm with Finance"; descriptions stay one line of 5 to 25 words.
-- Office footprint rows lead with the base case the savings assume (exit under the remote operating model, keeping one touchdown space at the engineering hub), then the fallback (one flexible provider).
-- A risk_note is required on every Terminate and Consolidate row and on every Optimize row at or above $25,000: one clause naming the main risk of acting, or of not acting where the row must not be cut (check C16).
+- Office footprint rows lead with the base case the savings assume, then the fallback (one flexible provider): a row labeled Consolidate starts "Consolidate the offices into one hub space under a remote operating model: exit this space", so that label and text agree, and the hub's own lease (Optimize) says keep and right-size it (step 7).
+- A risk_note is required on every Terminate and Consolidate row and on every Optimize row at or above $25,000: one clause naming the main risk of acting, or the risk of withholding payment where the row must not be cut (check C16). A risk note states no fact about a vendor that the verification log does not support (step 7).
 - A Terminate row on a lever whose base saving is below 50%, outside the Excluded opportunity, and an Optimize row on a lever above 50%, are either fixed or given a recorded reason (check V9).
 - The three columns are in American English, as the brief's "Optimize" is, and carry none of the project vocabulary (lever, cluster, depends_on, hint, batch) (step 6; checks C19 and C20).
+- A row whose saving rests on a group decision (a saving line tagged with a decision, base saving above zero) leads its rationale with the group function it moves to and gives the vendor-only fallback second (check V10, step 7).
+- A Terminate row whose base saving is under half its spend says why in a clause: pay passed through, a processing fee, stopped until confirmed, or no saving counted (check V11, step 7).

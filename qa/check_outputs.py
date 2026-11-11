@@ -156,6 +156,25 @@ RECOMMENDATION_LEVER_EXCEPTIONS = {
         "utilities, parking, safety and supplies fall with the space under the remote operating model, not by a vendor "
         "action, so the label stays Optimize while the lever follows the office decision (step 5)",
 }
+# Step 7: a row whose saving rests on a group decision leads its rationale with the group function it moves to (one
+# of its decision's phrases) and gives the vendor-only fallback second (after a fallback phrase), where the lever has
+# a without-decision case. Checked by V10.
+DECISION_PHRASES = {
+    "remote_operating_model": ["remote operating model"],
+    "group_talent_function": ["group talent function", "group's development programs"],
+    "group_insurance_programme": ["group insurance program"],
+    "group_auditor": ["group auditor"],
+    "parent_crm_instance": ["group's crm instance"],
+    "group_it_procurement": ["group it procurement"],
+    "group_payroll": ["group payroll"],
+    "group_systems": ["group's erp", "group's hris", "group's finance systems"],
+    "group_legal": ["group legal function", "group's ip firm"],
+    "group_engineering_sourcing": ["group's engineering sourcing"],
+}
+FALLBACK_PHRASES = ["failing that", "until then", "without the decision"]
+# Step 7: a Terminate row whose base saving is under half its spend says why in a clause. Checked by V11.
+UNDER_HALF_PHRASES = ["passes through", "pass-through", "processing fee", "until finance", "until a business owner",
+                      "no saving is counted", "no saving counted", "is counted at the"]
 # True lists every item in a check's detail instead of the first few; scripts/merge_validate.py sets it so that
 # qa/validation_report.md shows every failure in full.
 FULL_DETAIL = False
@@ -244,10 +263,13 @@ def plain(s: str) -> str:
 
 
 def groups() -> list[dict]:
+    """The merge and link groups; `duplicate` marks the groups that are duplicate records of one vendor (a merge, or a
+    same-brand link through separate entities), the only ones whose rows must name the other record (step 7)."""
     out = [{"kind": "merge", "name": g["canonical"], "ids": [f"V{r:04d}" for r in g["rows"]], "shared": True,
-            "names": g["names"], "status": g["status"]} for g in MERGE_GROUPS]
+            "names": g["names"], "status": g["status"], "duplicate": True} for g in MERGE_GROUPS]
     out += [{"kind": "link", "name": g["label"], "ids": [f"V{r:04d}" for r in g["rows"]],
-             "shared": g["recommendation"] == "shared", "names": g["names"], "status": g["recommendation"]}
+             "shared": g["recommendation"] == "shared", "names": g["names"], "status": g["recommendation"],
+             "duplicate": g["type"].startswith("same brand")}
             for g in LINK_GROUPS]
     return out
 
@@ -467,6 +489,8 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
         if g["shared"] and len({r["recommendation"] for r in present}) > 1:
             split.append(f"{g['name']} ({', '.join(r['vendor_id'] + ' ' + r['recommendation'] for r in present)})")
         for r in present:
+            if not g["duplicate"]:
+                continue   # rows linked only through a corporate parent need no mention of the group (step 7)
             rationale = r["rationale"]
             if not names_group(rationale, g["names"]):
                 unnamed.append(f"{r['vendor_id']} does not name {g['name']}")
@@ -474,8 +498,9 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
                 unnamed.append(f"{r['vendor_id']} names {g['name']} only as its own name")
     res.add("C11", "Rows of each merge group and each shared link group carry one recommendation", not split,
             f"split: {sample(split) or 'none'}")
-    res.add("C12", "Every grouped row's rationale names its group (per-row links included)", not unnamed,
-            f"bad: {sample(unnamed) or 'none'}")
+    res.add("C12", "Every row that is a duplicate record of one vendor (a merge group or a same-brand link group) names the "
+                   "other record in its rationale; rows linked only through a corporate parent need not (step 7)",
+            not unnamed, f"bad: {sample(unnamed) or 'none'}")
 
     bad = []
     for vids, col, expected, source in DECISION_EXPECTATIONS:
@@ -493,8 +518,8 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
             f"bad: {sample(bad, 2) or 'none'}")
 
     bad = [r["vendor_id"] for r in rows if r["is_addressable"] == "FALSE"
-           and not ("non-discretionary" in plain(r["rationale"]) and "savings base" in plain(r["rationale"]))]
-    res.add("C15", "Rows outside the savings base say \"non-discretionary, excluded from the savings base\"", not bad,
+           and not ("non-discretionary" in plain(r["rationale"]) and "no saving counted" in plain(r["rationale"]))]
+    res.add("C15", "Rows outside the savings base say \"non-discretionary, no saving counted\" (step 7)", not bad,
             f"bad: {sample(bad) or 'none'}")
 
     def large_optimize(r: dict) -> bool:
@@ -685,8 +710,8 @@ def synthetic(clean: list[dict]) -> list[dict]:
         for vid in vids:
             by_id[vid][col] = expected
     for vid in ("V0015", "V0093"):
-        by_id[vid]["rationale"] = ("Synthetic rationale, part of the Telefónica group: non-discretionary, excluded "
-                                   "from the savings base, and rebates would belong against revenue.")
+        by_id[vid]["rationale"] = ("Synthetic rationale for both Telefónica entities: non-discretionary, no saving "
+                                   "counted, and rebates would belong against revenue.")
     for vid in ("V0030", "V0086", "V0186"):
         by_id[vid]["rationale"] = "Synthetic rationale: workforce cost, set by the hiring plan, not a vendor action."
     for vid in HARDWARE_IDS:
@@ -703,7 +728,7 @@ def synthetic(clean: list[dict]) -> list[dict]:
                 by_id[vid][col] = text.rstrip(".") + f", with {added}." if col == "rationale" else f"{text} {added}".strip()
     for r in rows:
         if r["is_addressable"] == "FALSE" and "non-discretionary" not in plain(r["rationale"]):
-            r["rationale"] = r["rationale"].rstrip(".") + ": non-discretionary, excluded from the savings base."
+            r["rationale"] = r["rationale"].rstrip(".") + ": non-discretionary, no saving counted."
     for vid in SYNTHETIC_UNVERIFIED:
         by_id[vid]["verified"] = "FALSE"
         by_id[vid]["source_url"] = ""
@@ -769,8 +794,8 @@ MUTATIONS = [
     ("Pluxee merge split (Sodexo SVC India renamed)", set_field("V0054", "recommendation", "Terminate"), "C11"),
     ("Rationale does not name its group", set_field("V0071", "rationale", "Synthetic rationale for one insurer."), "C12"),
     ("Group named only through the row's own name", set_field("V0047", "rationale", "Bupa keeps the policy."), "C12"),
-    ("Per-row link rationale does not name its group",
-     set_field("V0026", "rationale", "Synthetic rationale for recruiter seats."), "C12"),
+    ("Merge-group row does not name the other record",
+     set_field("V0024", "rationale", "Synthetic rationale for a travel platform."), "C12"),
     ("Amazon marketplace row not Terminate", set_field("V0203", "recommendation", "Optimize"), "C13"),
     ("Microsoft 365 not Consolidate", set_field("V0081", "recommendation", "Optimize"), "C13"),
     ("npm outside Engineering", set_field("V0125", "department", "SaaS"), "C13"),
@@ -779,11 +804,11 @@ MUTATIONS = [
      set_field("V0167", "rationale", "Synthetic rationale for one hardware vendor."), "C14"),
     ("Adviser taken out of the recurring base", set_field("V0018", "is_recurring", "FALSE"), "C13"),
     ("Telefónica rationale without the revenue note",
-     set_field("V0015", "rationale", "Synthetic rationale, part of the Telefónica group: non-discretionary, "
-                                     "excluded from the savings base."), "C14"),
-    ("Non-addressable row without the savings-base wording",
-     set_field("V0093", "rationale", "Synthetic rationale, part of the Telefónica group, where rebates would "
-                                     "belong against revenue."), "C15"),
+     set_field("V0015", "rationale", "Synthetic rationale for both Telefónica entities: non-discretionary, no saving "
+                                     "counted."), "C14"),
+    ("Non-addressable row without the no-saving-counted wording",
+     set_field("V0093", "rationale", "Synthetic rationale for both Telefónica entities, where rebates would belong "
+                                     "against revenue."), "C15"),
     ("Banned phrase in a description", set_field("V0002", "description", "CRM solutions for the sales team"), "C7"),
     ("Em dash in a description", set_field("V0005", "description", f"Flexible offices {EM_DASH} London"), "C9"),
     ("Two-sentence rationale", set_field("V0004", "rationale", "First sentence. Second sentence."), "C8"),
@@ -877,12 +902,12 @@ DOC_MUTATIONS = [
 
 def savings_checks(res: Results, srows: list[dict], rows: list[dict], register_text: str,
                    savings_text: str | None) -> None:
-    """V1 to V8 on outputs/analysis/savings.csv, read against the classification, the register and savings.md."""
+    """V1 to V11 on outputs/analysis/savings.csv, read against the classification, the register and savings.md."""
     decisions, levers, register_problems = load_register(register_text)
     cols = set(srows[0].keys()) if srows else set()
     missing_cols = [c for c in SAVINGS_COLUMNS if c not in cols]
     if missing_cols or not srows:
-        for cid in ("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9"):
+        for cid in ("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11"):
             res.add(cid, "Savings check", False, f"savings file unusable; missing columns: {', '.join(missing_cols) or 'none'}"
                     + ("; no rows" if not srows else ""))
         return
@@ -1030,6 +1055,42 @@ def savings_checks(res: Results, srows: list[dict], rows: list[dict], register_t
             f"flagged: {sample(flagged) or 'none'}; recorded reasons cover "
             + ("; ".join(f"{k} ({len(v)} rows)" for k, v in covered.items()) or "no row"))
 
+    bad, n_decision = [], 0
+    for s in srows:
+        c, f = by_id.get(s["vendor_id"]), levers.get(s["lever"])
+        if not c or not f or to_float(s["saving_base"]) <= 0:
+            continue
+        tags = [t for t in f["depends_on"] if t != "none"]
+        if not tags:
+            continue
+        n_decision += 1
+        text = plain(c["rationale"])
+        phrases = [p for t in tags for p in DECISION_PHRASES.get(t, [])]
+        base_at = min((text.find(p) for p in phrases if p in text), default=-1)
+        fall_at = min((text.find(p) for p in FALLBACK_PHRASES if p in text), default=-1)
+        if base_at < 0:
+            bad.append(f"{s['vendor_id']}: no {' or '.join(tags)} phrase")
+        elif f["pct_without_decision"] > 0 and fall_at < 0:
+            bad.append(f"{s['vendor_id']}: no fallback clause")
+        elif 0 <= fall_at < base_at:
+            bad.append(f"{s['vendor_id']}: the fallback comes before the group function")
+    res.add("V10", "Every row whose saving rests on a group decision leads its rationale with the group function it moves to "
+                   "and gives the vendor-only fallback second (step 7)", not bad,
+            f"{n_decision} rows rest on a decision; bad: {sample(bad) or 'none'}")
+
+    bad, n_small = [], 0
+    for s in srows:
+        c = by_id.get(s["vendor_id"])
+        # under half, with a cent of tolerance for the rounding of a 50% line in the CSV
+        if not c or c["recommendation"] != "Terminate" or to_float(s["saving_base"]) >= 0.5 * to_float(s["spend_12m"]) - 0.01:
+            continue
+        n_small += 1
+        if not any(p in plain(c["rationale"]) for p in UNDER_HALF_PHRASES):
+            bad.append(s["vendor_id"])
+    res.add("V11", "Every Terminate row whose base saving is under half its spend says why in a clause: pay passed through, "
+                   "a processing fee, stopped until confirmed, or no saving counted (step 7)", not bad,
+            f"{n_small} Terminate rows save under half their spend; bad: {sample(bad) or 'none'}")
+
 
 def synthetic_savings(rows: list[dict], levers: dict[str, dict]) -> list[dict]:
     """Savings rows for the synthetic classification that satisfy every savings check: rows outside the savings
@@ -1056,6 +1117,41 @@ def set_saving(vid: str, col: str, value):
             if s["vendor_id"] == vid:
                 s[col] = str(value(s) if callable(value) else value)
         return srows, rows, text
+    return mutate
+
+
+def decision_rows(srows: list[dict], levers: dict[str, dict]) -> list[tuple[dict, str]]:
+    """(savings row, decision tag) for every row whose saving rests on a group decision: a lever tagged with a decision
+    and a base saving above zero."""
+    out = []
+    for s in srows:
+        f = levers.get(s["lever"])
+        tags = [t for t in f["depends_on"] if t != "none"] if f else []
+        if tags and to_float(s["saving_base"]) > 0:
+            out.append((s, tags[0]))
+    return out
+
+
+def decision_led_rationales(rows: list[dict], srows: list[dict], levers: dict[str, dict]) -> None:
+    """Give every synthetic row whose saving rests on a decision a rationale that satisfies V10: the group function
+    first, the vendor-only fallback second."""
+    by_id = {r["vendor_id"]: r for r in rows}
+    for s, tag in decision_rows(srows, levers):
+        if s["vendor_id"] in by_id:
+            by_id[s["vendor_id"]]["rationale"] = (f"Synthetic rationale: move it to the {DECISION_PHRASES[tag][0]}; "
+                                                  "failing that, a vendor action.")
+
+
+def decision_rationale(levers: dict[str, dict], make_text):
+    """Rewrite the rationale of the first synthetic row whose saving rests on a decision; make_text(phrase) gives the
+    text, where phrase is the decision's first phrase."""
+    def mutate(srows, rows, text):
+        by_id = {r["vendor_id"]: r for r in rows}
+        for s, tag in decision_rows(srows, levers):
+            if s["vendor_id"] in by_id:
+                by_id[s["vendor_id"]]["rationale"] = make_text(DECISION_PHRASES[tag][0])
+                return srows, rows, text
+        raise AssertionError("self-test: no synthetic row rests on a decision")
     return mutate
 
 
@@ -1137,6 +1233,13 @@ def savings_mutations(levers: dict[str, dict]) -> list[tuple]:
          reassign("V0203", "Telecom and internet providers", levers), "V9", True),
         ("Optimize row on a lever above 50% with no recorded reason",
          reassign("V0005", "Recruitment agencies and job boards", levers), "V9", True),
+        ("Decision-dependent row whose rationale does not name the group function",
+         decision_rationale(levers, lambda phrase: "Synthetic rationale with the vendor action only."), "V10", False),
+        ("Decision-dependent row whose fallback comes before the group function",
+         decision_rationale(levers, lambda phrase: f"Synthetic rationale: a vendor action; failing that, move it to the "
+                                                   f"{phrase}."), "V10", False),
+        ("Terminate row saving under half its spend without the reason clause",
+         reassign("V0203", "One-off spend that falls away", levers), "V11", True),
     ]
 
 
@@ -1177,6 +1280,7 @@ def self_test(clean: list[dict]) -> bool:
     # The savings checks, on savings rows built from the synthetic classification and the real register.
     decisions, levers, register_problems = load_register(doc)
     base_savings = synthetic_savings(base_rows, levers)
+    decision_led_rationales(base_rows, base_savings, levers)
     base_text = render_rollup_sections(base_savings, levers)
     res = Results()
     savings_checks(res, copy.deepcopy(base_savings), copy.deepcopy(base_rows), doc, base_text)
@@ -1250,7 +1354,7 @@ def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT, savings
             savings_text = savings_report.read_text(encoding="utf-8") if savings_report.exists() else None
             savings_checks(res, read_csv(savings), rows, SAVINGS_ASSUMPTIONS.read_text(encoding="utf-8"), savings_text)
         else:
-            res.add("V*", "Savings checks V1 to V9", None, f"{rel(savings)} not produced yet")
+            res.add("V*", "Savings checks V1 to V11", None, f"{rel(savings)} not produced yet")
     else:
         res.add("C*", "Classification checks C1 to C20", None, f"{rel(classified)} not produced yet")
     if documents and all(p.exists() for p in DOCUMENTS):
