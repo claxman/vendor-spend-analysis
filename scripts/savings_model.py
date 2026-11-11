@@ -147,8 +147,31 @@ ANALYST_CALLS = {
     "V0203": "follows its cluster as office consumables (confirmed in step 4b), although the card policy that removes it does not depend on the office decision",
     "V0291": "follows its cluster as office consumables (confirmed in step 4b), although the card policy that removes it does not depend on the office decision",
 }
+# Vendors that must not be cut (insights section 3 and the presentation figures): (label, vendor_ids).
+MUST_NOT_CUT = [
+    ("Customer-mandated platform fees (Telefónica, Ariba)", ["V0015", "V0093", "V0191"]),
+    ("Software escrow for customer contracts", ["V0144"]),
+    ("ISO certification audits", ["V0142"]),
+    ("Statutory workers' compensation and occupational health",
+     ["V0094", "V0201", "V0212", "V0300", "V0328", "V0382", "V0383", "V0384"]),
+    ("Taxes, government fees, regulators and the depository", ["V0073", "V0139", "V0284", "V0333", "V0353", "V0361"]),
+    ("Salary-sacrifice schemes (cycle to work, novated leasing)", ["V0100", "V0195"]),
+    ("Meal and benefit cards", ["V0054", "V0128"]),
+    ("The contingent-fee R&D tax credit adviser", ["V0068"]),
+]
+# Levers whose spend falls away without action (the presentation figures).
+FALLS_AWAY_LEVERS = ["M&A and transaction costs", ONE_OFF_LEVER]
 ROLLUP_HEADINGS = {"opportunity": "Savings by opportunity", "cost_cluster": "Savings by cost cluster",
                    "lever": "Savings by lever"}
+
+
+def thousands(x: float) -> int:
+    """A dollar figure rounded to the nearest $1,000, as an integer number of dollars."""
+    return int(round(x / 1000.0)) * 1000
+
+
+def money_k(x: float) -> str:
+    return money(thousands(x))
 ROLLUP_LABELS = {"opportunity": "Opportunity", "cost_cluster": "Cost cluster", "lever": "Lever"}
 # Report column -> savings column, for the roll-up tables and the check that reads them back.
 MONEY_COLUMNS = {"Spend": "spend", "Low": "saving_low", "Base": "saving_base", "High": "saving_high",

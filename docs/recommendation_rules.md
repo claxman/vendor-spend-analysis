@@ -122,3 +122,4 @@ The description, rationale and risk_note columns go into the sheet and are read 
 - Office footprint rows lead with the base case the savings assume (exit under the remote operating model, keeping one touchdown space at the engineering hub), then the fallback (one flexible provider).
 - A risk_note is required on every Terminate and Consolidate row and on every Optimize row at or above $25,000: one clause naming the main risk of acting, or of not acting where the row must not be cut (check C16).
 - A Terminate row on a lever whose base saving is below 50%, outside the Excluded opportunity, and an Optimize row on a lever above 50%, are either fixed or given a recorded reason (check V9).
+- The three columns are in American English, as the brief's "Optimize" is, and carry none of the project vocabulary (lever, cluster, depends_on, hint, batch) (step 6; checks C19 and C20).

@@ -56,6 +56,38 @@ from vsa_common import (  # noqa: E402
 CLASSIFIED = ROOT / "outputs" / "vendors_classified.csv"
 SAVINGS_CSV = ROOT / "outputs" / "analysis" / "savings.csv"
 SAVINGS_MD = ROOT / "outputs" / "analysis" / "savings.md"
+# The four documents a reader sees (step 6), and the three that go into the sheet workbook.
+DOCUMENTS = [ROOT / "outputs" / "top3_opportunities.md", ROOT / "outputs" / "memo.md", ROOT / "outputs" / "methodology.md",
+             ROOT / "README.md"]
+SHEET_DOCUMENTS = DOCUMENTS[:3]
+FIGURE_SOURCES = [ROOT / "outputs" / "analysis", ROOT / "qa"]   # files whose figures the documents may quote
+SHEET = ROOT / "outputs" / "sheet" / "Vendor Analysis Assessment - Chaitanya Laxman.xlsx"
+SHEET_BUILDER = ROOT / "scripts" / "05_build_sheet.py"
+# Project vocabulary a reader of the sheet or the documents must not meet (step 6).
+PROJECT_VOCABULARY = ["lever", "levers", "cluster", "clusters", "depends_on", "hint", "hints", "batch", "batches"]
+# Common British forms; the documents and the three reader-facing columns are in American English (step 6).
+BRITISH_FORMS = [
+    "organisation", "organisations", "organisational", "organise", "organised", "organiser", "organisers", "organising",
+    "optimise", "optimised", "optimising", "optimisation", "licence", "licences", "programme", "programmes", "centre",
+    "centres", "colour", "colours", "analyse", "analysed", "analysing", "catalogue", "catalogues", "favour", "favourite",
+    "behaviour", "behaviours", "prioritise", "prioritised", "prioritisation", "recognise", "recognised", "realise",
+    "realised", "realisation", "utilise", "utilised", "utilisation", "standardise", "standardised", "standardisation",
+    "summarise", "summarised", "specialise", "specialised", "specialises", "specialising", "specialisation", "modernise",
+    "modernising", "modernisation", "travelling", "traveller", "cancelled", "cancelling", "modelling", "modelled",
+    "labelled", "labelling", "fulfil", "fulfilment", "enrol", "enrolment", "defence", "offence", "cheque", "cheques",
+    "grey", "tyre", "tyres", "whilst", "amongst", "learnt", "judgement", "practise", "practised", "storey", "sceptical",
+    "theatre", "metre", "metres", "litre", "fibre", "ageing", "jewellery", "authorised", "authorise", "authorisation",
+    "capitalise", "customise", "customisation", "digitise", "digitisation", "finalise", "harmonise", "minimise",
+    "minimised", "maximise", "maximised", "normalise", "penalise", "personalise", "personalised", "rationalise",
+    "scrutinise", "stabilise", "subsidise", "visualise", "dialogue", "instalment", "counsellor", "totalled", "channelled",
+    "levelled", "focussed", "honour", "honoured", "honouring", "neighbour", "endeavour", "flavour", "humour", "apologise",
+    "criticise", "emphasise", "mobilise", "monetise", "localise", "itemise", "categorise", "characterise", "aluminium",
+    "skilful", "wilful", "sulphur", "kilometre", "artefact", "draught", "cosy", "dematerialised", "centralised",
+    "centralise", "decentralised", "labour", "per cent",
+]
+BRITISH = re.compile(r"\b(" + "|".join(sorted(BRITISH_FORMS, key=len, reverse=True)) + r")\b", re.I)
+VOCAB = re.compile(r"\b(" + "|".join(PROJECT_VOCABULARY) + r")\b", re.I)
+FIGURE = re.compile(r"\$\d{1,3}(?:,\d{3})*(?:\.\d+)?|\b\d+(?:\.\d+)?%")
 CLEAN = ROOT / "outputs" / "vendors_clean.csv"
 GROUPS = ROOT / "qa" / "vendor_groups.csv"
 TAXONOMY = ROOT / "docs" / "taxonomy.md"
@@ -102,7 +134,7 @@ WORKINGS_PHRASES = ["hint", "optimize list", "terminate list", "terminate rule",
                     "source states", "source identifies", "registry shows", "registry entry", "directory snippet", "snippet",
                     "forensic", "confirm with finance", "finance question", "court records", "savings assumption", "taxonomy",
                     "tie-break", "not verified", "unverified", "verification", "classification", "step 3", "step 2",
-                    "per its website"]
+                    "per its website", "lever", "cluster", "depends_on", "batch"]
 # Recommendation against lever (step 5): a Terminate row on a lever whose base is below 50%, outside the Excluded
 # opportunity, or an Optimize row on a lever above 50%, needs a recorded reason, by vendor_id or by
 # "<recommendation>:<lever>".
@@ -513,6 +545,98 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
     res.add("C19", "Descriptions, rationales and risk notes never refer to the project's own workings: hints, lists, rules, "
                    "searches, sources, steps, prompts or files (step 5)", not bad, f"bad: {sample(bad) or 'none'}")
 
+    bad = [f"{r['vendor_id']} {col}: {', '.join(m.group(0) for m in BRITISH.finditer(r[col]))}"
+           for r in rows for col in ("description", "rationale", "risk_note") if BRITISH.search(r[col])]
+    res.add("C20", "Descriptions, rationales and risk notes are in American English: none of the common British forms (step 6)",
+            not bad, f"bad: {sample(bad) or 'none'}")
+
+
+# ---------------------------------------------------------------- document and sheet checks (step 6)
+
+def markdown_tables(text: str) -> list[list[list[str]]]:
+    """Every markdown table in the text, as rows of stripped cells, separator rows removed."""
+    tables, current = [], []
+    for line in text.splitlines():
+        if line.startswith("|"):
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if not all(re.fullmatch(r":?-+:?", c) for c in cells):
+                current.append(cells)
+        elif current:
+            tables.append(current)
+            current = []
+    if current:
+        tables.append(current)
+    return tables
+
+
+def table_sum_problems(text: str) -> list[str]:
+    """Tables with a Total row: every dollar column's other rows must sum to the Total cell exactly."""
+    problems = []
+    for t, table_rows in enumerate(markdown_tables(text), 1):
+        totals = [r for r in table_rows[1:] if r and r[0].strip().lower() == "total"]
+        if not totals:
+            continue
+        total = totals[0]
+        body = [r for r in table_rows[1:] if r is not total]
+        for col in range(1, len(total)):
+            cells = [r[col] for r in body if col < len(r)]
+            if not cells or not re.fullmatch(r"\$[\d,]+", total[col].strip()):
+                continue
+            figures = [c.strip() for c in cells if c.strip()]
+            if not figures or not all(re.fullmatch(r"\$[\d,]+", c) for c in figures):
+                continue
+            s = sum(int(c.strip("$").replace(",", "")) for c in figures)
+            want = int(total[col].strip().strip("$").replace(",", ""))
+            if s != want:
+                problems.append(f"table {t}, column {table_rows[0][col] if col < len(table_rows[0]) else col}: rows sum to "
+                                f"${s:,} against a Total of ${want:,}")
+    return problems
+
+
+def figure_problems(text: str, allowed: set[str]) -> list[str]:
+    return sorted({f for f in FIGURE.findall(text) if f not in allowed})
+
+
+def allowed_figures() -> set[str]:
+    found: set[str] = set()
+    for folder in FIGURE_SOURCES:
+        for path in folder.rglob("*"):
+            if path.suffix in (".md", ".csv") and path.is_file() and path not in DOCUMENTS:
+                found.update(FIGURE.findall(path.read_text(encoding="utf-8", errors="replace")))
+    return found
+
+
+def document_checks(res: Results, docs: dict[Path, str], allowed: set[str]) -> None:
+    """D1 to D4 on the documents: {path: text}."""
+    bad = [f"{rel(p)}: {', '.join(figure_problems(t, allowed)[:4])}" for p, t in docs.items() if figure_problems(t, allowed)]
+    res.add("D1", "Every dollar figure and percentage in the four documents appears in a file under outputs/analysis or qa "
+                  "(savings_summary.md first)", not bad, f"bad: {sample(bad) or 'none'}")
+    bad = [f"{rel(p)}: {'; '.join(table_sum_problems(t))}" for p, t in docs.items() if table_sum_problems(t)]
+    res.add("D2", "Every table with a Total row in the documents adds up", not bad, f"bad: {sample(bad) or 'none'}")
+    bad = [f"{rel(p)}: {', '.join(sorted({m.group(0).lower() for m in VOCAB.finditer(t)}))}"
+           for p, t in docs.items() if p in SHEET_DOCUMENTS and VOCAB.search(t)]
+    res.add("D3", "No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the methodology",
+            not bad, f"bad: {sample(bad) or 'none'}")
+    bad = [f"{rel(p)}: {', '.join(sorted({m.group(0).lower() for m in BRITISH.finditer(t)}))}"
+           for p, t in docs.items() if BRITISH.search(t)]
+    res.add("D4", "The four documents are in American English: none of the common British forms", not bad,
+            f"bad: {sample(bad) or 'none'}")
+
+
+def sheet_builder():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_sheet", SHEET_BUILDER)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def sheet_check(res: Results, sheet: Path) -> None:
+    problems = sheet_builder().verify(sheet)
+    res.add("W1", f"{rel(sheet)} matches its sources cell by cell, keeps the raw row order and the Department dropdown, uses "
+                  "only Config departments, and its saving column sums to the base saving", not problems,
+            f"problems: {sample(problems) or 'none'}")
+
 
 # ---------------------------------------------------------------- self-test
 
@@ -677,6 +801,8 @@ MUTATIONS = [
     ("Optimize row at or above $25,000 without a risk note", set_field("V0005", "risk_note", ""), "C16"),
     ("Description that refers to the hint", set_field("V0005", "description", "Flexible offices per the hint"), "C19"),
     ("Rationale that cites a search", set_field("V0005", "rationale", "Search shows flexible offices in London."), "C19"),
+    ("Risk note that names the lever", set_field("V0203", "risk_note", "the lever is price"), "C19"),
+    ("Description in British English", set_field("V0005", "description", "Flexible office licences in London"), "C20"),
     # Step 3b: the platform reclassification
     ("Salesforce back in Sales as the sales team's CRM", set_field("V0002", "department", "Sales"), "C13"),
     ("Mason Frank back in the Salesforce platform cluster", set_field("V0034", "cost_cluster", "Salesforce platform"),
@@ -1076,15 +1202,40 @@ def self_test(clean: list[dict]) -> bool:
         all_ok &= caught
         print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
               f" (checks failing: {', '.join(res.failed()) or 'none'})")
+    # The document checks, on a synthetic document and a synthetic set of allowed figures.
+    clean_doc = ("Spend was $7,887,000 and the base saving $2,229,000 (28%).\n\n| Move | Base | Year 1 |\n|---|---|---|\n"
+                 "| Offices | $1,000 | $500 |\n| Audit | $2,000 | $700 |\n| Total | $3,000 | $1,200 |\n")
+    allowed = {"$7,887,000", "$2,229,000", "28%", "$1,000", "$2,000", "$3,000", "$500", "$700", "$1,200"}
+    doc_cases = [
+        ("Figure that no analysis file carries", clean_doc.replace("$2,229,000", "$2,300,000"), "D1"),
+        ("Percentage that no analysis file carries", clean_doc.replace("(28%)", "(29%)"), "D1"),
+        ("Table whose Total does not add up", clean_doc.replace("| Total | $3,000 |", "| Total | $4,000 |"), "D2"),
+        ("Project vocabulary in the memo", clean_doc.replace("base saving", "lever"), "D3"),
+        ("British form in a document", clean_doc.replace("Spend was", "Spend was optimised at"), "D4"),
+    ]
+    res = Results()
+    document_checks(res, {p: clean_doc for p in DOCUMENTS}, allowed)
+    doc_clean = not res.failed()
+    all_ok &= doc_clean
+    print(f"{'PASS' if doc_clean else 'FAIL'}    a synthetic document whose figures all appear in the allowed set, whose table "
+          f"adds up and whose text is plain American English passes D1 to D4"
+          + ("" if doc_clean else f" (failed: {', '.join(res.failed())})"))
+    for title, text, expected in doc_cases:
+        res = Results()
+        document_checks(res, {p: text for p in DOCUMENTS}, allowed)
+        caught = expected in res.failed()
+        all_ok &= caught
+        print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
+              f" (checks failing: {', '.join(res.failed()) or 'none'})")
     print(f"self-test {'passed' if all_ok else 'FAILED'}: clean run plus "
-          f"{len(MUTATIONS) + len(DOC_MUTATIONS) + len(mutations)} planted errors")
+          f"{len(MUTATIONS) + len(DOC_MUTATIONS) + len(mutations) + len(doc_cases)} planted errors")
     return all_ok
 
 
 # ---------------------------------------------------------------- main
 
 def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT, savings: Path = SAVINGS_CSV,
-        savings_report: Path = SAVINGS_MD) -> Results:
+        savings_report: Path = SAVINGS_MD, documents: bool = True) -> Results:
     """The structural checks, then the classification checks once `classified` exists, then the savings checks once
     `savings` exists. main() calls it on the real files; scripts/merge_validate.py calls it on the files it has just
     written, and scripts/03_savings.py runs the savings checks on its own output."""
@@ -1101,7 +1252,15 @@ def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT, savings
         else:
             res.add("V*", "Savings checks V1 to V9", None, f"{rel(savings)} not produced yet")
     else:
-        res.add("C*", "Classification checks C1 to C18", None, f"{rel(classified)} not produced yet")
+        res.add("C*", "Classification checks C1 to C20", None, f"{rel(classified)} not produced yet")
+    if documents and all(p.exists() for p in DOCUMENTS):
+        document_checks(res, {p: p.read_text(encoding="utf-8") for p in DOCUMENTS}, allowed_figures())
+    elif documents:
+        res.add("D*", "Document checks D1 to D4", None, "not every document is written yet")
+    if documents and SHEET.exists() and SHEET_BUILDER.exists():
+        sheet_check(res, SHEET)
+    elif documents:
+        res.add("W*", "Sheet check W1", None, f"{rel(SHEET)} not produced yet")
     return res
 
 

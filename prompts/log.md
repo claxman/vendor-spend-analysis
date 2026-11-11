@@ -327,3 +327,50 @@ The description, rationale and risk_note columns go into the sheet and are read 
 
 Then re-run the merge, the savings, the insights and all QA with both self-tests, commit as "Step 5: second-pass review and reader-facing text" and push. Print: the new savings totals by opportunity; Stage 1 and Stage 2 coverage and agreement rates; every row changed in this prompt with before and after; the count of text cells rewritten; anything not covered.
 ```
+
+## Prompt 19 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 19. Run it after prompt 18 is committed. It writes the four documents and the sheet workbook. Read CLAUDE.md, docs/decisions.md, outputs/analysis/savings.md, outputs/analysis/insights.md, qa/validation_report.md and qa/second_pass_report.md first.
+
+Rules for everything written in this prompt
+- The readers are the CEO and CFO of the parent and the people assessing this work. They have not seen this repository. No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the sheet.
+- American English everywhere a reader sees it (the brief writes "Optimize"): the four documents and the description, rationale and risk_note columns. Add a check for common British forms.
+- Refer to "the acquired business" and "the group".
+- Acquirer decisions are presented as decisions with their value, never as facts about the group.
+- Plain, short sentences. Past tense about what was done in this project.
+
+PART A: presentation figures
+Extend scripts/03_savings.py to write outputs/analysis/savings_summary.md: the figures the documents may quote, rounded to the nearest $1,000, with every total computed as the sum of the rounded lines it shows, so that parts always add to totals. Include: total spend; run-rate saving low, base, high; year 1; saving from vendor action alone; each of the three opportunities and the second wave (spend, low, base, high, year 1, without the decision, value of the decision); spend that falls away without action; spend that must not be cut; rows and spend verified; the second-pass figures. Add a check with planted errors: every dollar figure and percentage in the four documents appears in savings_summary.md or another file under outputs/analysis or qa, and every table in the documents adds up.
+
+PART B: outputs/top3_opportunities.md
+The three opportunities, ranked by base saving. For each: a specific title of at most 12 words; an explanation of 70 to 100 words that gives the evidence from the vendor data (vendors, spend), the calculation (spend times assumption, with the range), the first-year figure and why it is lower, the decision or action it needs, and the main risk; and the estimated annual saving in USD (base). For the Salesforce opportunity say that the product runs on the platform, so the lever is price and terms and never exit, and that the figure is the value of a negotiation that starts when the contract and usage data arrive. End the file with one line for the second wave and one for spend that falls away without action.
+
+PART C: outputs/memo.md and outputs/memo.docx
+A one-page memo to the CEO and CFO of the group from Chaitanya Laxman, VP Operations of the acquired business, dated November 11, 2026. At most 430 words outside the table. Order:
+1. Subject line that carries the number.
+2. Bottom line in two sentences: what was reviewed, the run-rate saving and its share of spend, the first-year figure, the high case and what gets there, and that three moves carry most of it.
+3. One sentence of context they may not remember: what the data is, and that one vendor is about 40% of spend because the product runs on its platform.
+4. A table of four rows (the three opportunities and the second wave) plus a total: move, run-rate saving, year 1, what it needs.
+5. "Decisions needed": the two or three decisions only they can take, each with what it is worth compared with vendor action alone, and the date needed to hold the year-1 figure.
+6. "Plan": four lines, 0 to 30 days, 30 to 90, 90 to 180, and 6 to 12 months, with what happens in each (contracts, renewal dates and usage data first; notices and negotiations; exits and transfers; system and audit moves at year-end), and one line on how it is run: one owner per move, a weekly tracker, a saving counted only when the contract changes.
+7. "Risks": at most four, one line each: platform dependency; retention at the engineering hub; notice periods and exit costs not yet known; vendors that customers or regulators require, which stay.
+8. One closing line on scale: against group revenue the direct saving is modest, and the value is a review that repeats on every acquisition, with the share of third-party spend this one found.
+Also say in one line what is not counted: deal and one-off costs that fall away on their own. Build memo.docx from the same text (US Letter, 0.75 inch margins, 10.5 point, the table as a real table) and report the word count. Every figure comes from savings_summary.md.
+
+PART D: outputs/methodology.md
+For the Methodology tab: at most 400 words, written as short lines that each fit one spreadsheet row, under four headings. Approach: the steps in order, one line each, from profiling to documents. Tools that produced the outputs: Claude Code CLI with the model and the research agents, Python with pandas and openpyxl, web search and fetch, git and GitHub. Prompts: how many, that they are logged in prompts/log.md, the prompts that shaped the work (at most six) with one line each on what they asked, and the research brief. Validation and evidence: the automated checks and what each group looks for, the planted-error self-tests, web verification coverage, the second-pass review with its coverage, agreement rates and number of rows changed, reconciliation to the cent, and the path of each evidence file. Close with the limits: one 12-month total per vendor, modified names and costs, no contracts or headcount, and the rows left unconfirmed.
+
+PART E: README.md and tidying
+README sections: what this is; results in five lines; how the work was done, step by step, with the prompt number and commit for each step; repository map (inputs, outputs, scripts, qa, docs, prompts) with one line per file; how to re-run every script in order; quality checks and where the evidence is; assumptions and limits; a note that vendor names and costs were modified by the provider of the data. Remove empty folders and stray files, and confirm that every script named in the README runs from a clean clone.
+
+PART F: the sheet workbook
+Write scripts/05_build_sheet.py. It copies the raw workbook to outputs/sheet/Vendor Analysis Assessment - Chaitanya Laxman.xlsx, never touching the raw file, keeps the Department dropdown, and fills:
+- Vendor tab, rows 2 to 387 in the original order: B department, D description, E recommendation, then new headed columns F Rationale, G Key risk, H Estimated annual saving (USD, base case), I Savings opportunity, J Verified online (Yes or No), K Source.
+- Top 3 Opportunities tab: titles in B, explanations in C, and D headed "Estimated annual savings (USD)".
+- Methodology tab: the methodology lines from row 2 down, one per row.
+- CEOCFO Recommendations tab: row 2 "Memo (Google Doc): [link to be added]", then the memo text below.
+Add a check that reads the workbook back and confirms every cell against the source files, the row order against the raw file, that every department is in the Config list, and that column H sums to the base saving.
+
+Run every check and both self-tests, commit as "Step 6: Top 3, memo, methodology, README and sheet workbook", push, and print the Top 3, the memo and the methodology in full with the memo's word count.
+```

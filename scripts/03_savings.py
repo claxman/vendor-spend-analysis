@@ -26,6 +26,7 @@ from __future__ import annotations
 import csv
 import datetime as dt
 import io
+import math
 import sys
 from pathlib import Path
 
@@ -34,15 +35,141 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "qa"))
 import check_outputs  # noqa: E402
 from savings_model import (  # noqa: E402
-    ANALYST_CALLS, MONEY_COLUMNS, OPPORTUNITIES, PCT_COLUMNS, REGISTER, SAVING_COLUMNS, SAVINGS_COLUMNS, build,
-    decision_values, reconciliation, render_rollup_sections, rollup, to_float, totals,
+    ANALYST_CALLS, FALLS_AWAY_LEVERS, MONEY_COLUMNS, MUST_NOT_CUT, OPPORTUNITIES, PCT_COLUMNS, REGISTER, SAVING_COLUMNS,
+    SAVINGS_COLUMNS, build, decision_values, money_k, reconciliation, render_rollup_sections, rollup, thousands,
+    to_float, totals,
 )
 from vsa_common import money, pct, rel, table, write_text  # noqa: E402
 
 CLASSIFIED = check_outputs.CLASSIFIED
 SAVINGS_CSV = ROOT / "outputs" / "analysis" / "savings.csv"
 SAVINGS_MD = ROOT / "outputs" / "analysis" / "savings.md"
+SUMMARY_MD = ROOT / "outputs" / "analysis" / "savings_summary.md"
+REVIEW_CSV = ROOT / "qa" / "second_pass_review.csv"
 TOP_N = 15
+LARGEST_VENDOR = "V0002"
+
+
+def whole_pct(part: float, whole: float) -> str:
+    return f"{round(100 * part / whole):d}%" if whole else "n/a"
+
+
+def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], levers: dict[str, dict]) -> str:
+    """The figures the documents may quote: rounded to the nearest $1,000, every total the sum of the rounded lines it
+    shows, so that parts always add to totals."""
+    by_id = {r["vendor_id"]: r for r in rows}
+    by_opp = rollup(srows, "opportunity")
+    by_lever = rollup(srows, "lever")
+    cols = ["spend", "saving_low", "saving_base", "saving_high", "saving_year1", "saving_without_decision"]
+    opp_lines = []
+    for name in OPPORTUNITIES:
+        g = by_opp.get(name)
+        if not g:
+            continue
+        k = {c: thousands(g[c]) for c in cols}
+        k["value"] = k["saving_base"] - k["saving_without_decision"]
+        opp_lines.append((name, k))
+    tot = {c: sum(k[c] for _, k in opp_lines) for c in cols + ["value"]}
+    spend_total = tot["spend"]
+
+    def row(name, k):
+        return [name, money(k["spend"]), money(k["saving_low"]), money(k["saving_base"]), money(k["saving_high"]),
+                money(k["saving_year1"]), money(k["saving_without_decision"]), money(k["value"])]
+
+    largest = thousands(to_float(by_id[LARGEST_VENDOR]["spend_12m"]))
+    lines = [
+        "# Presentation figures",
+        "",
+        f"Written by `scripts/03_savings.py` with `{rel(SAVINGS_MD)}`. These are the figures the Top 3, the memo, the "
+        "methodology and the README may quote. Every dollar figure is rounded to the nearest $1,000 and every total is the "
+        "sum of the rounded lines above it, so that parts always add to totals; percentages are whole numbers of the "
+        "rounded total spend. The exact figures are in `savings.md` and `savings.csv`.",
+        "",
+        "## Spend and savings",
+        "",
+        *table(["Measure", "Figure"], [
+            ["Total spend, 12 months (the sum of the opportunity lines below)", money(spend_total)],
+            ["Largest vendor, Salesforce UK, and its share of spend", f"{money(largest)} ({whole_pct(largest, spend_total)})"],
+            ["Run-rate saving, low", money(tot["saving_low"])],
+            ["Run-rate saving, base", money(tot["saving_base"])],
+            ["Run-rate saving, high", money(tot["saving_high"])],
+            ["Base saving as a share of spend", whole_pct(tot["saving_base"], spend_total)],
+            ["High saving as a share of spend", whole_pct(tot["saving_high"], spend_total)],
+            ["Year-1 saving", money(tot["saving_year1"])],
+            ["Year-1 saving as a share of spend", whole_pct(tot["saving_year1"], spend_total)],
+            ["Saving from vendor action alone, with no group decision", money(tot["saving_without_decision"])],
+            ["Vendor action alone as a share of spend", whole_pct(tot["saving_without_decision"], spend_total)],
+            ["Value of the group decisions together (base minus vendor action alone)", money(tot["value"])],
+        ]),
+        "",
+        "## Opportunities",
+        "",
+        "Base is the run-rate saving the documents quote. Year 1 is the share of the base live in the first 12 months. "
+        "\"Without the decision\" is what vendor action alone achieves; the value of the decision is the difference.",
+        "",
+        *table(["Opportunity", "Spend", "Low", "Base", "High", "Year 1", "Without the decision", "Value of the decision"],
+               [row(name, k) for name, k in opp_lines] + [row("Total", tot)]),
+        "",
+        "## Decisions for the group",
+        "",
+        "For each decision only the group can take: the base saving of the moves that depend on it, what vendor action "
+        "alone achieves without it, and the difference as the value of the decision.",
+        "",
+    ]
+    values = decision_values(srows, decisions, levers)
+    dec_lines = [(v["decision"], thousands(v["spend"]), thousands(v["with"]), thousands(v["without"]),
+                  thousands(v["with"]) - thousands(v["without"]), thousands(v["year1"])) for v in values]
+    lines += table(["Decision", "Spend", "With the decision", "Without it", "Value of the decision", "Year 1"],
+                   [[f"`{d}`", money(s), money(w), money(wo), money(val), money(y)] for d, s, w, wo, val, y in dec_lines]
+                   + [["Total", money(sum(x[1] for x in dec_lines)), money(sum(x[2] for x in dec_lines)),
+                       money(sum(x[3] for x in dec_lines)), money(sum(x[4] for x in dec_lines)),
+                       money(sum(x[5] for x in dec_lines))]])
+    falls = [(name, thousands(by_lever[name]["spend"]), by_lever[name]["rows"]) for name in FALLS_AWAY_LEVERS if name in by_lever]
+    lines += ["", "## Spend that falls away without action", "",
+              "Deal and one-off costs that end on their own; they carry no saving in the model.", "",
+              *table(["Spend", "Rows", "Figure"], [[n, r, money(s)] for n, s, r in falls]
+                     + [["Total", sum(r for _, _, r in falls), money(sum(s for _, s, _ in falls))]])]
+    keep = []
+    for label, vids in MUST_NOT_CUT:
+        sel = [by_id[v] for v in vids]
+        keep.append((label, len(sel), thousands(math.fsum(to_float(r["spend_12m"]) for r in sel))))
+    lines += ["", "## Spend that must not be cut", "",
+              "Payees that customers, regulators or employment terms require, or whose fee is contingent on cash recovered.", "",
+              *table(["Spend", "Rows", "Figure"], [[n, r, money(s)] for n, r, s in keep]
+                     + [["Total", sum(r for _, r, _ in keep), money(sum(s for _, _, s in keep))]])]
+    verified = [r for r in rows if r["verified"] == "TRUE"]
+    unverified = [r for r in rows if r["verified"] != "TRUE"]
+    v_spend = thousands(math.fsum(to_float(r["spend_12m"]) for r in verified))
+    u_spend = thousands(math.fsum(to_float(r["spend_12m"]) for r in unverified))
+    lines += ["", "## Verification", "",
+              *table(["Measure", "Figure"], [
+                  ["Rows verified online, from the vendor's own site or a reliable directory", f"{len(verified)} of {len(rows)}"],
+                  ["Spend verified online", f"{money(v_spend)} ({whole_pct(v_spend, spend_total)})"],
+                  ["Rows left unconfirmed", f"{len(unverified)} ({money(u_spend)})"],
+              ])]
+    if REVIEW_CSV.exists():
+        review = check_outputs.read_csv(REVIEW_CSV)
+        stage1 = {r["vendor_id"] for r in review if r["stage"] == "1"}
+        stage2 = {r["vendor_id"] for r in review if r["stage"] == "2"}
+        changed = {r["vendor_id"] for r in review if r["verdict"] == "changed"}
+        disagreed = {r["vendor_id"] for r in review if r["stage"] == "2" and r["verdict"] == "changed"
+                     and r["field"] in ("department", "cost_cluster", "recommendation", "sub_function")}
+        s2_spend = thousands(math.fsum(to_float(by_id[v]["spend_12m"]) for v in stage2 if v in by_id))
+        agreement = whole_pct(len(stage2) - len(disagreed), len(stage2)) if stage2 else "n/a"
+        lines += ["", "## Second-pass review", "",
+                  "Stage 1: an independent read of every row against its research finding and the rules, without the web. "
+                  "Stage 2: fresh web verification, with neither the hint nor the first-pass row, of every flagged row, "
+                  "every row at or above $10,000 and a random sample.", "",
+                  *table(["Measure", "Figure"], [
+                      ["Stage 1 rows reviewed", f"{len(rows)} of {len(rows)}"],
+                      ["Stage 1 rows flagged", f"{len(stage1)}"],
+                      ["Stage 2 rows verified fresh", f"{len(stage2)} of {len(rows)}"],
+                      ["Stage 2 spend covered", f"{money(s2_spend)} ({whole_pct(s2_spend, spend_total)})"],
+                      ["Stage 2 rows whose reading changed (department, function, group or recommendation)", f"{len(disagreed)}"],
+                      ["Stage 2 agreement with the first pass", agreement],
+                      ["Rows changed by the review, any field", f"{len(changed)}"],
+                  ])]
+    return "\n".join(lines).rstrip("\n") + "\n"
 
 
 def csv_text(srows: list[dict]) -> str:
@@ -192,8 +319,9 @@ def main() -> int:
     SAVINGS_CSV.write_text(csv_text(srows), encoding="utf-8")
     text = render(srows, rows, decisions, levers)
     write_text(SAVINGS_MD, text)
+    write_text(SUMMARY_MD, render_summary(srows, rows, decisions, levers))
     tot = totals(srows)
-    print(f"Wrote {rel(SAVINGS_CSV)} ({len(srows)} rows) and {rel(SAVINGS_MD)}: spend {money(tot['spend'])}, "
+    print(f"Wrote {rel(SUMMARY_MD)} and {rel(SAVINGS_CSV)} ({len(srows)} rows) and {rel(SAVINGS_MD)}: spend {money(tot['spend'])}, "
           f"run-rate saving {money(tot['saving_low'])} / {money(tot['saving_base'])} / {money(tot['saving_high'])}, "
           f"without decisions {money(tot['saving_without_decision'])}, year 1 {money(tot['saving_year1'])}.")
     res = check_outputs.Results()

@@ -2,7 +2,7 @@
 
 Written by `scripts/merge_validate.py`, which merged the batch files in `outputs/batches/` into `outputs/vendors_classified.csv`, sorted by `vendor_id` (the original sheet order), and ran `qa/check_outputs.py` on it. The report is rebuilt on every run and is not edited by hand: the reason for a row with `verified` FALSE goes in `qa/verification_exceptions.csv`.
 
-**Result: PASS.** All 41 checks passed.
+**Result: PASS.** All 47 checks passed.
 
 ## Counts
 
@@ -102,14 +102,14 @@ Rows per batch:
 | vendor_id | Vendor | Spend | Department | Recommendation | Description |
 |---|---|---|---|---|---|
 | V0015 | Telefonica Global Services GmbH | $89,880 | Sales | Optimize | Global procurement company of the Telefónica group in Munich, a customer's buying arm; what these payments cover is for Finance |
-| V0038 | Nefron - Obrt Za Poslovne Usluge | $30,614 | Marketing | Terminate | Podstrana sole trader registered to organise meetings and trade fairs; what it supplied the company is not shown (unconfirmed) |
+| V0038 | Nefron - Obrt Za Poslovne Usluge | $30,614 | Marketing | Terminate | Podstrana sole trader registered to organize meetings and trade fairs; what it supplied the company is not shown (unconfirmed) |
 | V0043 | Google Ireland Limited | $24,798 | Marketing | Optimize | Google's Dublin billing entity for Ads and Cloud in Europe; the product bought is not shown, most likely Google Ads (unconfirmed) |
 | V0074 | Bijeli Pijesak Obrt Za Poslovno Savjetovanje | $11,605 | G&A | Terminate | Croatian sole trader whose name says business consulting; the work is not established (unconfirmed) |
 | V0082 | Catering Muring | $9,603 | Facilities | Terminate | Caterer by its name, most likely office catering for the Croatian office (unconfirmed) |
 | V0087 | The Guardian | $8,070 | Marketing | Optimize | UK newspaper publisher selling subscriptions, advertising and Guardian Jobs recruitment ads; which was bought is unconfirmed, for marketing or HR |
 | V0092 | Obrt Sjaj Sunca | $6,596 | G&A | Terminate | Croatian sole trader in Split whose activity is not established (unconfirmed) |
 | V0093 | Telefónica Compras Electrónicas S.L. | $6,157 | Sales | Optimize | Telefónica's Madrid procurement company running the group purchasing platform suppliers must use; what these payments cover is for Finance |
-| V0096 | Mosaic Concept d.o.o. | $5,731 | Marketing | Terminate | Zagreb micro company registered to organise meetings and business fairs; what it supplied the company is not shown (unconfirmed) |
+| V0096 | Mosaic Concept d.o.o. | $5,731 | Marketing | Terminate | Zagreb micro company registered to organize meetings and business fairs; what it supplied the company is not shown (unconfirmed) |
 | V0102 | Athlete Service Ltd | $5,285 | G&A | Terminate | UK cycling and triathlon retailer selling bikes, clothing and accessories, per a company-data site; what was bought is unconfirmed |
 | V0107 | Profi Bar d.o.o. | $4,917 | G&A | Terminate | Croatian company whose name suggests a bar or drinks supplier; what it provides is not established (unconfirmed) |
 | V0110 | The Virtual Legal Counsel Ltd | $4,800 | Legal | Consolidate | London company whose name suggests outsourced in-house legal counsel, registered as a management consultancy, for legal (unconfirmed) |
@@ -310,7 +310,7 @@ Rows per recommendation on each savings lever, with the lever's base saving perc
 
 ## Checks
 
-The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C19 and, once `outputs/analysis/savings.csv` exists, the savings checks V1 to V9 on it (steps 4 and 5).
+The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C20, the savings checks V1 to V9 once `outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D4 and the sheet check W1 once the documents and the workbook exist (step 6).
 
 | Check | Result | Rule |
 |---|---|---|
@@ -346,6 +346,7 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | C17 | PASS | Every row is verified TRUE, or FALSE and listed with a reason under "Verification exceptions" in qa/validation_report.md; every listed id is FALSE in the file |
 | C18 | PASS | vendor_name_original and vendor_name_clean match outputs/vendors_clean.csv by vendor_id, and the rows are in the original sheet order (vendor_id ascending) |
 | C19 | PASS | Descriptions, rationales and risk notes never refer to the project's own workings: hints, lists, rules, searches, sources, steps, prompts or files (step 5) |
+| C20 | PASS | Descriptions, rationales and risk notes are in American English: none of the common British forms (step 6) |
 | V1 | PASS | pct_low <= pct_base <= pct_high on every row, all within 0 and 100 |
 | V2 | PASS | pct_without_decision <= pct_base on every row, and equal to it on untagged rows |
 | V3 | PASS | The year-1 saving is the base saving times a factor between 0 and 1, so never above the base |
@@ -355,7 +356,12 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | V7 | PASS | Every depends_on tag, on the rows and in the register, is none or a registered decision |
 | V8 | PASS | The roll-ups by opportunity, cluster and lever in outputs/analysis/savings.md equal the sums of the vendor rows, and their totals equal the file's total |
 | V9 | PASS | Every Terminate row on a lever with a base below 50% outside the Excluded opportunity, and every Optimize row on a lever above 50%, is fixed or has a recorded reason (step 5) |
+| D1 | PASS | Every dollar figure and percentage in the four documents appears in a file under outputs/analysis or qa (savings_summary.md first) |
+| D2 | PASS | Every table with a Total row in the documents adds up |
+| D3 | PASS | No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the methodology |
+| D4 | PASS | The four documents are in American English: none of the common British forms |
+| W1 | PASS | outputs/sheet/Vendor Analysis Assessment - Chaitanya Laxman.xlsx matches its sources cell by cell, keeps the raw row order and the Department dropdown, uses only Config departments, and its saving column sums to the base saving |
 
 ## Failures
 
-None: all 41 checks passed.
+None: all 47 checks passed.

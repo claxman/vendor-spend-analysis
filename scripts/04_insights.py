@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from savings_model import REGISTER, load_register, to_float  # noqa: E402
+from savings_model import MUST_NOT_CUT, REGISTER, load_register, to_float  # noqa: E402
 from vsa_common import money, pct, rel, section_rows, table, write_text  # noqa: E402
 
 CLASSIFIED = ROOT / "outputs" / "vendors_classified.csv"
@@ -82,17 +82,6 @@ OVERLAPS = [
     ("Three document and e-signature tools", ["V0194", "V0281", "V0117"]),
     ("Two learning platforms", ["V0221", "V0276"]),
     ("Marketing automation (HubSpot) alongside the Salesforce platform's own marketing", ["V0037"]),
-]
-MUST_NOT_CUT = [
-    ("Customer-mandated platform fees (Telefónica, Ariba)", ["V0015", "V0093", "V0191"]),
-    ("Software escrow for customer contracts", ["V0144"]),
-    ("ISO certification audits", ["V0142"]),
-    ("Statutory workers' compensation and occupational health",
-     ["V0094", "V0201", "V0212", "V0300", "V0328", "V0382", "V0383", "V0384"]),
-    ("Taxes, government fees, regulators and the depository", ["V0073", "V0139", "V0284", "V0333", "V0353", "V0361"]),
-    ("Salary-sacrifice schemes (cycle to work, novated leasing)", ["V0100", "V0195"]),
-    ("Meal and benefit cards", ["V0054", "V0128"]),
-    ("The contingent-fee R&D tax credit adviser", ["V0068"]),
 ]
 LEAVER_SIGNS = [
     ("three one-off payments to UK employment-law firms, of the size of an employer's contribution to a departing "
