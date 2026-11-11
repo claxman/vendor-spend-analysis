@@ -45,7 +45,7 @@ V0044,Zuric I Partneri Odvjetnicko Drustvo d.o.o.,24135.4373744,Legal,Law firms 
 V0045,Care Health Insurance Company Limited,24044.6861392,Insurance and benefits,Employee health and life insurance,Back office into group shared services,5,10,15,5,0.5,group_insurance_programme,1202.23430696,2404.46861392,3606.70292088,1202.23430696,1202.23430696
 V0046,New Star Networks (NSN),23886.603342399998,"Cloud, telecom and IT",Telecom and internet providers,Second wave,25,40,60,15,0.5,remote_operating_model,5971.6508355999995,9554.641336959998,14331.962005439998,3582.9905013599996,4777.320668479999
 V0047,Bupa,22799.784114399998,Insurance and benefits,Employee health and life insurance,Back office into group shared services,5,10,15,5,0.5,group_insurance_programme,1139.98920572,2279.97841144,3419.96761716,1139.98920572,1139.98920572
-V0048,Shree Info System Solutions Pvt Ltd,22275.0370528,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,1113.75185264,2227.50370528,4455.00741056,2227.50370528,1336.5022231679998
+V0048,Shree Info System Solutions Pvt Ltd,22275.0370528,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,1113.75185264,2227.50370528,4455.00741056,1113.75185264,1336.5022231679998
 V0049,Technet IT Recruitment,21952.284676,Recruiting and HR outsourcing,Recruitment agencies and job boards,Back office into group shared services,80,100,100,30,0.9,group_talent_function,17561.8277408,21952.284676,21952.284676,6585.6854028,19757.0562084
 V0050,MightyHive Ltd,19041.6583664,"Marketing agencies, media and memberships",Marketing agencies,Second wave,30,50,70,50,0.75,none,5712.49750992,9520.8291832,13329.16085648,9520.8291832,7140.6218874
 V0051,Cedar Recruitment Ltd,18537.4035192,Recruiting and HR outsourcing,Recruitment agencies and job boards,Back office into group shared services,80,100,100,30,0.9,group_talent_function,14829.922815360002,18537.4035192,18537.4035192,5561.221055760001,16683.663167280003
@@ -63,7 +63,7 @@ V0062,Westbrook Advisers,15360.3784224,Legal,Law firms and legal resourcing,Back
 V0063,Work Easy Space Solutions Private Limited,14913.209029599999,Office footprint,Office footprint,Office exit,60,75,90,25,0.5,remote_operating_model,8947.92541776,11184.9067722,13421.888126639999,3728.3022573999997,5592.4533861
 V0064,"Taxstudio, Ltd.",14642.419053599999,"Audit, tax, accounting and corporate services","Audit, tax and accounting firms",Back office into group shared services,25,35,45,10,0.4,group_auditor,3660.6047634,5124.846668759999,6589.08857412,1464.2419053599997,2049.938667504
 V0065,Pingo d.o.o.,14508.487795199999,Outsourced engineering and contractors,Unidentified and individual payees,Second wave,30,50,70,50,0.75,none,4352.54633856,7254.243897599999,10155.94145664,7254.243897599999,5440.6829232
-V0066,Magazin Računalni Sistemi d.o.o.,13870.301689599999,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,693.5150844799999,1387.0301689599999,2774.0603379199997,1387.0301689599999,832.2181013759999
+V0066,Magazin Računalni Sistemi d.o.o.,13870.301689599999,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,693.5150844799999,1387.0301689599999,2774.0603379199997,693.5150844799999,832.2181013759999
 V0067,TP Prime d.o.o.,13785.4053728,"Audit, tax, accounting and corporate services","Audit, tax and accounting firms",Back office into group shared services,25,35,45,10,0.4,group_auditor,3446.3513432,4824.89188048,6203.43241776,1378.54053728,1929.9567521919998
 V0068,GrantTree Limited,13658.7927624,"Audit, tax, accounting and corporate services",R&D tax credit adviser (contingent fee),Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0069,Cigna SG,13248.9484744,Insurance and benefits,Employee health and life insurance,Back office into group shared services,5,10,15,5,0.5,group_insurance_programme,662.4474237200001,1324.8948474400001,1987.3422711599999,662.4474237200001,662.4474237200001
@@ -118,9 +118,9 @@ V0117,Adobe Systems Software,3928.6502464,Software subscriptions (non-Salesforce
 V0118,"Common Desk, LLC",3842.2902,Office footprint,Office footprint,Office exit,60,75,90,25,0.5,remote_operating_model,2305.37412,2881.71765,3458.06118,960.5725500000001,1440.858825
 V0119,HEP Elektra d.o.o.,3734.7060744,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,1867.3530372,2614.29425208,2987.7648595200003,746.9412148800001,1307.14712604
 V0120,Zivi Napitak d.o.o.,3699.576564,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,1849.788282,2589.7035948,2959.6612511999997,739.9153127999999,1294.8517974
-V0121,Gym4You d.o.o.,3692.257916,"Team events, perks and wellness",Statutory cover and benefit schemes,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
+V0121,Gym4You d.o.o.,3692.257916,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,1476.9031664000001,2215.3547496,2769.1934370000004,2215.3547496,1661.5160622
 V0122,Aha! Labs Inc,3689.3304568,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,553.39956852,922.3326142,1291.26565988,922.3326142,553.39956852
-V0123,Apple Retail UK Ltd,3548.0805504,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,177.40402752000003,354.80805504000006,709.6161100800001,354.80805504000006,212.88483302400002
+V0123,Apple Retail UK Ltd,3548.0805504,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,177.40402752000003,354.80805504000006,709.6161100800001,177.40402752000003,212.88483302400002
 V0124,"Kryterion, Inc.",3541.4937672,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,531.22406508,885.3734418,1239.52281852,885.3734418,531.22406508
 V0125,npm Inc,3534.9069839999997,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,530.2360475999999,883.7267459999999,1237.2174444,883.7267459999999,530.2360475999999
 V0126,Pinsent Masons MPillay LLP,4077.8263165000003,Legal,Law firms and legal resourcing,Back office into group shared services,20,30,40,10,0.6,group_legal,815.5652633000001,1223.34789495,1631.1305266000002,407.78263165000004,734.00873697
@@ -128,7 +128,7 @@ V0127,Calm Achiever (A Unit Of Mohsin Ali Vakil),4071.0143285000004,Unidentified
 V0128,Pluxee India Private Limited,3994.3794635000004,Insurance and benefits,Statutory cover and benefit schemes,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0129,O'Donnell Salzano Lawyers,3955.2105325,Legal,Law firms and legal resourcing,Back office into group shared services,20,30,40,10,0.6,group_legal,791.0421065,1186.56315975,1582.084213,395.52105325,711.93789585
 V0130,Papertrail Inc,3899.86313,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,584.9794695,974.9657825,1364.9520955,974.9657825,584.9794695
-V0131,Sniper Systems And Solutions Private Limited,3899.0116315,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,194.950581575,389.90116315,779.8023263,389.90116315,233.94069789
+V0131,Sniper Systems And Solutions Private Limited,3899.0116315,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,194.950581575,389.90116315,779.8023263,194.950581575,233.94069789
 V0132,Trocadero (London) Hotel Ltd,3867.5061870000004,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,1160.2518561000002,1933.7530935000002,2707.2543309000002,1933.7530935000002,1450.314820125
 V0133,Semrush Inc,3729.56343,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,559.4345145,932.3908575,1305.3472005,932.3908575,559.4345145
 V0134,Golubica Parking d.o.o.,3726.1574360000004,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,1863.0787180000002,2608.3102052000004,2980.9259488000007,745.2314872000002,1304.1551026000002
@@ -141,7 +141,7 @@ V0140,T-Mobile,3357.4585855,"Cloud, telecom and IT",Telecom and internet provide
 V0141,Akton d.o.o.,3253.5757685000003,"Cloud, telecom and IT",Telecom and internet providers,Second wave,25,40,60,15,0.5,remote_operating_model,813.3939421250001,1301.4303074000002,1952.1454611000001,488.03636527500004,650.7151537000001
 V0142,Bureau Veritas Croatia d.o.o.,3199.931363,"Audit, tax, accounting and corporate services","Bank, payment and certification fees",Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0143,Cici Prudential Life Insurance Co. Ltd.,3194.822372,Insurance and benefits,Employee health and life insurance,Back office into group shared services,5,10,15,5,0.5,group_insurance_programme,159.74111860000002,319.48223720000004,479.2233558,159.74111860000002,159.74111860000002
-V0144,NCC Services Limited,3036.443651,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,151.82218255,303.6443651,607.2887302,303.6443651,182.18661906
+V0144,NCC Services Limited,3036.443651,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,151.82218255,303.6443651,607.2887302,303.6443651,182.18661906
 V0145,Smartsheet Inc.,2994.7202245000003,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,449.208033675,748.6800561250001,1048.1520785750001,748.6800561250001,449.208033675
 V0146,Good Game Global d.o.o.,2953.8482965000003,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,1181.5393186000001,1772.3089779000002,2215.386222375,1772.3089779000002,1329.2317334250001
 V0147,Garaža Firule d.o.o.,2930.0063385000003,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,1465.0031692500002,2051.00443695,2344.0050708,586.0012677,1025.502218475
@@ -164,15 +164,15 @@ V0163,StarHub Ltd,2205.381115,"Cloud, telecom and IT",Telecom and internet provi
 V0164,N S Shastri And Co,2194.3116345000003,"Audit, tax, accounting and corporate services","Audit, tax and accounting firms",Back office into group shared services,25,35,45,10,0.4,group_auditor,548.5779086250001,768.0090720750002,987.4402355250002,219.43116345,307.20362883000007
 V0165,John Smith,2162.8061900000002,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0166,Fabiola Thistlewhaite,2154.291205,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0167,HP Inc UK Limited,2136.4097365000002,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,106.820486825,213.64097365,427.2819473,213.64097365,128.18458419
+V0167,HP Inc UK Limited,2136.4097365000002,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,106.820486825,213.64097365,427.2819473,106.820486825,128.18458419
 V0168,Cision PR Newswire,2110.0132830000002,"Marketing agencies, media and memberships","Other marketing, media and events",Second wave,20,30,50,30,0.75,none,422.0026566,633.0039849000001,1055.0066415000001,633.0039849000001,474.7529886750001
 V0169,George Anchor,2107.4587875,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0170,"Yoxel, Inc",2043.5964000000001,Salesforce platform,Slack and Yoxel inside the Salesforce renewal,Salesforce platform agreement,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0171,GRT Hotels And Resorts P Ltd,2031.6754210000001,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,609.5026263000001,1015.8377105000001,1422.1727947000002,1015.8377105000001,761.8782828750001
-V0172,Apple Pty Ltd,2030.8239225000002,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,101.541196125,203.08239225,406.1647845,203.08239225,121.84943535
+V0172,Apple Pty Ltd,2030.8239225000002,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,101.541196125,203.08239225,406.1647845,101.541196125,121.84943535
 V0173,Slack Technologies Limited,1989.100496,Salesforce platform,Slack and Yoxel inside the Salesforce renewal,Salesforce platform agreement,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0174,G S Notary Public Limited,1935.4560905,Legal,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0175,Apple Distribution International Ltd,1913.3171295000002,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,95.665856475,191.33171295,382.6634259,191.33171295,114.79902777
+V0175,Apple Distribution International Ltd,1913.3171295000002,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,95.665856475,191.33171295,382.6634259,95.665856475,114.79902777
 V0176,Porezno Savjetništvo Tuk d.o.o.,1812.8403065,"Audit, tax, accounting and corporate services","Audit, tax and accounting firms",Back office into group shared services,25,35,45,10,0.4,group_auditor,453.210076625,634.494107275,815.778137925,181.28403064999998,253.79764291000004
 V0177,Susan Lee,1761.7503965,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0178,Ansar Madovic,1731.947949,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -193,7 +193,7 @@ V0192,Chamiers Recreation Club,1337.7041435,"Team events, perks and wellness","T
 V0193,Quadrant Law LLC,1326.634663,Legal,Law firms and legal resourcing,Back office into group shared services,20,30,40,10,0.6,group_legal,265.3269326,397.9903989,530.6538652,132.6634663,238.79423934
 V0194,DocuSign,1307.9016960000001,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,196.18525440000002,326.97542400000003,457.76559360000005,326.97542400000003,196.18525440000002
 V0195,Inside Edge Novated Leasing,1287.4657320000001,Insurance and benefits,Statutory cover and benefit schemes,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0196,Rhea d.o.o.,1253.405792,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,626.702896,877.3840544,1002.7246336,250.6811584,438.6920272
+V0196,Rhea d.o.o.,1253.405792,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,62.6702896,125.3405792,250.6811584,125.3405792,75.20434752
 V0197,P S Recreation Club,1219.3458520000001,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,487.73834080000006,731.6075112000002,914.509389,731.6075112000002,548.7056334000001
 V0198,FastSpring,1179.3254225,"Audit, tax, accounting and corporate services","Bank, payment and certification fees",Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0199,DSV Solutions A/S,1162.2954525,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -211,7 +211,7 @@ V0210,Digitalna Produkcija j.d.o.o.,992.847251,"Marketing agencies, media and me
 V0211,Computershare-Caboodle Technology Limited,980.926272,Insurance and benefits,Other software subscriptions,Second wave,15,25,35,25,0.6,none,147.1389408,245.231568,343.3241952,245.231568,147.1389408
 V0212,Allianz WA,970.70829,Insurance and benefits,Statutory cover and benefit schemes,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0213,Trending Technology Services GmbH,961.3418065000001,Recruiting and HR outsourcing,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0214,"GoDaddy.com, LLC",923.0243740000001,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,46.15121870000001,92.30243740000002,184.60487480000003,92.30243740000002,55.38146244000001
+V0214,"GoDaddy.com, LLC",923.0243740000001,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,46.15121870000001,92.30243740000002,184.60487480000003,92.30243740000002,55.38146244000001
 V0215,Time Out Group,920.4698785,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,276.14096355000004,460.23493925,644.32891495,460.23493925,345.1762044375
 V0216,Raiffeisenbank Austria d.d.,919.61838,"Audit, tax, accounting and corporate services","Bank, payment and certification fees",Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0217,Galop-Prijevoz d.o.o.,907.697401,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,272.3092203,453.84870049999995,635.3881807,453.84870049999995,340.38652537499996
@@ -226,10 +226,10 @@ V0225,Potomac d.o.o.,805.5175810000001,"Team events, perks and wellness","Team e
 V0226,"President Hotel And Tower Co., Ltd",802.9630855,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,240.88892565000003,401.48154275,562.07415985,401.48154275,301.1111570625
 V0227,Friends Sports Club,797.002596,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,318.80103840000004,478.2015576,597.751947,478.2015576,358.65116820000003
 V0228,The Cycle Gap Adyar,765.4971515000001,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,229.64914545000002,382.74857575000004,535.8480060500001,382.74857575000004,287.0614318125
-V0229,Apple - AMER,763.7941545,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,38.189707725,76.37941545,152.7588309,76.37941545,45.827649269999995
+V0229,Apple - AMER,763.7941545,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,38.189707725,76.37941545,152.7588309,38.189707725,45.827649269999995
 V0230,KLG - Kalra Legal Group,681.1988,Legal,Employment-law settlement advice,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0231,Kilgannon & Partners LLP,681.1988,Legal,Employment-law settlement advice,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0232,UK Postbox Limited,670.1293195000001,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,335.0646597500001,469.09052365,536.1034556,134.0258639,234.545261825
+V0232,UK Postbox Limited,670.1293195000001,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,33.506465975,67.01293195,134.0258639,67.01293195,40.207759169999996
 V0233,Catering Ivić d.o.o.,669.277821,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0234,Blink Events,664.1688300000001,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,265.66753200000005,398.501298,498.1266225000001,398.501298,298.8759735
 V0235,Grafo-Jan,662.4658330000001,"Marketing agencies, media and memberships",One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -237,7 +237,7 @@ V0236,Mesa Verde,662.4658330000001,Unidentified and individual payees,One-off sp
 V0237,Pixsy Inc,613.07892,Legal,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0238,Dun & Bradstreet d.o.o.,609.6729260000001,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,91.45093890000003,152.41823150000002,213.38552410000003,152.41823150000002,91.45093890000001
 V0239,Induslaw,596.04895,Legal,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0240,Trans-Agram Obrt Za Dostavu,580.721977,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,290.3609885,406.5053839,464.57758160000003,116.14439540000001,203.25269195
+V0240,Trans-Agram Obrt Za Dostavu,580.721977,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,29.036098850000002,58.072197700000004,116.14439540000001,58.072197700000004,34.84331862
 V0241,Landu Law Solicitors,567.9494995,Legal,Employment-law settlement advice,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0242,Arena Center Zagreb d.o.o.,567.0980010000001,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,226.83920040000004,340.25880060000003,425.32350075,340.25880060000003,255.19410045
 V0243,Obrt Za Ugostiteljstvo Mirakul,565.3950040000001,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,169.61850120000003,282.69750200000004,395.7765028000001,282.69750200000004,212.02312650000005
@@ -257,7 +257,7 @@ V0256,Rudan d.o.o.,472.58166750000004,Travel and entertainment,"Other travel, ho
 V0257,Entrio Tehnologije d.o.o.,472.58166750000004,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,189.032667,283.54900050000003,354.436250625,283.54900050000003,212.66175037500003
 V0258,Vivat Fina Vina d.o.o.,466.62117800000004,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,186.64847120000002,279.9727068,349.9658835000001,279.9727068,209.97953010000003
 V0259,"Figma, Inc.",459.80919,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,68.9713785,114.9522975,160.9332165,114.9522975,68.9713785
-V0260,E-Disti d.o.o.,458.106193,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,22.90530965,45.8106193,91.6212386,45.8106193,27.48637158
+V0260,E-Disti d.o.o.,458.106193,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,22.90530965,45.8106193,91.6212386,22.90530965,27.48637158
 V0261,Greencell Express Private Limited,457.2546945,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,137.17640835,228.62734725,320.07828615,228.62734725,171.47051043750002
 V0262,Edwardian Pastoria Hotels Ltd (The Londoner),433.41273650000005,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,130.02382095000002,216.70636825000003,303.38891555000004,216.70636825000003,162.52977618750003
 V0263,Tiganda j.d.o.o.,431.7097395,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -275,7 +275,7 @@ V0274,Spar Hrvatska d.o.o.,340.5994,Office running costs,Office running costs,Of
 V0275,Pepe's Italian And Liquor,338.896403,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,101.66892090000002,169.44820149999998,237.2274821,169.44820149999998,127.08615112499999
 V0276,"Pluralsight, LLC",318.460439,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,47.76906585,79.61510975,111.46115365,79.61510975,47.76906585
 V0277,Maniax Melbourne CBD,315.05444500000004,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,126.02177800000001,189.03266700000003,236.29083375000002,189.03266700000003,141.77450025000002
-V0278,DNSimple,311.648451,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,15.58242255,31.1648451,62.3296902,31.1648451,18.69890706
+V0278,DNSimple,311.648451,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,15.58242255,31.1648451,62.3296902,31.1648451,18.69890706
 V0279,Treci Posao d.o.o.,307.3909585,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0280,Gaucho Restaurants,302.2819675,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,90.68459025,151.14098375,211.59737725,151.14098375,113.3557378125
 V0281,FormSwift,301.430469,Software subscriptions (non-Salesforce),One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -287,7 +287,7 @@ V0286,The Riding House Cafe,264.8160335,Travel and entertainment,"Other travel, 
 V0287,Stillmark Zagreb d.o.o.,263.1130365,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,105.2452146,157.86782190000002,197.33477737500002,157.86782190000002,118.40086642500002
 V0288,LastPass Ireland Limited,263.1130365,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,39.466955475000006,65.778259125,92.08956277500002,65.778259125,39.466955475
 V0289,Taste Of Health,258.855544,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,77.6566632,129.427772,181.1988808,129.427772,97.070829
-V0290,Infodata,240.97407550000003,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,12.048703775000002,24.097407550000003,48.19481510000001,24.097407550000003,14.458444530000001
+V0290,Infodata,240.97407550000003,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,12.048703775000002,24.097407550000003,48.19481510000001,24.097407550000003,14.458444530000001
 V0291,Amazon (Aus),233.31058900000002,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,116.65529450000002,163.3174123,186.64847120000002,46.662117800000004,81.65870615
 V0292,Regency Hampers Ltd,247.877645215,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,99.15105808599999,148.726587129,185.90823391125,148.726587129,111.54494034675
 V0293,Bella Operation A/S,240.505819335,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,72.15174580050001,120.2529096675,168.35407353450003,120.2529096675,90.189682250625
@@ -300,20 +300,20 @@ V0299,Freepik Company,202.72521170000002,"Marketing agencies, media and membersh
 V0300,Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Štampar,199.03929876,Insurance and benefits,Statutory cover and benefit schemes,Back office into group shared services,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0301,Rishi Events And Entainment,198.117820525,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,79.24712821000001,118.87069231500001,148.58836539375,118.87069231500001,89.15301923625
 V0302,Kosmaz Technologies Croatia,195.35338582,Unidentified and individual payees,Unidentified and individual payees,Second wave,30,50,70,50,0.75,none,58.606015746000004,97.67669291,136.747370074,97.67669291,73.2575196825
-V0303,DHL,190.745994645,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,95.3729973225,133.5221962515,152.596795716,38.149198929,66.76109812575
+V0303,DHL,190.745994645,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,9.53729973225,19.0745994645,38.149198929,19.0745994645,11.4447596787
 V0304,Hotel Laguna d.d.,189.82451641,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,56.947354923000006,94.912258205,132.877161487,94.912258205,71.18419365375
 V0305,Bigshare Services Private Limited,187.98155994,"Audit, tax, accounting and corporate services","Corporate secretarial, registered agent and share registry",Back office into group shared services,10,20,30,20,0.5,none,18.798155994000002,37.596311988000004,56.39446798200001,37.596311988000004,18.798155994000002
 V0306,Zettanet,183.374168765,"Cloud, telecom and IT",Telecom and internet providers,Second wave,25,40,60,15,0.5,remote_operating_model,45.84354219125,73.349667506,110.024501259,27.50612531475,36.674833753
 V0307,Hahn Air,183.374168765,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,55.0122506295,91.6870843825,128.3619181355,91.6870843825,68.765313286875
 V0308,Vitality Works,181.53121229500002,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,72.612484918,108.91872737700001,136.14840922125003,108.91872737700001,81.68904553275001
-V0309,Avoxi Inc,177.845299355,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,8.89226496775,17.7845299355,35.569059871,17.7845299355,10.6707179613
+V0309,Avoxi Inc,177.845299355,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,8.89226496775,17.7845299355,35.569059871,17.7845299355,10.6707179613
 V0310,Zapier Inc.,166.787560535,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,25.01813408025,41.69689013375,58.375646187250005,41.69689013375,25.01813408025
 V0311,"SolarWinds, Inc",165.86608230000002,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,24.879912345,41.466520575000004,58.05312880500001,41.466520575000004,24.879912345
 V0312,Xenon Savjetovanje d.o.o.,164.02312583,Outsourced engineering and contractors,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0313,Floom Ltd,162.18016936,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,64.872067744,97.308101616,121.63512702,97.308101616,72.981076212
 V0314,Notino s.r.o.,161.258691125,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,64.50347645000001,96.755214675,120.94401834375002,96.755214675,72.56641100625001
 V0315,"Paint&Wine, Vl. Stevo Dosen",159.415734655,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,63.766293862000005,95.649440793,119.56180099125,95.649440793,71.73708059475
-V0316,Parcelforce Worldwide,154.80834348000002,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,77.40417174000001,108.36584043600001,123.84667478400003,30.961668696000007,54.18292021800001
+V0316,Parcelforce Worldwide,154.80834348000002,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,7.740417174000002,15.480834348000004,30.961668696000007,15.480834348000004,9.288500608800002
 V0317,Advena,153.886865245,Unidentified and individual payees,Unidentified and individual payees,Second wave,30,50,70,50,0.75,none,46.1660595735,76.9434326225,107.7208056715,76.9434326225,57.707574466875
 V0318,Hrvatski Nezavisnici Izvoznici Softvera,153.886865245,"Marketing agencies, media and memberships","Other marketing, media and events",Second wave,20,30,50,30,0.75,none,30.777373048999998,46.1660595735,76.9434326225,46.1660595735,34.624544680125
 V0319,Monile j.d.o.o.,152.043908775,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -333,7 +333,7 @@ V0332,The Cook Kitchen,122.55660525500001,Office running costs,One-off spend tha
 V0333,Australian Taxation Office (ATO),122.55660525500001,Statutory and government,Statutory and government,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0334,Capitol Services,119.79217055000001,"Audit, tax, accounting and corporate services","Corporate secretarial, registered agent and share registry",Back office into group shared services,10,20,30,20,0.5,none,11.979217055000001,23.958434110000002,35.937651165000005,23.958434110000002,11.979217055000001
 V0335,Bonus Opinio d.o.o.,119.79217055000001,Unidentified and individual payees,Unidentified and individual payees,Second wave,30,50,70,50,0.75,none,35.937651165000005,59.896085275000004,83.854519385,59.896085275000004,44.92206395625
-V0336,DHL Express (UK) Ltd,118.870692315,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,59.4353461575,83.2094846205,95.096553852,23.774138463,41.60474231025
+V0336,DHL Express (UK) Ltd,118.870692315,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,5.94353461575,11.8870692315,23.774138463,11.8870692315,7.1322415389
 V0337,Kat's Kitchen d.o.o.,118.870692315,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,35.6612076945,59.4353461575,83.2094846205,59.4353461575,44.576509618125
 V0338,Soho Kitchen Ltd,104.12704055500001,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0339,Fortis Trade j.d.o.o.,94.912258205,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
@@ -342,7 +342,7 @@ V0341,Pret A Manger,92.1478235,Travel and entertainment,"Other travel, hotels, r
 V0342,Axil Coffee Roasters,89.383388795,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0343,Pepco Croatia d.o.o.,89.383388795,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0344,Lemia d.o.o.,87.540432325,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
-V0345,Retriever LLC,87.540432325,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,4.3770216162499995,8.754043232499999,17.508086464999998,8.754043232499999,5.252425939499999
+V0345,Retriever LLC,87.540432325,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,4.3770216162499995,8.754043232499999,17.508086464999998,8.754043232499999,5.252425939499999
 V0346,Meluba Limited,87.540432325,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0347,London Waste Management,85.69747585500001,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0348,Hilton Garden Inn - Zagreb City Hotels d.o.o.,82.011562915,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,24.6034688745,41.0057814575,57.4080940405,41.0057814575,30.754336093124998
@@ -360,22 +360,22 @@ V0359,Snappy Snaps,58.97460704,Travel and entertainment,"Other travel, hotels, r
 V0360,New Block d.o.o.,56.210172335,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0361,Cayman Islands Government,56.210172335,Statutory and government,Statutory and government,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0362,Officeworks,56.210172335,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,28.105086167500005,39.3471206345,44.96813786800001,11.242034467000002,19.67356031725
-V0363,Click Send Pty Ltd,55.2886941,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,2.7644347049999998,5.5288694099999995,11.057738819999999,5.5288694099999995,3.3173216459999995
+V0363,Click Send Pty Ltd,55.2886941,"Cloud, telecom and IT",Other cloud and IT,Second wave,5,10,20,10,0.6,none,2.7644347049999998,5.5288694099999995,11.057738819999999,5.5288694099999995,3.3173216459999995
 V0364,Kall Kwik Centre 565,55.2886941,"Marketing agencies, media and memberships",One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0365,Shilton Hospitality LLP,55.2886941,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,16.58660823,27.64434705,38.70208587,27.64434705,20.733260287500002
 V0366,Axosoft GitKraken,54.367215865,Software subscriptions (non-Salesforce),Other software subscriptions,Second wave,15,25,35,25,0.6,none,8.155082379749999,13.59180396625,19.02852555275,13.59180396625,8.155082379749999
 V0367,Istra Wine,53.44573763,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,21.378295052000002,32.067442578,40.084303222500004,32.067442578,24.0505819335
-V0368,Gophr,51.60278116,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,25.801390579999996,36.121946812000004,41.282224928,10.320556232,18.060973406000002
+V0368,Gophr,51.60278116,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,2.580139058,5.160278116,10.320556232,5.160278116,3.0961668695999998
 V0369,Pan-Pek d.o.o.,49.75982469,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,14.927947407000001,24.879912345,34.831877283000004,24.879912345,18.65993425875
 V0370,Uber *Eats,49.75982469,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,14.927947407000001,24.879912345,34.831877283000004,24.879912345,18.65993425875
-V0371,FedEx Express UK Transportation Ltd,46.995389985,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,23.4976949925,32.8967729895,37.596311988000004,9.399077997000001,16.44838649475
+V0371,FedEx Express UK Transportation Ltd,46.995389985,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,2.3497694992500002,4.6995389985000005,9.399077997000001,4.6995389985000005,2.8197233991000004
 V0372,Garden City d.o.o.,45.152433515,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,13.5457300545,22.576216757500003,31.606703460499997,22.576216757500003,16.932162568125
 V0373,Livingstone,40.54504234,Unidentified and individual payees,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0374,Ekupi d.o.o.,39.623564105,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0375,Farmacia - Specijalizirana Prodavaonica d.o.o.,35.937651165,Office running costs,One-off spend that falls away,Excluded,0,0,0,0,0.5,none,0.0,0.0,0.0,0.0,0.0
 V0376,Cupcake Central (Life Is Sweet Bakery),35.01617293,Travel and entertainment,"Other travel, hotels, restaurants and food through AP",Second wave,30,50,70,50,0.75,none,10.504851879,17.508086465,24.511321051000003,17.508086465,13.13106484875
-V0377,Post Office Ltd,32.251738225000004,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,16.125869112500002,22.576216757500003,25.801390580000003,6.450347645000001,11.288108378750001
-V0378,Currys PC World,30.408781755,"Cloud, telecom and IT","Other cloud and IT, including employee hardware",Second wave,5,10,20,10,0.6,none,1.52043908775,3.0408781755,6.081756351,3.0408781755,1.8245269053
+V0377,Post Office Ltd,32.251738225000004,Office running costs,Couriers and postage,Second wave,5,10,20,10,0.6,none,1.6125869112500002,3.2251738225000004,6.450347645000001,3.2251738225000004,1.9351042935000002
+V0378,Currys PC World,30.408781755,"Cloud, telecom and IT",Employee hardware,Second wave,5,10,20,5,0.6,group_it_procurement,1.52043908775,3.0408781755,6.081756351,1.52043908775,1.8245269053
 V0379,Brodomerkur d.d.,28.565825285000003,Office running costs,Office running costs,Office exit,50,70,80,20,0.5,remote_operating_model,14.282912642500001,19.996077699500002,22.852660228000005,5.713165057000001,9.998038849750001
 V0380,Sport Vision d.o.o.,25.80139058,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,10.320556232,15.480834348,19.351042935,15.480834348,11.610625761
 V0381,Harissa d.o.o.,21.193999405,"Team events, perks and wellness","Team events, perks and wellness",Second wave,40,60,75,60,0.75,none,8.477599762,12.716399642999999,15.895499553750001,12.716399642999999,9.537299732249998

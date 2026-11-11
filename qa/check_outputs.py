@@ -136,6 +136,8 @@ DECISION_EXPECTATIONS = [
     (["V0009"], "confidence", "low", "step 3b: Weking stays low confidence"),
     (["V0284"], "is_addressable", "FALSE", "step 3b: NSDL, as in the forensic exclusion"),
     (["V0284"], "cost_cluster", "Statutory and government", "step 3b: NSDL"),
+    (["V0057"], "recommendation", "Optimize", "step 4b: the MultiSport card stays as an employee benefit at the hub"),
+    (["V0121"], "recommendation", "Consolidate", "step 4b: Gym4You consolidates into the MultiSport card"),
 ]
 # Phrases a field must contain: (vendor_ids, column, phrases, source).
 WORDING_EXPECTATIONS = [
@@ -149,7 +151,7 @@ WORDING_EXPECTATIONS = [
     (["V0009"], "rationale", ["engineering sourcing model"], "step 3b: Weking, the group's engineering sourcing model"),
     (["V0009"], "risk_note", ["product knowledge"], "step 3b: Weking, product knowledge transferred first"),
     (["V0009"], "description", ["confirm with finance"], "step 3b: Weking keeps \"confirm with Finance\""),
-    (["V0018"], "risk_note", ["companies house", "non-trading"], "step 3b: Bisley Law control finding"),
+    (["V0018"], "risk_note", ["invoicing entity"], "step 4b: Bisley Law, Finance confirms the invoicing entity"),
     (["V0023", "V0081", "V0173"], "sub_function", ["corporate it"],
      "step 3c: company-wide software carries a sub_function that starts Corporate IT"),
 ]
@@ -163,7 +165,8 @@ EXPECTED_NAMES = {"V0014": "Amazon Web Services", "V0103": "Amazon Web Services"
                   "V0378": "Currys", "V0004": "BDO", "V0018": "Bisley Law", "V0029": "Grant Thornton",
                   "V0002": "Salesforce", "V0006": "Cloudcrossing", "V0009": "Weking",
                   "V0284": "National Securities Depository", "V0023": "Cloud Technology", "V0130": "Papertrail",
-                  "V0214": "GoDaddy", "V0278": "DNSimple", "V0311": "SolarWinds", "V0350": "Uptime Robot"}
+                  "V0214": "GoDaddy", "V0278": "DNSimple", "V0311": "SolarWinds", "V0350": "Uptime Robot",
+                  "V0057": "Benefit Systems", "V0121": "Gym4You"}
 
 
 # ---------------------------------------------------------------- helpers
@@ -631,8 +634,10 @@ MUTATIONS = [
     ("Mason Frank back in the Salesforce platform cluster", set_field("V0034", "cost_cluster", "Salesforce platform"),
      "C13"),
     ("NSDL back in the savings base", set_field("V0284", "is_addressable", "TRUE"), "C13"),
-    ("Bisley Law risk note without the control finding",
+    ("Bisley Law risk note without the invoicing-entity check",
      set_field("V0018", "risk_note", "open legal matters must move first"), "C14"),
+    # Step 4b: the assumption decisions
+    ("Gym4You back to Terminate", set_field("V0121", "recommendation", "Terminate"), "C13"),
     ("Weking description without confirm with Finance",
      set_field("V0009", "description", "Zagreb Salesforce consultancy supplying developers"), "C14"),
     # Step 3c: the SaaS department reading

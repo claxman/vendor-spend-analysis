@@ -6,7 +6,7 @@ Written 2026-11-11 by `scripts/04_insights.py` from `outputs/vendors_classified.
 
 - The product runs on Salesforce. `V0002` Salesforce UK Ltd is $3,117,226, 39.5% of all spend, and the Salesforce platform cluster (the platform, PDF Butler, Kimble, Yoxel and Slack: `V0002`, `V0006`, `V0027`, `V0170`, `V0173`) is $3,382,759, 42.9%. Salesforce-specialist labour adds $182,241 (`V0009`, `V0034`).
 - Concentration on the merged view: the top vendor is 39.5% of spend, the top 10 are 64.7%, the top 50 are 89.0%; the other 331 vendors share 11.0%.
-- The platform agreement is the largest single lever in the model, $467,584 base run-rate ($311,723 to $779,306), and the largest dependency: the lever is commercial terms at change of control, never exit, and no figure should be relied on before the contract is read (Finance question 2).
+- The platform agreement is the largest single lever in the model, $467,584 base run-rate ($311,723 to $779,306), and the largest dependency: the lever is commercial terms at change of control, never exit, and the figure is the value of a negotiation that starts when the contract and usage data arrive (Finance question 2).
 
 ## 2. What falls away without action, the recurring base, and the sale-related share
 
@@ -30,8 +30,8 @@ Written 2026-11-11 by `scripts/04_insights.py` from `outputs/vendors_classified.
 
 - Duplicate vendor records: 5 vendors appear under two names each (Navan (TripActions Inc) and Navan, Inc, `V0003`, `V0024`; Amazon Web Services LLC and Amazon Web Services Inc., `V0014`, `V0103`; 4i Advisory Services and 4i Management Consulting Private Limited, `V0017`, `V0072`; Tmforum and TM Forum, `V0025`, `V0249`; Sodexo SVC India Private Limited and Pluxee India Private Limited, `V0054`, `V0128`), $691,318 in all; two more names carry a Supplier tag that suggests a second record of the same company (`V0047`, `V0163`). A vendor master with duplicate records calls for a duplicate-payment review, which needs invoice-level data: this file holds 12-month totals, and its identical amounts are explained by the cost modification (`outputs/analysis/01_forensics.md`, section 2).
 - Individual and unnamed payees: 6 individuals paid through AP ($12,220; `V0160`, `V0165`, `V0166`, `V0169`, `V0177`, `V0178`), 2 single-word names that may be people (`V0148`, `V0373`) and one payment with no vendor name (`V0325`, $137). Each is a contractor-status or reimbursement question before it is a saving.
-- A law firm filed as non-trading: `V0018` Bisley Law Ltd, $67,414. Companies House lists the entity as non-trading and no website or SRA record describes its services; no payment should continue until Finance confirms which entity invoiced and for what (Finance question 7).
-- Sole traders paid at contractor scale: 3 Croatian obrt rows of $5,000 or more, $48,815 (`V0038`, `V0074`, `V0092`), and 13 Croatian companies of unknown function ($309,614, led by `V0009` Weking at $144,093). One-person businesses supplying labour carry an employment-status question as well as an identification one.
+- A payee name that matches no trading law firm: `V0018` Bisley Law Ltd, $67,414. The provider of this data modified vendor names, so an unmatched name is a question for Finance (which entity invoiced, and for what; question 7), not evidence of a problem. The spend is legal work and follows the law-firms lever whoever the payee proves to be; the payee check is a control action.
+- Sole traders paid at contractor scale: 3 Croatian obrt rows of $5,000 or more, $48,815 (`V0038`, `V0074`, `V0092`), and 13 Croatian companies of unknown function ($309,614, led by `V0009` Weking at $144,093, whose $43,228 base saving is provisional until Finance confirms the entity). One-person businesses supplying labour carry an employment-status question as well as an identification one; with modified vendor names, an unidentified name is a question for Finance, not a finding against the payee.
 - Retail merchants in the vendor master: the forensic pass flags 56 consumer or retail payees, $83,926; 5 of them are employee hardware that stays (`V0123`, `V0172`, `V0175`, `V0229`, `V0378`), the other 51 ($75,640) are food, groceries, gifts, gyms and marketplaces that a purchasing-card and expense policy removes from the vendor master. The vendor count falls from 381 to 330 once they go.
 
 ## 5. Country and legal-entity footprint
@@ -95,14 +95,14 @@ The file has no headcount, but some rows are the kind of spend that leavers and 
 
 ## 9. Timing constraints
 
-The year-1 saving is $1,221,188 against a base run-rate of $2,247,348, because the levers wait for dates the file does not show:
+The year-1 saving is $1,221,950 against a base run-rate of $2,247,704, because the levers wait for dates the file does not show:
 
 | Year-1 factor | What it waits for | Levers |
 |---|---|---|
 | 0.25 | a system migration | HR and finance systems; HubSpot |
 | 0.4 | the financial year-end, when an auditor changes | Audit, tax and accounting firms |
 | 0.5 | a renewal or notice date the file does not show | Salesforce platform agreement; PDF Butler OEM pricing; Kimble PSA licences; Office footprint; Office running costs; Corporate secretarial, registered agent and share registry; Employer-of-record providers; Payroll processing providers; Commercial insurance through brokers; Employee health and life insurance; Telecom and internet providers; Outsourced engineering and contractors |
-| 0.6 | renewals spread through the year | Law firms and legal resourcing; LinkedIn; Other software subscriptions; AWS; Other cloud and IT, including employee hardware |
+| 0.6 | renewals spread through the year | Law firms and legal resourcing; LinkedIn; Other software subscriptions; AWS; Other cloud and IT; Employee hardware; Couriers and postage |
 | 0.75 | a policy change within 90 days | External training and coaching; Navan; Other travel, hotels, restaurants and food through AP; Team events, perks and wellness; Marketing agencies; Other marketing, media and events; Unidentified and individual payees |
 | 0.9 | open mandates closing | Recruitment agencies and job boards |
 
@@ -113,7 +113,7 @@ The year-1 saving is $1,221,188 against a base run-rate of $2,247,348, because t
 
 ## 10. Data limits and the requests that follow
 
-- The file is one 12-month total per vendor: no dates, invoices, entities, cost centres or approvers, and the costs were modified by the data owner. 81 rows ($200,268) could not be verified on the web and 101 rows ($543,894) carry low confidence; 69 payees ($472,522) have names that do not show their function. The Salesforce contract, 39.5% of spend, is not visible. 8 questions for Finance are open in `docs/decisions.md`.
+- The file is one 12-month total per vendor: no dates, invoices, entities, cost centres or approvers, and the costs were modified by the data owner. 81 rows ($200,268) could not be verified on the web and 101 rows ($543,894) carry low confidence; 69 payees ($472,522) have names that do not show their function. The provider of this data modified vendor names, so a name that matches no trading firm, or that the web does not confirm, is a question for Finance and never evidence of a problem with the payee. The Salesforce contract, 39.5% of spend, is not visible. 8 questions for Finance are open in `docs/decisions.md`.
 - Requests, in the order they unlock the figures:
   1. The monthly AP ledger for the 12 months, with invoice number, date, paying entity, cost centre and approver: it settles the duplicate-payment review, the one-off against recurring split, the leavers question and the identification of the payees in section 4.
   2. The contract register with renewal and notice dates for insurance, the leases and coworking, the Salesforce agreement, the HR and finance systems and the telecom lines: it turns the year-1 factors in section 9 from conventions into dates.

@@ -2,6 +2,22 @@
 
 Decisions taken during the analysis, newest first. Each records what was decided and where it is implemented. The prompts that carried them are in `prompts/log.md`.
 
+## 2026-11-11: assumption decisions (prompt 18, step 4b)
+
+The seven points raised in step 4 (section 4 of the next entry), decided:
+
+1. **Employee hardware** is a lever of its own: the nine hardware rows (`V0066`, `V0123`, `V0131`, `V0167`, `V0172`, `V0175`, `V0229`, `V0260`, `V0378`) and Shree Info System (`V0048`); 5 / 10 / 20; without decision 5; 0.6; `group_it_procurement`. The rest of the cluster keeps the lever, now named "Other cloud and IT".
+2. **MultiSport stays.** Benefit Systems (`V0057`) is an employee benefit at the engineering hub: recommendation Optimize, rationale to keep it and review take-up and the employee co-payment, no risk note, lever unchanged at 0%. Gym4You (`V0121`) becomes Consolidate into the MultiSport card, on the Team events, perks and wellness lever (60% base), with the risk note that the gyms staff use must be in the MultiSport network first.
+3. **Bisley Law stays on the law-firms lever.** Whoever the payee proves to be, the spend is legal work that follows that lever; the payee check is a control action, not a savings assumption. The finding is reworded wherever it appears (the row's description, rationale and risk note; Finance question 7; the step 3b entry; `insights.md`). The provider of this data modified vendor names, so a name that matches no trading firm is a question for Finance, not evidence of a problem. The same caution applies to every statement about unmatched or unverified names: in `insights.md` (sections 4 and 10) and in this file, where the step 3 and 3b entries record what the searches found and this entry records how to read it.
+4. **Salesforce:** no change to the model. The documents present the figure as the value of a negotiation that starts when the contract and usage data arrive; the register's reasoning says so.
+5. **Unidentified and individual payees:** no change. One-off payments to individuals are a control finding and carry no saving; the one-off lever's reasoning says so.
+6. **Couriers and postage** is a lever of its own: the nine courier, postage, delivery and mail rows of Office running costs (`V0196`, `V0232`, `V0240`, `V0303`, `V0316`, `V0336`, `V0368`, `V0371`, `V0377`); 5 / 10 / 20; 0.6; no tag. The two Amazon marketplace rows stay in Office running costs.
+7. **Weking:** no change to the model; its share is marked provisional in the register (the lever's "Applies to") and in `insights.md`, until Finance answers question 3.
+
+The External training and coaching lever is confirmed as set in step 4.
+
+Where it is implemented: `docs/savings_assumptions.md` (the two new levers, the renamed lever, the reworded cells, the analyst-call table); `scripts/savings_model.py` (the lever map); `outputs/batches/batch_01.csv`, `batch_02.csv` and `batch_04.csv` (`V0018`, `V0057`, `V0121`), merged by `scripts/merge_validate.py`; `qa/check_outputs.py` (C13 expects Optimize for `V0057` and Consolidate for `V0121`; C14 expects "invoicing entity" in the `V0018` risk note; one planted error added, 67 in all); `scripts/04_insights.py`; and the savings and insights files re-run.
+
 ## 2026-11-11: savings model and insights (prompt 17, step 4)
 
 ### 1. The register
@@ -43,7 +59,7 @@ Recorded in `docs/savings_assumptions.md` ("Lever assignment") and repeated in `
 
 ### 4. Where the data argues against an assumption
 
-The assumptions are kept as given (prompt 17); these are the proposed changes.
+The assumptions are kept as given (prompt 17); these are the proposed changes, each decided in step 4b (the entry above).
 
 1. **Employee hardware carries no tag.** The nine hardware rows and the Chennai distributor (`V0048`) sit in Other cloud and IT at 10% with no tag, while their rationales name group IT procurement (step 2e) and `group_it_procurement` is a registered decision with no lever. Proposed: a separate Employee hardware lever at the same 5 / 10 / 20 with without-decision 5 and the tag, or retire the decision.
 2. **The gym schemes are Terminate at 0%.** Benefit Systems (`V0057`, $16,900) and Gym4You (`V0121`, $3,692) are Terminate in the classification (a perk with no commercial case) but 0% here under the gym-schemes line. Proposed: the Team events, perks and wellness lever (40 / 60 / 75) for both, worth $12,355 base, or Optimize in the classification.
@@ -169,8 +185,8 @@ Every other column rule is kept.
 
 ### 3. Bisley Law is a control finding for Finance
 
-- Companies House lists Bisley Law Ltd (`V0018`, $67,414) as non-trading, and no website or SRA record describes its services. Finance must confirm which entity invoiced and for what before any payment continues. It is question 7 below.
-- The row stays Consolidate; its risk note now carries the finding.
+- Companies House lists Bisley Law Ltd (`V0018`, $67,414) as non-trading, and no website or SRA record describes its services. Finance must confirm which entity invoiced and for what before any payment continues. It is question 7 below. Reworded in step 4b: the provider of this data modified vendor names, so an unmatched name is a question for Finance, not evidence of a problem; the spend is legal work on the law-firms lever, and the payee check is a control action.
+- The row stays Consolidate; its risk note now carries the question for Finance.
 - Question 8 asks for the PDF Butler OEM terms that the `V0006` description refers to Finance.
 
 ### 4. URLs that name a person are withheld
@@ -489,5 +505,5 @@ Questions the file cannot answer, collected from `outputs/analysis/01_forensics.
 | 4 | What was the City of Zagreb spatial-planning payment for? | `V0073` | $11,637, probably one-off |
 | 5 | Which group entity does the Cayman Islands Government payment relate to? | `V0361` | The legal-entity map behind the payee list |
 | 6 | How much of the BDO, Bisley Law and Grant Thornton spend was sale-related work? | `V0004`, `V0018`, `V0029` | They stay in the recurring base (step 2e); the sale-related share would come out of it |
-| 7 | Control finding: which entity invoiced as Bisley Law Ltd, and for what? Companies House lists the entity as non-trading, and no website or SRA record describes its services | `V0018` | $67,414; no payment should continue until Finance confirms the entity and the work (step 3b) |
+| 7 | Which entity invoiced as Bisley Law Ltd, and for what? The name matches no trading law firm on the public registers, which the modified vendor names can explain, so this is a question, not evidence of a problem (step 4b) | `V0018` | $67,414 of legal work, which follows the law-firms lever whoever the payee proves to be; the payee check is a control action |
 | 8 | Is PDF Butler licensed on OEM terms, embedded in or delivered with the product? | `V0006` | $208,675; OEM or volume pricing is renegotiated within the platform review (step 3b) |

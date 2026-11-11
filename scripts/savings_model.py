@@ -17,7 +17,7 @@ from __future__ import annotations
 import math
 from collections import defaultdict
 
-from vsa_common import ROOT, money, pct, section_rows, table
+from vsa_common import ROOT, money, pct, section_rows, strip_accents, table
 
 REGISTER = ROOT / "docs" / "savings_assumptions.md"
 OPPORTUNITIES = ["Salesforce platform agreement", "Office exit", "Back office into group shared services",
@@ -47,7 +47,7 @@ CLUSTER_LEVER = {
     "Legal": "Law firms and legal resourcing",
     "Insurance and benefits": "Employee health and life insurance",
     "Recruiting and HR outsourcing": "Recruitment agencies and job boards",
-    "Cloud, telecom and IT": "Other cloud and IT, including employee hardware",
+    "Cloud, telecom and IT": "Other cloud and IT",
     "Outsourced engineering and contractors": "Outsourced engineering and contractors",
     "Software subscriptions (non-Salesforce)": "Other software subscriptions",
     "Marketing agencies, media and memberships": "Other marketing, media and events",
@@ -65,7 +65,9 @@ HEALTH = "Employee health and life insurance"
 STATUTORY_COVER = "Statutory cover and benefit schemes"
 SYSTEMS = "HR and finance systems"
 TELECOM = "Telecom and internet providers"
-OTHER_IT = "Other cloud and IT, including employee hardware"
+OTHER_IT = "Other cloud and IT"
+HARDWARE = "Employee hardware"
+COURIERS = "Couriers and postage"
 AGENCIES = "Marketing agencies"
 OTHER_MARKETING = "Other marketing, media and events"
 UNIDENTIFIED = "Unidentified and individual payees"
@@ -94,7 +96,13 @@ VENDOR_LEVERS = {
     "V0382": ("Specijalisticka", STATUTORY_COVER), "V0383": ("Specijalisticka", STATUTORY_COVER),
     "V0384": ("Ustanova", STATUTORY_COVER), "V0100": ("Green Commute", STATUTORY_COVER),
     "V0195": ("Inside Edge", STATUTORY_COVER), "V0054": ("Sodexo", STATUTORY_COVER), "V0128": ("Pluxee", STATUTORY_COVER),
-    "V0057": ("Benefit Systems", STATUTORY_COVER), "V0121": ("Gym4You", STATUTORY_COVER),
+    "V0057": ("Benefit Systems", STATUTORY_COVER),
+    "V0066": ("Racunalni Sistemi", HARDWARE), "V0123": ("Apple", HARDWARE), "V0131": ("Sniper Systems", HARDWARE),
+    "V0167": ("HP", HARDWARE), "V0172": ("Apple", HARDWARE), "V0175": ("Apple", HARDWARE), "V0229": ("Apple", HARDWARE),
+    "V0260": ("E-Disti", HARDWARE), "V0378": ("Currys", HARDWARE), "V0048": ("Shree Info System", HARDWARE),
+    "V0196": ("Rhea", COURIERS), "V0232": ("UK Postbox", COURIERS), "V0240": ("Trans-Agram", COURIERS),
+    "V0303": ("DHL", COURIERS), "V0316": ("Parcelforce", COURIERS), "V0336": ("DHL", COURIERS),
+    "V0368": ("Gophr", COURIERS), "V0371": ("FedEx", COURIERS), "V0377": ("Post Office", COURIERS),
     "V0211": ("Caboodle", "Other software subscriptions"),
     "V0028": ("Sage", SYSTEMS), "V0039": ("Planful", SYSTEMS), "V0055": ("Peakon", SYSTEMS),
     "V0080": ("Performancepro", SYSTEMS),
@@ -119,8 +127,7 @@ ANALYST_CALLS = {
     "V0211": "a benefits platform fee, not pay or cover, so it is software rather than a benefit scheme",
     "V0098": "benefits consulting is the broking and scheme-terms work that the lever describes",
     "V0273": "a health benefit for Singapore staff",
-    "V0057": "the MultiSport card is the gym scheme the assumption names, although the classification has it as Terminate",
-    "V0121": "gym memberships are a gym scheme, although the classification has the row as Terminate",
+    "V0057": "the MultiSport card is the gym scheme the assumption names; it stays as an employee benefit at the hub (step 4b), and Gym4You consolidates into it on the Team events lever",
     "V0058": "HR outsourcing, unconfirmed; the closest lever by sub_function, and its rationale already waits for group payroll",
     "V0179": "global payroll and expansion services are employer-of-record work",
     "V0020": "a lever added in step 4, because the assumptions list has no line for training",
@@ -136,8 +143,8 @@ ANALYST_CALLS = {
     "V0216": "a lever added in step 4 at 0%, because the assumptions list has no line for bank fees",
     "V0198": "a lever added in step 4 at 0%, because the assumptions list has no line for payment processing",
     "V0142": "a lever added in step 4 at 0%, because the assumptions list has no line for certification audits",
-    "V0203": "follows its cluster as office consumables, although the card policy that removes it does not depend on the office decision",
-    "V0291": "follows its cluster as office consumables, although the card policy that removes it does not depend on the office decision",
+    "V0203": "follows its cluster as office consumables (confirmed in step 4b), although the card policy that removes it does not depend on the office decision",
+    "V0291": "follows its cluster as office consumables (confirmed in step 4b), although the card policy that removes it does not depend on the office decision",
 }
 ROLLUP_HEADINGS = {"opportunity": "Savings by opportunity", "cost_cluster": "Savings by cost cluster",
                    "lever": "Savings by lever"}
@@ -220,7 +227,7 @@ def lever_for(row: dict) -> str:
     vid = row["vendor_id"]
     if vid in VENDOR_LEVERS:
         fragment, lever = VENDOR_LEVERS[vid]
-        if fragment.lower() not in row["vendor_name_clean"].lower():
+        if strip_accents(fragment).lower() not in strip_accents(row["vendor_name_clean"]).lower():
             raise ValueError(f"{vid} is {row['vendor_name_clean']!r}, not the {fragment!r} row the lever map expects")
         return lever
     if row["is_recurring"] == "FALSE" and cluster not in CATEGORY_RECURS:

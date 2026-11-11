@@ -57,9 +57,9 @@ Rows per batch:
 
 | Recommendation | Vendors | Share of vendors | Spend | Share of spend |
 |---|---|---|---|---|
-| Terminate | 154 | 39.9% | $707,786 | 9.0% |
-| Consolidate | 108 | 28.0% | $2,519,694 | 31.9% |
-| Optimize | 124 | 32.1% | $4,659,880 | 59.1% |
+| Terminate | 152 | 39.4% | $687,193 | 8.7% |
+| Consolidate | 109 | 28.2% | $2,523,387 | 32.0% |
+| Optimize | 125 | 32.4% | $4,676,780 | 59.3% |
 | Total | 386 | 100.0% | $7,887,360 | 100.0% |
 
 ## Distribution by cost cluster
@@ -103,7 +103,7 @@ Rows per batch:
 |---|---|---|---|---|---|
 | V0009 | Weking d.o.o. | $144,093 | Engineering | Consolidate | Zagreb Salesforce and CloudSense consultancy supplying consultants and developers, per its website, most likely to product engineering; entity unconfirmed, confirm with Finance |
 | V0015 | Telefonica Global Services GmbH | $89,880 | Sales | Optimize | Global procurement company of the Telefónica group in Munich, a customer's buying arm; what these payments cover is for Finance |
-| V0018 | Bisley Law Ltd | $67,414 | Legal | Consolidate | UK company named as a law practice; Companies House lists it as non-trading and no source shows its work, confirm with Finance |
+| V0018 | Bisley Law Ltd | $67,414 | Legal | Consolidate | UK law practice by its name, providing legal work for the legal team; the invoicing entity is not established (unconfirmed) |
 | V0038 | Nefron - Obrt Za Poslovne Usluge | $30,614 | G&A | Terminate | Podstrana sole trader registered to organise meetings and trade fairs; what it supplied the company is not shown, confirm with Finance |
 | V0043 | Google Ireland Limited | $24,798 | Marketing | Optimize | Google's Dublin billing entity for Ads and Cloud in Europe; the product bought is not shown, most likely Google Ads, confirm with Finance |
 | V0058 | Smart Group Services d.o.o. | $16,438 | G&A | Terminate | Zagreb consultancy at the address of the Smart Group HR brand (recruitment, payroll, employee leasing); the service bought is unconfirmed |

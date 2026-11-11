@@ -262,8 +262,8 @@ def main() -> int:
         f"the top 50 are {share(top(50))}; the other {len(canonical) - 50} vendors share {share(total - top(50))}.",
         f"- The platform agreement is the largest single lever in the model, {money(saving(['V0002']))} base run-rate "
         f"({money(saving(['V0002'], 'saving_low'))} to {money(saving(['V0002'], 'saving_high'))}), and the largest "
-        "dependency: the lever is commercial terms at change of control, never exit, and no figure should be relied on "
-        "before the contract is read (Finance question 2).",
+        "dependency: the lever is commercial terms at change of control, never exit, and the figure is the value of a "
+        "negotiation that starts when the contract and usage data arrive (Finance question 2).",
         "",
         "## 2. What falls away without action, the recurring base, and the sale-related share",
         "",
@@ -296,13 +296,16 @@ def main() -> int:
         f"{ids(individuals)}), {len(surname_like)} single-word names that may be people ({ids(surname_like)}) and one payment "
         f"with no vendor name ({ids(unnamed)}, {money(spend_of(unnamed))}). Each is a contractor-status or reimbursement "
         "question before it is a saving.",
-        f"- A law firm filed as non-trading: `V0018` {bisley['vendor_name_clean']}, {money(to_float(bisley['spend_12m']))}. "
-        "Companies House lists the entity as non-trading and no website or SRA record describes its services; no payment "
-        "should continue until Finance confirms which entity invoiced and for what (Finance question 7).",
+        f"- A payee name that matches no trading law firm: `V0018` {bisley['vendor_name_clean']}, "
+        f"{money(to_float(bisley['spend_12m']))}. The provider of this data modified vendor names, so an unmatched name is a "
+        "question for Finance (which entity invoiced, and for what; question 7), not evidence of a problem. The spend is "
+        "legal work and follows the law-firms lever whoever the payee proves to be; the payee check is a control action.",
         f"- Sole traders paid at contractor scale: {len(obrt_scale)} Croatian obrt rows of $5,000 or more, "
         f"{money(spend_of(obrt_scale))} ({ids(obrt_scale)}), and {len(hinted_unknown)} Croatian companies of unknown function "
-        f"({money(spend_of(hinted_unknown))}, led by `V0009` Weking at {money(to_float(weking['spend_12m']))}). One-person "
-        "businesses supplying labour carry an employment-status question as well as an identification one.",
+        f"({money(spend_of(hinted_unknown))}, led by `V0009` Weking at {money(to_float(weking['spend_12m']))}, whose "
+        f"{money(to_float(srows['V0009']['saving_base']))} base saving is provisional until Finance confirms the entity). "
+        "One-person businesses supplying labour carry an employment-status question as well as an identification one; "
+        "with modified vendor names, an unidentified name is a question for Finance, not a finding against the payee.",
         f"- Retail merchants in the vendor master: the forensic pass flags {len(retail_flagged)} consumer or retail payees, "
         f"{money(math.fsum(to_float(by_id[v]['spend_12m']) for v in retail_flagged))}; {len(retail_hardware)} of them are "
         f"employee hardware that stays ({ids(retail_hardware)}), the other {len(retail)} ({money(spend_of(retail))}) are "
@@ -388,9 +391,10 @@ def main() -> int:
         f"- The file is one 12-month total per vendor: no dates, invoices, entities, cost centres or approvers, and the "
         f"costs were modified by the data owner. {len(unverified)} rows ({money(spend_of(unverified))}) could not be verified on "
         f"the web and {len(low_conf)} rows ({money(spend_of(low_conf))}) carry low confidence; {len(unidentified)} payees "
-        f"({money(spend_of(unidentified))}) have names that do not show their function. The Salesforce contract, "
-        f"{share(to_float(sf['spend_12m']))} of spend, is not visible. {len(finance_questions)} questions for Finance are open "
-        "in `docs/decisions.md`.",
+        f"({money(spend_of(unidentified))}) have names that do not show their function. The provider of this data modified "
+        "vendor names, so a name that matches no trading firm, or that the web does not confirm, is a question for Finance "
+        f"and never evidence of a problem with the payee. The Salesforce contract, {share(to_float(sf['spend_12m']))} of "
+        f"spend, is not visible. {len(finance_questions)} questions for Finance are open in `docs/decisions.md`.",
         "- Requests, in the order they unlock the figures:",
         "  1. The monthly AP ledger for the 12 months, with invoice number, date, paying entity, cost centre and approver: "
         "it settles the duplicate-payment review, the one-off against recurring split, the leavers question and the "

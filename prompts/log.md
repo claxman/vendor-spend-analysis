@@ -284,3 +284,46 @@ Excluded, each on its own line in the report
 
 Do not write the Top 3, methodology, memo or README yet. Commit as "Step 4: savings model and insights" and push. Then print savings.md in full, the lever table, every row where you chose the lever yourself, and every assumption you would change.
 ```
+
+## Prompt 18 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 18. Three parts.
+
+PART A: assumption decisions (step 4b)
+
+Your seven points, decided:
+1. Add a lever "Employee hardware" for the nine hardware rows and Shree Info System: 5 / 10 / 20; without decision 5; 0.6; group_it_procurement.
+2. V0057 MultiSport is an employee benefit at the engineering hub and stays: recommendation Optimize, rationale to keep it and review take-up and the employee co-payment, lever unchanged at 0. V0121 Gym4You becomes Consolidate into the MultiSport card, on the Team events, perks and wellness lever, with the risk note that the gyms staff use must be in the MultiSport network first.
+3. Bisley Law stays on the law-firms lever: whoever the payee proves to be, the spend is legal work that follows that lever, and the payee check is a control action, not a savings assumption. Reword the finding wherever it appears. The provider of this data modified vendor names, so a name that matches no trading firm is a question for Finance, not evidence of a problem. Apply the same caution to every statement about unmatched or unverified names in insights.md and decisions.md.
+4. Salesforce: no change to the model. The documents will present the figure as the value of a negotiation that starts when the contract and usage data arrive.
+5. Unidentified and individual payees: no change. One-off payments to individuals are a control finding and carry no saving.
+6. Add a lever "Couriers and postage": 5 / 10 / 20; 0.6; no tag. The two Amazon marketplace rows stay where they are.
+7. Weking: no change to the model; mark its share as provisional in the register and in insights.md.
+The External training and coaching lever is confirmed as you set it.
+
+Re-run scripts/03_savings.py, scripts/04_insights.py and the QA. Commit as "Step 4b: assumption decisions".
+
+PART B: second-pass review (step 5)
+
+1. Keep the working files. Copy from the session scratchpad into the repository everything that produced the classification: the research brief, the research findings and lookup logs, the batch builder and the per-batch classification lines. Put them where a reader would look (the brief under prompts/, the builder under scripts/, findings and batch lines under qa/), apply the URL withholding rule, and remove docs/evidence if it stays empty.
+
+2. A known error to trace first. V0116 OrionW LLC is a Singapore law firm that specialises in technology, media and telecoms law, not an IT contractor. Move it to Legal and the law-firms lever. Find out why the first pass kept the wrong reading, and check every other row for the same cause.
+
+3. Stage 1, all 386 rows, no web. Start a reviewer agent that has not seen how the rows were classified. It reads each row's research finding beside the final description, department, sub_function, cost_cluster and recommendation, and flags every row where the final row does not follow from the finding, follows a hint the finding contradicts, or breaks docs/taxonomy.md or docs/recommendation_rules.md.
+
+4. Stage 2, fresh verification, in this order until done or the search limit stops you: every Stage 1 flag; every row at or above $10,000; then a seeded random sample of 30 of the remaining rows. For each, an agent that has seen neither the hint nor the first-pass result establishes from the vendor's own site or a reliable directory what the vendor does, in one line with its source. Compare that with the first pass.
+
+5. Resolve every disagreement in the main session: change the row, or keep it with a one-line reason. Write qa/second_pass_review.csv (vendor_id, stage, field, first-pass value, reviewer finding, verdict, resolution) and qa/second_pass_report.md: what each stage looked for, rows and spend covered, agreement rate by field, every disagreement with its resolution, every row changed with before and after, and what was not covered and why.
+
+PART C: text a reader of the sheet will see (still step 5)
+
+The description, rationale and risk_note columns go into the sheet and are read by someone who has never seen this repository.
+1. Rewrite every cell that refers to the project's own workings: hints, lists, rules, searches, sources, steps, prompts or files ("per the hint", "named in the Optimize list", "under the Terminate rule", "search shows", "no source confirms it"). State the fact or the action directly.
+2. Where what a vendor does is not established, give the best reading and end the description with "(unconfirmed)" in place of "confirm with Finance". Descriptions stay one line of 5 to 25 words.
+3. Office footprint rows: the rationale leads with the base case the savings assume (exit under the remote operating model, keeping one touchdown space at the engineering hub), then the fallback (one flexible provider).
+4. A risk_note is now also required on every Optimize row at or above $25,000: one clause naming the main risk of acting, or of not acting where the row must not be cut. Update C16.
+5. Add checks with planted errors: the three columns contain none of the workings phrases; a check that lists every Terminate row with a base saving under 50% whose lever is not one-off or excluded, and every Optimize row above 50%, each one then fixed or given a recorded reason. Print the cross-tab of recommendation by lever in qa/validation_report.md.
+
+Then re-run the merge, the savings, the insights and all QA with both self-tests, commit as "Step 5: second-pass review and reader-facing text" and push. Print: the new savings totals by opportunity; Stage 1 and Stage 2 coverage and agreement rates; every row changed in this prompt with before and after; the count of text cells rewritten; anything not covered.
+```
