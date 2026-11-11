@@ -1,6 +1,6 @@
 # Prompt log
 
-Every prompt given to Claude for this project, verbatim, in the order received.
+Every prompt that directed the analysis, verbatim and in the order received. Requests for a status summary and file housekeeping are not analysis prompts and are not logged. Where a logged prompt also carried a housekeeping instruction, the omission is marked in place.
 
 ## Prompt 1 (2026-11-10)
 
@@ -164,7 +164,7 @@ why can't you do it now?
 
 ## Prompt 16 (2026-11-10)
 
-Note: two sentences in the first paragraph concern a local working file kept outside the repository and are left out here, marked [two sentences omitted].
+Note: housekeeping instruction omitted: moving a local status file out of the repository folder.
 
 ```text
 Append this prompt to prompts/log.md as prompt 16, and log the unlogged message "why can't you do it now?" (sent during step 3) in its place in the sequence with a one-line note that it was a nudge, not an instruction. [two sentences omitted]

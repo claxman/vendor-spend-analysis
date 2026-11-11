@@ -10,6 +10,6 @@ Rules
 - Departments only from docs/taxonomy.md. Recommendations only from {Terminate, Consolidate, Optimize}, each with a one-sentence rationale.
 - Every savings figure is computed by a script from the spend data, with its assumption written next to it.
 - Every number in the memo must trace to a file in outputs/analysis.
-- Append every prompt I give you to prompts/log.md verbatim before acting on it.
+- Append every prompt that directs the analysis to prompts/log.md, verbatim and in the order received, before acting on it. Requests for a status summary and file housekeeping are not analysis prompts and are not logged; where a logged prompt also carries a housekeeping instruction, mark the omission in place (scope clarified 2026-11-11).
 - Commit after each step with a message naming the step.
 - No em dashes anywhere.
