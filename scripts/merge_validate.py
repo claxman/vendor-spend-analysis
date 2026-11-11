@@ -58,7 +58,7 @@ RECOMMENDATION_ORDER = ["Terminate", "Consolidate", "Optimize"]
 CONFIDENCE_ORDER = ["high", "medium", "low"]
 REPORT_SECTIONS = ["Counts", "Distribution by department", "Distribution by recommendation",
                    "Distribution by cost cluster", "Distribution by confidence", "Low-confidence vendors",
-                   check_outputs.EXCEPTIONS_HEADING, "Checks", "Failures"]
+                   check_outputs.EXCEPTIONS_HEADING, "Recommendation by lever", "Checks", "Failures"]
 
 MERGE_CHECKS = {
     "M1": "Batch files are named batch_NN.csv and numbered from 01 without gaps",
@@ -311,13 +311,39 @@ def render(m: dict, clean: list[dict], paths: dict, items: list | None) -> str:
     else:
         lines += [f"- {vid}: {reason}" for vid, reason in m["reasons"]] + [""]
 
+    # The cross-tab of recommendation by savings lever (step 5), from outputs/analysis/savings.csv when it exists.
+    lines += ["## Recommendation by lever", ""]
+    savings_path = paths.get("savings")
+    if savings_path is None or not savings_path.exists():
+        lines += [f"Not available: `{show(savings_path) if savings_path else 'outputs/analysis/savings.csv'}` not produced yet.", ""]
+    else:
+        rec_of = {r["vendor_id"]: r["recommendation"] for r in rows}
+        by_lever: dict[str, dict] = {}
+        for s in check_outputs.read_csv(savings_path):
+            entry = by_lever.setdefault(s["lever"], {"base": s["pct_base"], "opportunity": s["opportunity"],
+                                                     "rows": 0, "spend": 0.0, **{k: 0 for k in RECOMMENDATION_ORDER}})
+            entry["rows"] += 1
+            entry["spend"] += check_outputs.to_float(s["spend_12m"])
+            rec = rec_of.get(s["vendor_id"], "")
+            if rec in entry:
+                entry[rec] += 1
+        lines += ["Rows per recommendation on each savings lever, with the lever's base saving percentage. Check V9 lists the "
+                  "Terminate rows on levers below 50% outside the Excluded opportunity and the Optimize rows on levers above "
+                  "50%, each fixed or given a recorded reason.", "",
+                  *table(["Lever", "Opportunity", "Base %", *RECOMMENDATION_ORDER, "Rows", "Spend"],
+                         [[name, e["opportunity"], e["base"], *(e[k] for k in RECOMMENDATION_ORDER), e["rows"], money(e["spend"])]
+                          for name, e in by_lever.items()]
+                         + [["Total", "", "", *(sum(e[k] for e in by_lever.values()) for k in RECOMMENDATION_ORDER),
+                             sum(e["rows"] for e in by_lever.values()),
+                             money(math.fsum(e["spend"] for e in by_lever.values()))]]), ""]
+
     lines += ["## Checks", ""]
     if items is None:
         lines += ["Not run yet.", ""]
     else:
         lines += ["The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural "
-                  "checks S1 to S6, classification checks C1 to C18 and, once `outputs/analysis/savings.csv` exists, "
-                  "the savings checks V1 to V8 on it (step 4).", "",
+                  "checks S1 to S6, classification checks C1 to C19 and, once `outputs/analysis/savings.csv` exists, "
+                  "the savings checks V1 to V9 on it (steps 4 and 5).", "",
                   *table(["Check", "Result", "Rule"], [[cid, status, rule] for cid, status, rule, _ in items]), ""]
     lines += ["## Failures", ""]
     if items is None:

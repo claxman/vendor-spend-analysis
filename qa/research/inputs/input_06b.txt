@@ -1,0 +1,20 @@
+V0222 | Croatia Airlines | AP name: Croatia Airlines | $832 | legal-form clue: Croatia | no hint
+V0223 | BB Football Scouting j.d.o.o. | AP name: Bb Football Scouting J.D.O.O. | $823 | legal-form clue: Croatia | no hint
+V0224 | Boe Croatia d.o.o. | AP name: Boe Croatia D.O.O. | $814 | legal-form clue: Croatia | no hint
+V0225 | Potomac d.o.o. | AP name: Potomac D.O.O. | $806 | legal-form clue: Croatia | no hint
+V0226 | President Hotel And Tower Co., Ltd | AP name: President Hotel And Tower Co., Ltd | $803 | legal-form clue: United Kingdom | no hint
+V0227 | Friends Sports Club | AP name: Friends Sports Club | $797 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0228 | The Cycle Gap Adyar | AP name: The Cycle Gap Adyar | $765 | legal-form clue: India | no hint
+V0229 | Apple - AMER | AP name: Apple - Amer | $764 | legal-form clue: none | no hint
+V0230 | KLG - Kalra Legal Group | AP name: Klg - Kalra Legal Group | $681 | legal-form clue: none | no hint
+V0231 | Kilgannon & Partners LLP | AP name: Kilgannon & Partners Llp | $681 | legal-form clue: United Kingdom | no hint
+V0232 | UK Postbox Limited | AP name: Uk Postbox Limited | $670 | legal-form clue: United Kingdom | no hint
+V0233 | Catering Ivić d.o.o. | AP name: Catering Iviä‡ D.O.O. | $669 | legal-form clue: Croatia | no hint | name note: mojibake repaired
+V0234 | Blink Events | AP name: Blink Events | $664 | legal-form clue: none | no hint
+V0235 | Grafo-Jan | AP name: Grafo-Jan | $662 | legal-form clue: none | no hint
+V0236 | Mesa Verde | AP name: Mesa Verde | $662 | legal-form clue: none | no hint
+V0237 | Pixsy Inc | AP name: Pixsy Inc | $613 | legal-form clue: United States | hint 57: Pixsy: image copyright monitoring.
+V0238 | Dun & Bradstreet d.o.o. | AP name: Dun & Bradstreet D.O.O. | $610 | legal-form clue: Croatia | no hint
+V0239 | Induslaw | AP name: Induslaw | $596 | legal-form clue: none | no hint
+V0240 | Trans-Agram Obrt Za Dostavu | AP name: Trans-Agram Obrt Za Dostavu | $581 | legal-form clue: Croatia | no hint
+V0241 | Landu Law Solicitors | AP name: Landu Law Solicitors | $568 | legal-form clue: none | no hint

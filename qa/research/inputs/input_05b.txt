@@ -1,0 +1,20 @@
+V0182 | Golden Mean, Inc | AP name: Golden Mean, Inc | $1,659 | legal-form clue: United States | no hint
+V0183 | Paint & Fun Vl. Martina Milkova Nikolova | AP name: Paint & Fun Vl. Martina Milkova Nikolova | $1,654 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0184 | Carrington Communications | AP name: Carrington Communications | $1,654 | legal-form clue: none | hint 55: Carrington Communications, Cision PR Newswire: PR.
+V0185 | Crayond Digital Private Limited | AP name: Crayond Digital Private Limited | $1,646 | legal-form clue: India | hint 60: Infosys, Shree Info System Solutions, Crayond Digital, Orionw, Trending Technology Services: outsourced IT and development, confirm whether customer-project subcontracting.
+V0186 | Studentski Centar Karlovac | AP name: Studentski Centar Karlovac | $1,549 | legal-form clue: none | hint 72: Studentski Centar (Zagreb, Split, Karlovac): Croatian student-service work contracts, contingent labour, not a vendor service.
+V0187 | Lajnap Comedy Booking d.o.o. | AP name: Lajnap Comedy Booking D.O.O. | $1,536 | legal-form clue: Croatia | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0188 | British Telecommunications | AP name: British Telecommunications | $1,493 | legal-form clue: none | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet.
+V0189 | ETM Concessions Ltd | AP name: Etm Concessions Ltd | $1,419 | legal-form clue: United Kingdom | no hint
+V0190 | Radisson GRT - Unit Of Hotels & Resorts Pvt Ltd | AP name: Radisson Grt - Unit Of Hotels & Resorts Pvt Ltd | $1,406 | legal-form clue: India | no hint
+V0191 | Ariba Inc | AP name: Ariba Inc | $1,363 | legal-form clue: United States | hint 45: Ariba: SAP Ariba supplier network fees, customer-mandated.
+V0192 | Chamiers Recreation Club | AP name: Chamiers Recreation Club | $1,338 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0193 | Quadrant Law LLC | AP name: Quadrant Law Llc | $1,327 | legal-form clue: United States | no hint
+V0194 | DocuSign | AP name: Docusign | $1,308 | legal-form clue: none | no hint
+V0195 | Inside Edge Novated Leasing | AP name: Inside Edge Novated Leasing | $1,287 | legal-form clue: none | hint 39: Inside Edge Novated Leasing: Australian salary-packaged car leasing.
+V0196 | Rhea d.o.o. | AP name: Rhea D.O.O. | $1,253 | legal-form clue: Croatia | no hint
+V0197 | P S Recreation Club | AP name: P S Recreation Club | $1,219 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0198 | FastSpring | AP name: Fastspring | $1,179 | legal-form clue: none | hint 44: FastSpring: merchant-of-record payment processing.
+V0199 | DSV Solutions A/S | AP name: Dsv Solutions A/S | $1,162 | legal-form clue: Denmark | no hint
+V0200 | Curzon Green Solicitors | AP name: Curzon Green Solicitors | $1,158 | legal-form clue: none | no hint
+V0201 | icare NSW | AP name: Icare Nsw | $1,150 | legal-form clue: Australia | hint 21: Allianz Australia Workers' Compensation and icare NSW: statutory workers' compensation.

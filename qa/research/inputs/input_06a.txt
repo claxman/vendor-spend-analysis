@@ -1,0 +1,20 @@
+V0202 | Thomas Mansfield Solicitors Limited | AP name: Thomas Mansfield Solicitors Limited | $1,135 | legal-form clue: United Kingdom | no hint
+V0203 | Amazon.co.uk | AP name: Amazon.Co.Uk | $1,107 | legal-form clue: United Kingdom | no hint
+V0204 | Backoffice Associates | AP name: Backoffice Associates | $1,080 | legal-form clue: none | no hint
+V0205 | Oladi d.o.o. | AP name: Oladi D.O.O. | $1,064 | legal-form clue: Croatia | no hint
+V0206 | Integrated Personnel Services | AP name: Integrated Personnel Services | $1,054 | legal-form clue: none | no hint
+V0207 | Müller Trgovina Zagreb d.o.o. | AP name: Mãœller Trgovina Zagreb D.O.O. | $1,051 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture. | name note: mojibake repaired
+V0208 | Lunch Nutrition d.o.o. | AP name: Lunch Nutrition D.O.O. | $1,012 | legal-form clue: Croatia | no hint
+V0209 | Winmaxi Tours & Travels | AP name: Winmaxi Tours & Travels | $1,001 | legal-form clue: none | no hint
+V0210 | Digitalna Produkcija j.d.o.o. | AP name: Digitalna Produkcija J.D.O.O. | $993 | legal-form clue: Croatia | no hint
+V0211 | Computershare-Caboodle Technology Limited | AP name: Computershare-Caboodle Technology Limited | $981 | legal-form clue: United Kingdom | hint 42: Computershare-Caboodle, Bigshare, NSDL: share plan administration and depository.
+V0212 | Allianz WA | AP name: Allianz Wa | $971 | legal-form clue: Australia | no hint
+V0213 | Trending Technology Services GmbH | AP name: Trending Technology Services Gmbh | $961 | legal-form clue: Germany, Austria or Switzerland | hint 60: Infosys, Shree Info System Solutions, Crayond Digital, Orionw, Trending Technology Services: outsourced IT and development, confirm whether customer-project subcontracting.
+V0214 | GoDaddy.com, LLC | AP name: Godaddy.Com, Llc | $923 | legal-form clue: United States | no hint
+V0215 | Time Out Group | AP name: Time Out Group | $920 | legal-form clue: none | no hint
+V0216 | Raiffeisenbank Austria d.d. | AP name: Raiffeisenbank Austria D.D. | $920 | legal-form clue: Croatia | hint 43: Raiffeisenbank Austria d.d.: Croatian bank fees.
+V0217 | Galop-Prijevoz d.o.o. | AP name: Galop-Prijevoz D.O.O. | $908 | legal-form clue: Croatia | no hint
+V0218 | Lane IP Limited | AP name: Lane Ip Limited | $851 | legal-form clue: United Kingdom | no hint
+V0219 | Urbani Eventi d.o.o. | AP name: Urbani Eventi D.O.O. | $851 | legal-form clue: Croatia | no hint
+V0220 | Smashing Media AG | AP name: Smashing Media Ag | $850 | legal-form clue: Switzerland or Germany | hint 56: Smashing Media: UX publication and conferences.
+V0221 | Epignosis LLC | AP name: Epignosis Llc | $833 | legal-form clue: United States | hint 34: Epignosis: TalentLMS.

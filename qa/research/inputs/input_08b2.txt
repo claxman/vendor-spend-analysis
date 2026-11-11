@@ -1,0 +1,7 @@
+V0315 | Paint&Wine, Vl. Stevo Dosen | AP name: Paint&Wine, Vl. Stevo Dosen | $159 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0316 | Parcelforce Worldwide | AP name: Parcelforce Worldwide | $155 | legal-form clue: none | no hint
+V0317 | Advena | AP name: Advena | $154 | legal-form clue: none | no hint
+V0318 | Hrvatski Nezavisnici Izvoznici Softvera | AP name: Hrvatski Nezavisnici Izvoznici Softvera | $154 | legal-form clue: Croatia | hint 73: Hrvatski Nezavisni Izvoznici Softvera, Split Tech City: industry and community memberships. | name note: Nezavisnici as in the source; the analyst hint spells it Nezavisni
+V0319 | Monile j.d.o.o. | AP name: Monile J.D.O.O. | $152 | legal-form clue: Croatia | no hint
+V0320 | Puzzle Promotion j.d.o.o. | AP name: Puzzle Promotion J.D.O.O. | $143 | legal-form clue: Croatia | no hint
+V0321 | Zagrebački Holding d.o.o. | AP name: Zagrebaä_x008d_Ki Holding D.O.O. | $143 | legal-form clue: Croatia | hint 67: Zagrebački Holding: Zagreb city utilities. | name note: mojibake repaired

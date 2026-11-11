@@ -1,0 +1,4 @@
+V0238 | Dun & Bradstreet d.o.o. | AP name: Dun & Bradstreet D.O.O. | $610 | legal-form clue: Croatia | no hint
+V0239 | Induslaw | AP name: Induslaw | $596 | legal-form clue: none | no hint
+V0240 | Trans-Agram Obrt Za Dostavu | AP name: Trans-Agram Obrt Za Dostavu | $581 | legal-form clue: Croatia | no hint
+V0241 | Landu Law Solicitors | AP name: Landu Law Solicitors | $568 | legal-form clue: none | no hint

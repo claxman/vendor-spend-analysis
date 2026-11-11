@@ -112,3 +112,13 @@ The rules above can point two ways for the same vendor; for example, Navan is pa
 ## Writing the rationale
 
 One sentence that names something specific. For Consolidate, it names the vendor or entity to keep; for Optimize, the lever; for Terminate, what makes the vendor redundant or the condition that would. For a row in a merge or link group, it also names the group. Plain wording, no em dashes, none of the banned phrases from `CLAUDE.md`.
+
+## Text a reader of the sheet will see (step 5)
+
+The description, rationale and risk_note columns go into the sheet and are read by someone who has never seen this repository (prompt 18):
+
+- None of the three refers to the project's own workings: hints, the Optimize or Terminate lists, rules, searches, sources, steps, prompts or files. They state the fact or the action directly (check C19).
+- Where what a vendor does is not established, the description gives the best reading and ends with "(unconfirmed)" in place of "confirm with Finance"; descriptions stay one line of 5 to 25 words.
+- Office footprint rows lead with the base case the savings assume (exit under the remote operating model, keeping one touchdown space at the engineering hub), then the fallback (one flexible provider).
+- A risk_note is required on every Terminate and Consolidate row and on every Optimize row at or above $25,000: one clause naming the main risk of acting, or of not acting where the row must not be cut (check C16).
+- A Terminate row on a lever whose base saving is below 50%, outside the Excluded opportunity, and an Optimize row on a lever above 50%, are either fixed or given a recorded reason (check V9).

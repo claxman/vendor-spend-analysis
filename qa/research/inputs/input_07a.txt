@@ -1,0 +1,20 @@
+V0242 | Arena Center Zagreb d.o.o. | AP name: Arena Center Zagreb D.O.O. | $567 | legal-form clue: Croatia | no hint
+V0243 | Obrt Za Ugostiteljstvo Mirakul | AP name: Obrt Za Ugostiteljstvo Mirakul | $565 | legal-form clue: Croatia | no hint
+V0244 | Oakberry Jr d.o.o. | AP name: Oakberry Jr D.O.O. | $535 | legal-form clue: Croatia | no hint
+V0245 | Tau On-Line d.o.o. | AP name: Tau On-Line D.O.O. | $534 | legal-form clue: Croatia | no hint
+V0246 | Magic Mountain Saloon | AP name: Magic Mountain Saloon | $524 | legal-form clue: none | no hint
+V0247 | Hotel Zonar | AP name: Hotel Zonar | $523 | legal-form clue: none | no hint
+V0248 | Roto Dinamic d.o.o. | AP name: Roto Dinamic D.O.O. | $512 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0249 | TM Forum | AP name: Tm Forum | $510 | legal-form clue: none | hint 47: TM Forum (two spellings): telecom industry association membership and events.
+V0250 | Marvie Hotel - Krupa d.o.o. | AP name: Marvie Hotel - Krupa D.O.O. | $502 | legal-form clue: Croatia | no hint
+V0251 | Merchandise Ltd | AP name: Merchandise Ltd | $490 | legal-form clue: United Kingdom | no hint
+V0252 | Yellow Submarine d.o.o. | AP name: Yellow Submarine D.O.O. | $486 | legal-form clue: Croatia | no hint
+V0253 | Streamlinereforms Inc | AP name: Streamlinereforms Inc | $483 | legal-form clue: United States | no hint
+V0254 | Make And Grow Ltd | AP name: Make And Grow Ltd | $483 | legal-form clue: United Kingdom | no hint
+V0255 | Obiteljski Hoteli d.o.o. | AP name: Obiteljski Hoteli D.O.O. | $474 | legal-form clue: Croatia | no hint
+V0256 | Rudan d.o.o. | AP name: Rudan D.O.O. | $473 | legal-form clue: Croatia | no hint
+V0257 | Entrio Tehnologije d.o.o. | AP name: Entrio Tehnologije D.O.O. | $473 | legal-form clue: Croatia | hint 74: Entrio: event ticketing.
+V0258 | Vivat Fina Vina d.o.o. | AP name: Vivat Fina Vina D.O.O. | $467 | legal-form clue: Croatia | no hint
+V0259 | Figma, Inc. | AP name: Figma, Inc. | $460 | legal-form clue: United States | no hint
+V0260 | E-Disti d.o.o. | AP name: E-Disti D.O.O. | $458 | legal-form clue: Croatia | hint 61: Magazin Računalni Sistemi, E-Disti, Sniper Systems: IT hardware resellers.
+V0261 | Greencell Express Private Limited | AP name: Greencell Express Private Limited | $457 | legal-form clue: India | no hint

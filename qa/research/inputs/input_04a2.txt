@@ -1,0 +1,17 @@
+V0122 | Aha! Labs Inc | AP name: Aha! Labs Inc | $3,689 | legal-form clue: United States | no hint
+V0123 | Apple Retail UK Ltd | AP name: Apple Retail Uk Ltd | $3,548 | legal-form clue: United Kingdom | no hint
+V0124 | Kryterion, Inc. | AP name: Kryterion, Inc. | $3,541 | legal-form clue: United States | hint 35: Kryterion: certification exam delivery, likely for customer or partner certification.
+V0125 | npm Inc | AP name: Npm Inc | $3,535 | legal-form clue: United States | no hint
+V0126 | Pinsent Masons MPillay LLP | AP name: Pinsent Masons Mpillay Llp | $4,078 | legal-form clue: United Kingdom | no hint
+V0127 | Calm Achiever (A Unit Of Mohsin Ali Vakil) | AP name: Calm Achiever(A Unit Of Mohsin Ali Vakil) | $4,071 | legal-form clue: none | no hint | already searched once (see below): run one more search with a different variant before marking it not verified
+V0129 | O'Donnell Salzano Lawyers | AP name: Oâ€™Donnell Salzano Lawyers | $3,955 | legal-form clue: none | no hint | name note: mojibake repaired
+V0130 | Papertrail Inc | AP name: Papertrail Inc | $3,900 | legal-form clue: United States | no hint
+V0132 | Trocadero (London) Hotel Ltd | AP name: Trocadero (London) Hotel Ltd | $3,868 | legal-form clue: United Kingdom | no hint
+V0133 | Semrush Inc | AP name: Semrush Inc | $3,730 | legal-form clue: United States | no hint
+V0134 | Golubica Parking d.o.o. | AP name: Golubica Parking D.O.O. | $3,726 | legal-form clue: Croatia | no hint | already searched once (see below): run one more search with a different variant before marking it not verified
+V0135 | Vodafone (Australian) | AP name: Vodafone (Australian) | $3,672 | legal-form clue: Australia | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet.
+V0136 | IKEA Hrvatska d.o.o. | AP name: Ikea Hrvatska D.O.O. | $3,610 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0137 | Orcola d.o.o. | AP name: Orcola D.O.O. | $3,545 | legal-form clue: Croatia | hint 77: Weking d.o.o., Veniture d.o.o., Nefron obrt, Bijeli Pijesak obrt, Smart Group Services, TP Prime, Pingo, Ramiro, Omonia, Mosaic Concept, Limes Plus, Orcola, Akton: Croatian companies or sole traders of unknown function, most likely contractors; department by best inference, confidence low, description ends with "confirm with Finance". | already searched once (see below): run one more search with a different variant before marking it not verified
+V0138 | Info Edge India Limited | AP name: Info Edge India Limited | $3,536 | legal-form clue: India | hint 26: Info Edge: Naukri job board.
+V0139 | Grad Split | AP name: Grad Split | $3,483 | legal-form clue: Croatia | hint 66: Grad Zagreb, Grad Split: municipal fees.
+V0140 | T-Mobile | AP name: T-Mobile | $3,357 | legal-form clue: none | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet.

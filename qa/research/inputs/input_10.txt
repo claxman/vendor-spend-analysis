@@ -1,0 +1,26 @@
+V0362 | Officeworks | AP name: Officeworks | $56 | legal-form clue: none | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0363 | Click Send Pty Ltd | AP name: Click Send Pty Ltd | $55 | legal-form clue: Australia | hint 71: Click Send: SMS API.
+V0364 | Kall Kwik Centre 565 | AP name: Kall Kwik Centre 565 | $55 | legal-form clue: none | no hint
+V0365 | Shilton Hospitality LLP | AP name: Shilton Hospitality Llp | $55 | legal-form clue: United Kingdom | no hint
+V0366 | Axosoft GitKraken | AP name: Axosoft Gitkraken | $54 | legal-form clue: none | no hint
+V0367 | Istra Wine | AP name: Istra Wine | $53 | legal-form clue: none | no hint
+V0368 | Gophr | AP name: Gophr | $52 | legal-form clue: none | no hint
+V0369 | Pan-Pek d.o.o. | AP name: Pan-Pek D.O.O. | $50 | legal-form clue: Croatia | no hint
+V0370 | Uber *Eats | AP name: Uber *Eats | $50 | legal-form clue: none | no hint | name note: card-statement descriptor, suggesting a card transaction
+V0371 | FedEx Express UK Transportation Ltd | AP name: Fedex Express Uk Transportation Ltd | $47 | legal-form clue: United Kingdom | no hint
+V0372 | Garden City d.o.o. | AP name: Garden City D.O.O. | $45 | legal-form clue: Croatia | no hint
+V0373 | Livingstone | AP name: Livingstone | $41 | legal-form clue: none | no hint
+V0374 | Ekupi d.o.o. | AP name: Ekupi D.O.O. | $40 | legal-form clue: Croatia | no hint
+V0375 | Farmacia - Specijalizirana Prodavaonica d.o.o. | AP name: Farmacia - Specijalizirana Prodavaonica D.O.O. | $36 | legal-form clue: Croatia | no hint
+V0376 | Cupcake Central (Life Is Sweet Bakery) | AP name: Cupcake Central (Life Is Sweet Bakery) | $35 | legal-form clue: none | no hint
+V0377 | Post Office Ltd | AP name: Post Office Ltd | $32 | legal-form clue: United Kingdom | no hint
+V0378 | Currys PC World | AP name: Currys Pc World | $30 | legal-form clue: none | no hint
+V0379 | Brodomerkur d.d. | AP name: Brodomerkur D.D. | $29 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0380 | Sport Vision d.o.o. | AP name: Sport Vision D.O.O. | $26 | legal-form clue: Croatia | no hint
+V0381 | Harissa d.o.o. | AP name: Harissa D.O.O. | $21 | legal-form clue: Croatia | no hint
+V0382 | Specijalisticka Ordinacija Medicine Rada I Sporta Ina Kardos | AP name: Specijalisticka Ordinacija Medicine Rada I Sporta Ina Kardos | $20 | legal-form clue: none | hint 65: Nastavni Zavod za Javno Zdravstvo, Specijalistička ordinacija medicine rada (three), Ustanova za zdravstvenu skrb: statutory occupational health examinations.
+V0383 | Specijalisticka Ordinacija Medicine Rada Helena Blazic | AP name: Specijalisticka Ordinacija Medicine Rada Helena Blazic | $20 | legal-form clue: none | hint 65: Nastavni Zavod za Javno Zdravstvo, Specijalistička ordinacija medicine rada (three), Ustanova za zdravstvenu skrb: statutory occupational health examinations.
+V0384 | Ustanova Za Medicinu Rada I Sporta Dr. Novacki | AP name: Ustanova Za Medicinu Rada I Sporta Dr. Novacki | $20 | legal-form clue: none | hint 65: Nastavni Zavod za Javno Zdravstvo, Specijalistička ordinacija medicine rada (three), Ustanova za zdravstvenu skrb: statutory occupational health examinations.
+V0385 | M&S Simply Food | AP name: M&S Simply Food | $19 | legal-form clue: none | no hint
+V0386 | Bakemono Bakers Melbourne | AP name: Bakemono Bakers Melbourne | $18 | legal-form clue: Australia | no hint
+V0387 | Coles | AP name: Coles | $18 | legal-form clue: none | no hint

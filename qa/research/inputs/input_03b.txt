@@ -1,0 +1,20 @@
+V0102 | Athlete Service Ltd | AP name: Athlete Service Ltd | $5,285 | legal-form clue: United Kingdom | no hint
+V0103 | Amazon Web Services Inc. | AP name: Amazon Web Services Inc. | $5,153 | legal-form clue: United States | no hint
+V0104 | Telemach Hrvatska d.o.o. | AP name: Telemach Hrvatska D.O.O. | $5,134 | legal-form clue: Croatia | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet.
+V0105 | Acclime USA, Inc | AP name: Acclime Usa, Inc | $4,995 | legal-form clue: United States | hint 41: Intertrust Singapore, Acclime (two entities), Capitol Services: corporate secretarial and registered agent.
+V0106 | Centar Za Sigurnost d.o.o. | AP name: Centar Za Sigurnost D.O.O. | $4,991 | legal-form clue: Croatia | hint 64: Centar za Sigurnost: occupational safety and fire protection services.
+V0107 | Profi Bar d.o.o. | AP name: Profi Bar D.O.O. | $4,917 | legal-form clue: Croatia | no hint
+V0108 | PricewaterhouseCoopers LLP | AP name: Pricewaterhousecoopers Llp | $4,879 | legal-form clue: United Kingdom | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece.
+V0109 | Pinnacle Partnership CA | AP name: Pinnacle Partnership Ca | $4,836 | legal-form clue: none | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece.
+V0110 | The Virtual Legal Counsel Ltd | AP name: The Virtual Legal Counsel Ltd | $4,800 | legal-form clue: United Kingdom | no hint
+V0111 | Australian Payroll Professionals Pty Ltd | AP name: Australian Payroll Professionals Pty Ltd | $4,399 | legal-form clue: Australia | hint 29: Australian Payroll Professionals: payroll outsourcing.
+V0112 | Inter Continental Chennai Mahabalipuram Resort | AP name: Inter Continental Chennai Mahabalipuram Resort | $4,393 | legal-form clue: India | no hint
+V0113 | JetBrains s.r.o. | AP name: Jetbrains S.R.O. | $4,083 | legal-form clue: Czech Republic or Slovakia | no hint
+V0114 | Crowe Horwath Revizija d.o.o. | AP name: Crowe Horwath Revizija D.O.O. | $4,062 | legal-form clue: Croatia | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece.
+V0115 | Puducherry Backwater Resort Private Limited | AP name: Puducherry Backwater Resort Private Limited | $4,056 | legal-form clue: India | no hint
+V0116 | Orionw LLC | AP name: Orionw Llc | $4,025 | legal-form clue: United States | hint 60: Infosys, Shree Info System Solutions, Crayond Digital, Orionw, Trending Technology Services: outsourced IT and development, confirm whether customer-project subcontracting.
+V0117 | Adobe Systems Software | AP name: Adobe Systems Software | $3,929 | legal-form clue: none | no hint
+V0118 | Common Desk, LLC | AP name: Common Desk, Llc | $3,842 | legal-form clue: United States | hint 11: Common Desk: US coworking.
+V0119 | HEP Elektra d.o.o. | AP name: Hep Elektra D.O.O. | $3,735 | legal-form clue: Croatia | hint 68: HEP Elektra: electricity.
+V0120 | Zivi Napitak d.o.o. | AP name: Zivi Napitak D.O.O. | $3,700 | legal-form clue: Croatia | no hint
+V0121 | Gym4You d.o.o. | AP name: Gym4You D.O.O. | $3,692 | legal-form clue: Croatia | no hint

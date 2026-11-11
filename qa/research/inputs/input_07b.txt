@@ -1,0 +1,20 @@
+V0262 | Edwardian Pastoria Hotels Ltd (The Londoner) | AP name: Edwardian Pastoria Hotels Ltd (The Londoner) | $433 | legal-form clue: United Kingdom | no hint
+V0263 | Tiganda j.d.o.o. | AP name: Tiganda J.D.O.O. | $432 | legal-form clue: Croatia | no hint
+V0264 | Franklin, Gringer & Cohen, P.C. | AP name: Franklin, Gringer & Cohen, P.C. | $427 | legal-form clue: United States | no hint
+V0265 | Blitz - Cinestar d.o.o. | AP name: Blitz - Cinestar D.O.O. | $426 | legal-form clue: Croatia | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0266 | Lancefield Bus Service | AP name: Lancefield Bus Service | $412 | legal-form clue: none | no hint
+V0267 | Super Odredište d.o.o. | AP name: Super Odrediå¡Te D.O.O. | $378 | legal-form clue: Croatia | no hint | name note: mojibake repaired
+V0268 | PMI Global Operations Center | AP name: Pmi Global Operations Center | $378 | legal-form clue: none | no hint
+V0269 | Student Packers & Movers | AP name: Student Packers & Movers | $371 | legal-form clue: none | no hint
+V0270 | Del Posto d.o.o. | AP name: Del Posto D.O.O. | $364 | legal-form clue: Croatia | no hint
+V0271 | Inicijativa Centar Za Edukaciju | AP name: Inicijativa Centar Za Edukaciju | $358 | legal-form clue: none | no hint
+V0272 | Niva Transport j.d.o.o. | AP name: Niva Transport J.D.O.O. | $358 | legal-form clue: Croatia | no hint
+V0273 | Doctor Anywhere Operations Pte Ltd | AP name: Doctor Anywhere Operations Pte Ltd | $347 | legal-form clue: Singapore | no hint
+V0274 | Spar Hrvatska d.o.o. | AP name: Spar Hrvatska D.O.O. | $341 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0275 | Pepe's Italian And Liquor | AP name: Pepe'S Italian And Liquor | $339 | legal-form clue: none | no hint
+V0276 | Pluralsight, LLC | AP name: Pluralsight, Llc | $318 | legal-form clue: United States | no hint
+V0277 | Maniax Melbourne CBD | AP name: Maniax Melbourne Cbd | $315 | legal-form clue: Australia | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0278 | DNSimple | AP name: Dnsimple | $312 | legal-form clue: none | no hint
+V0279 | Treci Posao d.o.o. | AP name: Treci Posao D.O.O. | $307 | legal-form clue: Croatia | no hint
+V0280 | Gaucho Restaurants | AP name: Gaucho Restaurants | $302 | legal-form clue: none | no hint
+V0281 | FormSwift | AP name: Formswift | $301 | legal-form clue: none | no hint

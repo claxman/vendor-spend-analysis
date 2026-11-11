@@ -90,9 +90,39 @@ VENDOR_ID = re.compile(r"\bV\d{4}\b")
 # Currys) is Consolidate into group IT procurement; BDO, Bisley Law and Grant Thornton stay in the recurring base.
 HARDWARE_IDS = ["V0066", "V0123", "V0131", "V0167", "V0172", "V0175", "V0229", "V0260", "V0378"]
 RECURRING_ADVISER_IDS = ["V0004", "V0018", "V0029"]
-# Optimize rows carry no risk note, except where a recorded decision allows one (step 3b).
-OPTIMIZE_RISK_NOTE_EXCEPTIONS = {
-    "V0002": "step 3b: the product depends on the Salesforce platform, so the lever is commercial terms, never exit",
+# Optimize rows at or above this spend carry a risk note (step 5); smaller Optimize rows carry none, except where a
+# recorded decision allows one. V0002's step 3b exception is now covered by the threshold.
+OPTIMIZE_RISK_NOTE_MIN_SPEND = 25000
+OPTIMIZE_RISK_NOTE_EXCEPTIONS: dict[str, str] = {}
+# Words that refer to the project's own workings (hints, lists, rules, searches, sources, steps, prompts, files) and
+# must not appear in the three columns a reader of the sheet sees (step 5).
+WORKINGS_PHRASES = ["hint", "optimize list", "terminate list", "terminate rule", "tail-spend rule", "under the rule",
+                    "the rule for", "search shows", "search points", "searches show", "found by search", "by the search",
+                    "web search", "no source", "public source", "source confirms", "source shows", "source traces",
+                    "source states", "source identifies", "registry shows", "registry entry", "directory snippet", "snippet",
+                    "forensic", "confirm with finance", "finance question", "court records", "savings assumption", "taxonomy",
+                    "tie-break", "not verified", "unverified", "verification", "classification", "step 3", "step 2",
+                    "per its website"]
+# Recommendation against lever (step 5): a Terminate row on a lever whose base is below 50%, outside the Excluded
+# opportunity, or an Optimize row on a lever above 50%, needs a recorded reason, by vendor_id or by
+# "<recommendation>:<lever>".
+RECOMMENDATION_LEVER_EXCEPTIONS = {
+    "Terminate:Employer-of-record providers":
+        "the saving is the service fee, because the employees' pay passes through the invoices (step 4)",
+    "Terminate:Payroll processing providers":
+        "the lever's 40% is the processing fee; the rest is the cost of running payroll in the group (step 4)",
+    "Terminate:Other marketing, media and events":
+        "the lever's 30% is set across the marketing budget; these small memberships and subscriptions end entirely and "
+        "the Optimize rows absorb the difference (step 5)",
+    "Terminate:Other software subscriptions":
+        "the lever's 25% is set across the subscriptions; these overlapping tools end entirely and the seat true-downs "
+        "on the other rows absorb the difference (step 5)",
+    "Optimize:Office footprint":
+        "the lever's 75% is the office exit under the remote operating model; the hub's lease and its charges are "
+        "Optimize because they are the touchdown-space candidates (step 5)",
+    "Optimize:Office running costs":
+        "utilities, parking, safety and supplies fall with the space under the remote operating model, not by a vendor "
+        "action, so the label stays Optimize while the lever follows the office decision (step 5)",
 }
 # True lists every item in a check's detail instead of the first few; scripts/merge_validate.py sets it so that
 # qa/validation_report.md shows every failure in full.
@@ -133,7 +163,8 @@ DECISION_EXPECTATIONS = [
     (["V0009"], "cost_cluster", "Outsourced engineering and contractors", "step 3b: Weking"),
     (["V0009", "V0018"], "recommendation", "Consolidate",
      "step 3b: Weking into the group's engineering sourcing model; Bisley Law stays Consolidate"),
-    (["V0009"], "confidence", "low", "step 3b: Weking stays low confidence"),
+    (["V0009"], "confidence", "medium",
+     "step 5: the Croatian register confirms Weking's entity, so confidence rises from the low of step 3b to medium"),
     (["V0284"], "is_addressable", "FALSE", "step 3b: NSDL, as in the forensic exclusion"),
     (["V0284"], "cost_cluster", "Statutory and government", "step 3b: NSDL"),
     (["V0057"], "recommendation", "Optimize", "step 4b: the MultiSport card stays as an employee benefit at the hub"),
@@ -147,10 +178,10 @@ WORDING_EXPECTATIONS = [
     (["V0002"], "rationale", ["change of control"], "step 3b: renegotiate the platform agreement at change of control"),
     (["V0002"], "risk_note", ["never exit"], "step 3b: the product depends on the platform"),
     (["V0006"], "rationale", ["oem"], "step 3b: PDF Butler, OEM or volume pricing"),
-    (["V0006"], "description", ["confirm oem terms with finance"], "step 3b: PDF Butler, OEM terms"),
+    (["V0006"], "description", ["oem terms unconfirmed"], "steps 3b and 5: PDF Butler, OEM terms unconfirmed"),
     (["V0009"], "rationale", ["engineering sourcing model"], "step 3b: Weking, the group's engineering sourcing model"),
     (["V0009"], "risk_note", ["product knowledge"], "step 3b: Weking, product knowledge transferred first"),
-    (["V0009"], "description", ["confirm with finance"], "step 3b: Weking keeps \"confirm with Finance\""),
+    (["V0009"], "description", ["work unconfirmed"], "steps 3b and 5: Weking's entity is confirmed, the work it supplies is not"),
     (["V0018"], "risk_note", ["invoicing entity"], "step 4b: Bisley Law, Finance confirms the invoicing entity"),
     (["V0023", "V0081", "V0173"], "sub_function", ["corporate it"],
      "step 3c: company-wide software carries a sub_function that starts Corporate IT"),
@@ -434,12 +465,16 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
     res.add("C15", "Rows outside the savings base say \"non-discretionary, excluded from the savings base\"", not bad,
             f"bad: {sample(bad) or 'none'}")
 
-    bad = [r["vendor_id"] for r in rows if r["recommendation"] in NEEDS_RISK_NOTE and not r["risk_note"].strip()]
-    extra = [r["vendor_id"] for r in rows if r["recommendation"] == "Optimize" and r["risk_note"].strip()
-             and r["vendor_id"] not in OPTIMIZE_RISK_NOTE_EXCEPTIONS]
-    res.add("C16", "Every Terminate and Consolidate row has a risk_note; Optimize rows have none, except "
-                   f"{', '.join(sorted(OPTIMIZE_RISK_NOTE_EXCEPTIONS))} (step 3b)", not bad and not extra,
-            f"missing: {sample(bad) or 'none'}; on Optimize rows: {sample(extra) or 'none'}")
+    def large_optimize(r: dict) -> bool:
+        return r["recommendation"] == "Optimize" and to_float(r["spend_12m"]) >= OPTIMIZE_RISK_NOTE_MIN_SPEND
+
+    bad = [r["vendor_id"] for r in rows
+           if (r["recommendation"] in NEEDS_RISK_NOTE or large_optimize(r)) and not r["risk_note"].strip()]
+    extra = [r["vendor_id"] for r in rows if r["recommendation"] == "Optimize" and not large_optimize(r)
+             and r["risk_note"].strip() and r["vendor_id"] not in OPTIMIZE_RISK_NOTE_EXCEPTIONS]
+    res.add("C16", "Every Terminate and Consolidate row, and every Optimize row at or above "
+                   f"${OPTIMIZE_RISK_NOTE_MIN_SPEND:,.0f} (step 5), has a risk_note; smaller Optimize rows have none",
+            not bad and not extra, f"missing: {sample(bad) or 'none'}; on small Optimize rows: {sample(extra) or 'none'}")
 
     listed, problems = verification_exceptions(validation_text)
     false_rows = {r["vendor_id"] for r in rows if r["verified"] == "FALSE"}
@@ -468,6 +503,15 @@ def classification_checks(res: Results, rows: list[dict], clean: list[dict], val
                    "the original sheet order (vendor_id ascending)", not name_bad and not order_bad,
             f"name mismatches: {sample(name_bad) or 'none'}; out of order at {len(order_bad)} positions"
             + (f", first: {order_bad[0]}" if order_bad else ""))
+
+    bad = []
+    for r in rows:
+        for col in ("description", "rationale", "risk_note"):
+            hits = [p for p in WORKINGS_PHRASES if p in r[col].lower()]
+            if hits:
+                bad.append(f"{r['vendor_id']} {col}: {', '.join(hits)}")
+    res.add("C19", "Descriptions, rationales and risk notes never refer to the project's own workings: hints, lists, rules, "
+                   "searches, sources, steps, prompts or files (step 5)", not bad, f"bad: {sample(bad) or 'none'}")
 
 
 # ---------------------------------------------------------------- self-test
@@ -524,7 +568,8 @@ def synthetic(clean: list[dict]) -> list[dict]:
     for vid in HARDWARE_IDS:
         by_id[vid]["rationale"] = by_id[vid]["rationale"][:-1] + ", consolidated into group IT procurement."
     for r in rows:
-        if r["recommendation"] in NEEDS_RISK_NOTE:
+        if r["recommendation"] in NEEDS_RISK_NOTE or (
+                r["recommendation"] == "Optimize" and to_float(r["spend_12m"]) >= OPTIMIZE_RISK_NOTE_MIN_SPEND):
             r["risk_note"] = "Synthetic risk note for the QA self-test"
     for vids, col, phrases, _ in WORDING_EXPECTATIONS:
         for vid in vids:
@@ -627,8 +672,11 @@ MUTATIONS = [
     ("Spend column under the old name cost_usd", rename_column("spend_12m", "cost_usd"), "C1"),
     ("Terminate row without a risk_note", set_field("V0203", "risk_note", ""), "C16"),
     ("Consolidate row without a risk_note", set_field("V0081", "risk_note", " "), "C16"),
-    ("Optimize row with a risk note and no recorded exception",
-     set_field("V0005", "risk_note", "Synthetic risk note on an Optimize row"), "C16"),
+    ("Small Optimize row with a risk note and no recorded exception",
+     set_field("V0387", "risk_note", "Synthetic risk note on an Optimize row"), "C16"),
+    ("Optimize row at or above $25,000 without a risk note", set_field("V0005", "risk_note", ""), "C16"),
+    ("Description that refers to the hint", set_field("V0005", "description", "Flexible offices per the hint"), "C19"),
+    ("Rationale that cites a search", set_field("V0005", "rationale", "Search shows flexible offices in London."), "C19"),
     # Step 3b: the platform reclassification
     ("Salesforce back in Sales as the sales team's CRM", set_field("V0002", "department", "Sales"), "C13"),
     ("Mason Frank back in the Salesforce platform cluster", set_field("V0034", "cost_cluster", "Salesforce platform"),
@@ -708,7 +756,7 @@ def savings_checks(res: Results, srows: list[dict], rows: list[dict], register_t
     cols = set(srows[0].keys()) if srows else set()
     missing_cols = [c for c in SAVINGS_COLUMNS if c not in cols]
     if missing_cols or not srows:
-        for cid in ("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"):
+        for cid in ("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9"):
             res.add(cid, "Savings check", False, f"savings file unusable; missing columns: {', '.join(missing_cols) or 'none'}"
                     + ("; no rows" if not srows else ""))
         return
@@ -837,18 +885,41 @@ def savings_checks(res: Results, srows: list[dict], rows: list[dict], register_t
     res.add("V8", f"The roll-ups by opportunity, cluster and lever in {rel(SAVINGS_MD)} equal the sums of the vendor rows, "
                   "and their totals equal the file's total", not bad, f"bad: {sample(bad) or 'none'}")
 
+    flagged, covered = [], defaultdict(list)
+    for s in srows:
+        c, f = by_id.get(s["vendor_id"]), levers.get(s["lever"])
+        if not c or not f:
+            continue
+        rec, base = c["recommendation"], f["pct_base"]
+        if (rec == "Terminate" and base < 50 and f["opportunity"] != "Excluded") or (rec == "Optimize" and base > 50):
+            by_row, by_lever = s["vendor_id"], f"{rec}:{s['lever']}"
+            if by_row in RECOMMENDATION_LEVER_EXCEPTIONS:
+                covered[by_row].append(s["vendor_id"])
+            elif by_lever in RECOMMENDATION_LEVER_EXCEPTIONS:
+                covered[by_lever].append(s["vendor_id"])
+            else:
+                flagged.append(f"{s['vendor_id']} {rec} on {s['lever']} ({base:g}%)")
+    res.add("V9", "Every Terminate row on a lever with a base below 50% outside the Excluded opportunity, and every Optimize "
+                  "row on a lever above 50%, is fixed or has a recorded reason (step 5)", not flagged,
+            f"flagged: {sample(flagged) or 'none'}; recorded reasons cover "
+            + ("; ".join(f"{k} ({len(v)} rows)" for k, v in covered.items()) or "no row"))
+
 
 def synthetic_savings(rows: list[dict], levers: dict[str, dict]) -> list[dict]:
     """Savings rows for the synthetic classification that satisfy every savings check: rows outside the savings
     base and in the M&A cluster take 0% levers, every other row cycles through the whole register."""
     names = list(levers)
     zero = [n for n in names if levers[n]["pct_high"] == 0]
+    high = [n for n in names if levers[n]["pct_base"] > 50]       # for Consolidate and Terminate rows only (V9)
+    low = [n for n in names if levers[n]["pct_base"] <= 50]       # for Optimize rows (V9)
     out = []
     for k, r in enumerate(rows):
         if r["is_addressable"] == "FALSE" or r["cost_cluster"] == MNA_CLUSTER:
             name = zero[k % len(zero)]
+        elif r["recommendation"] in NEEDS_RISK_NOTE:
+            name = high[k % len(high)]
         else:
-            name = names[k % len(names)]
+            name = low[k % len(low)]
         out.append(format_row(saving_row(r, name, levers[name])))
     return out
 
@@ -936,6 +1007,10 @@ def savings_mutations(levers: dict[str, dict]) -> list[tuple]:
          edit_rollup(f"| {names[0]} |", ROLLUP_HEADINGS["lever"], lambda line: line.replace("$", "$9", 1)), "V8", False),
         ("An opportunity row removed from its roll-up",
          edit_rollup("| Office exit |", ROLLUP_HEADINGS["opportunity"], lambda line: ""), "V8", False),
+        ("Terminate row on a lever below 50% with no recorded reason",
+         reassign("V0203", "Telecom and internet providers", levers), "V9", True),
+        ("Optimize row on a lever above 50% with no recorded reason",
+         reassign("V0005", "Recruitment agencies and job boards", levers), "V9", True),
     ]
 
 
@@ -1024,7 +1099,7 @@ def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT, savings
             savings_text = savings_report.read_text(encoding="utf-8") if savings_report.exists() else None
             savings_checks(res, read_csv(savings), rows, SAVINGS_ASSUMPTIONS.read_text(encoding="utf-8"), savings_text)
         else:
-            res.add("V*", "Savings checks V1 to V8", None, f"{rel(savings)} not produced yet")
+            res.add("V*", "Savings checks V1 to V9", None, f"{rel(savings)} not produced yet")
     else:
         res.add("C*", "Classification checks C1 to C18", None, f"{rel(classified)} not produced yet")
     return res

@@ -1,0 +1,20 @@
+V0142 | Bureau Veritas Croatia d.o.o. | AP name: Bureau Veritas Croatia D.O.O. | $3,200 | legal-form clue: Croatia | hint 63: Bureau Veritas Croatia: ISO certification audits.
+V0143 | Cici Prudential Life Insurance Co. Ltd. | AP name: Cici Prudential Life Insurance Co. Ltd. | $3,195 | legal-form clue: United Kingdom | hint 20: Aetna, Agram Life, Care Health, Bupa (two entities), Cigna SG, ICICI Lombard, ICICI Prudential: employee health and life insurance by country. | name note: spelled Cici in the source; the analyst hint identifies it as ICICI Prudential
+V0144 | NCC Services Limited | AP name: Ncc Services Limited | $3,036 | legal-form clue: United Kingdom | hint 62: NCC Services: software escrow.
+V0145 | Smartsheet Inc. | AP name: Smartsheet Inc. | $2,995 | legal-form clue: United States | no hint
+V0146 | Good Game Global d.o.o. | AP name: Good Game Global D.O.O. | $2,954 | legal-form clue: Croatia | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0147 | Garaža Firule d.o.o. | AP name: Garaå¾A Firule D.O.O. | $2,930 | legal-form clue: Croatia | no hint | name note: mojibake repaired
+V0148 | Crossland | AP name: Crossland | $2,924 | legal-form clue: none | no hint
+V0149 | It London | AP name: It London | $2,838 | legal-form clue: United Kingdom | no hint
+V0150 | Terrapinn Holdings Ltd | AP name: Terrapinn Holdings Ltd | $2,838 | legal-form clue: United Kingdom | hint 48: Terrapinn: conference organiser.
+V0151 | Elemental Life Solutions LLP | AP name: Elemental Life Solutions Llp | $2,807 | legal-form clue: United Kingdom | no hint
+V0152 | United Flow Ltd (The Goodness Project) | AP name: United Flow Ltd (The Goodness Project) | $2,744 | legal-form clue: United Kingdom | no hint
+V0153 | McBurneys Charted Accountants | AP name: Mcburneys Charted Accountants | $2,711 | legal-form clue: none | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece. | name note: Charted (sic) kept as in the source
+V0154 | Cleverland Winery Resort | AP name: Cleverland Winery Resort | $2,663 | legal-form clue: none | no hint
+V0155 | AG Grid Ltd | AP name: Ag Grid Ltd | $2,653 | legal-form clue: Switzerland or Germany | no hint
+V0156 | Lusha | AP name: Lusha | $2,606 | legal-form clue: none | hint 53: Cognism, Lusha, 6sense: B2B contact and intent data.
+V0157 | My Foodiverse LLP | AP name: My Foodiverse Llp | $2,489 | legal-form clue: United Kingdom | no hint
+V0158 | 4Imprint Direct Ltd | AP name: 4Imprint Direct Ltd | $2,436 | legal-form clue: United Kingdom | no hint
+V0159 | City Pantry Ltd | AP name: City Pantry Ltd | $2,419 | legal-form clue: United Kingdom | no hint
+V0160 | Stipe Piric | AP name: Stipe Piric | $2,302 | legal-form clue: none | hint 78: Stipe Piric, John Smith, Fabiola Thistlewhaite, George Anchor, Susan Lee, Ansar Madovic: individual payees, likely contractors or reimbursements, G&A, confidence low.
+V0161 | Office Move London | AP name: Office Move London | $2,293 | legal-form clue: United Kingdom | no hint

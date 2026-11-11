@@ -1,0 +1,20 @@
+V0342 | Axil Coffee Roasters | AP name: Axil Coffee Roasters | $89 | legal-form clue: none | no hint
+V0343 | Pepco Croatia d.o.o. | AP name: Pepco Croatia D.O.O. | $89 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0344 | Lemia d.o.o. | AP name: Lemia D.O.O. | $88 | legal-form clue: Croatia | no hint
+V0345 | Retriever LLC | AP name: Retriever Llc | $88 | legal-form clue: United States | no hint
+V0346 | Meluba Limited | AP name: Meluba Limited | $88 | legal-form clue: United Kingdom | no hint
+V0347 | London Waste Management | AP name: London Waste Management | $86 | legal-form clue: United Kingdom | no hint
+V0348 | Hilton Garden Inn - Zagreb City Hotels d.o.o. | AP name: Hilton Garden Inn - Zagreb City Hotels D.O.O. | $82 | legal-form clue: Croatia | no hint
+V0349 | Lider Media d.o.o. | AP name: Lider Media D.O.O. | $80 | legal-form clue: Croatia | no hint
+V0350 | Uptime Robot Service Provider Ltd | AP name: Uptime Robot Service Provider Ltd | $78 | legal-form clue: United Kingdom | no hint
+V0351 | Mithras Consultants | AP name: Mithras Consultants | $77 | legal-form clue: none | no hint
+V0352 | 6sense Insights Inc | AP name: 6Sense Insights Inc | $76 | legal-form clue: United States | hint 53: Cognism, Lusha, 6sense: B2B contact and intent data.
+V0353 | ICO | AP name: Ico | $67 | legal-form clue: none | no hint
+V0354 | Sportska Udruga Split | AP name: Sportska Udruga Split | $66 | legal-form clue: Croatia | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0355 | Prezzee | AP name: Prezzee | $64 | legal-form clue: none | no hint
+V0356 | Inet Telecoms Ltd. | AP name: Inet Telecoms Ltd. | $63 | legal-form clue: United Kingdom | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet.
+V0357 | Wolt Enterprises Oy | AP name: Wolt Enterprises Oy | $62 | legal-form clue: Finland | no hint
+V0358 | Platinum Office d.o.o. | AP name: Platinum Office D.O.O. | $62 | legal-form clue: Croatia | hint 76: Konzum, Spar, Müller, Pepco, Ikea Hrvatska, Officeworks, Platinum Office, Roto Dinamic, Fero-Term, Brodomerkur: office groceries, supplies and furniture.
+V0359 | Snappy Snaps | AP name: Snappy Snaps | $59 | legal-form clue: none | no hint
+V0360 | New Block d.o.o. | AP name: New Block D.O.O. | $56 | legal-form clue: Croatia | no hint
+V0361 | Cayman Islands Government | AP name: Cayman Islands Government | $56 | legal-form clue: none | no hint

@@ -1,0 +1,13 @@
+V0296 | Expert-Ing d.o.o. | AP name: Expert-Ing D.O.O. | $225 | legal-form clue: Croatia | no hint
+V0297 | Atlassian Pty Ltd | AP name: Atlassian Pty Ltd | $224 | legal-form clue: Australia | no hint
+V0298 | DJs For U | AP name: Djs For U | $220 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0299 | Freepik Company | AP name: Freepik Company | $203 | legal-form clue: none | no hint
+V0300 | Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Štampar | AP name: Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Å Tampar | $199 | legal-form clue: none | hint 65: Nastavni Zavod za Javno Zdravstvo, Specijalistička ordinacija medicine rada (three), Ustanova za zdravstvenu skrb: statutory occupational health examinations. | name note: mojibake repaired
+V0301 | Rishi Events And Entainment | AP name: Rishi Events And Entainment | $198 | legal-form clue: none | no hint
+V0315 | Paint&Wine, Vl. Stevo Dosen | AP name: Paint&Wine, Vl. Stevo Dosen | $159 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0316 | Parcelforce Worldwide | AP name: Parcelforce Worldwide | $155 | legal-form clue: none | no hint
+V0317 | Advena | AP name: Advena | $154 | legal-form clue: none | no hint
+V0318 | Hrvatski Nezavisnici Izvoznici Softvera | AP name: Hrvatski Nezavisnici Izvoznici Softvera | $154 | legal-form clue: Croatia | hint 73: Hrvatski Nezavisni Izvoznici Softvera, Split Tech City: industry and community memberships. | name note: Nezavisnici as in the source; the analyst hint spells it Nezavisni
+V0319 | Monile j.d.o.o. | AP name: Monile J.D.O.O. | $152 | legal-form clue: Croatia | no hint
+V0320 | Puzzle Promotion j.d.o.o. | AP name: Puzzle Promotion J.D.O.O. | $143 | legal-form clue: Croatia | no hint
+V0321 | Zagrebački Holding d.o.o. | AP name: Zagrebaä_x008d_Ki Holding D.O.O. | $143 | legal-form clue: Croatia | hint 67: Zagrebački Holding: Zagreb city utilities. | name note: mojibake repaired

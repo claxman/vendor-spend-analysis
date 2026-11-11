@@ -1,0 +1,20 @@
+V0022 | WeWork Singapore Pte. Ltd. | AP name: Wework Singapore Pte. Ltd. | $64,373 | legal-form clue: Singapore | no hint
+V0023 | Cloud Technology Solutions Ltd | AP name: Cloud Technology Solutions Ltd | $60,661 | legal-form clue: United Kingdom | hint 58: Cloud Technology Solutions: UK Google Cloud and Workspace reseller.
+V0024 | Navan, Inc | AP name: Navan, Inc | $57,929 | legal-form clue: United States | hint 5: Navan (both entities): corporate travel and expense platform.
+V0025 | Tmforum | AP name: Tmforum | $57,560 | legal-form clue: none | hint 47: TM Forum (two spellings): telecom industry association membership and events.
+V0026 | LinkedIn Ireland Limited | AP name: Linkedin Ireland Limited | $55,573 | legal-form clue: Ireland | hint 27: LinkedIn Ireland: recruiter licences, ads or Sales Navigator; default G&A recruiting, confidence medium.
+V0027 | Kimble Applications Ltd | AP name: Kimble Applications Ltd | $52,825 | legal-form clue: United Kingdom | hint 2: Kimble Applications: PSA software on the Salesforce platform (now Kantata).
+V0028 | Sage UK Limited | AP name: Sage Uk Limited | $46,895 | legal-form clue: United Kingdom | no hint
+V0029 | Grant Thornton | AP name: Grant Thornton | $46,539 | legal-form clue: none | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece.
+V0030 | Sveučilište U Zagrebu, Studentski Centar | AP name: Sveuä_x008d_Iliå¡Te U Zagrebu, Studentski Centar | $44,299 | legal-form clue: Croatia | hint 72: Studentski Centar (Zagreb, Split, Karlovac): Croatian student-service work contracts, contingent labour, not a vendor service. | name note: mojibake repaired
+V0031 | SS&C Intralinks Inc | AP name: Ss&C Intralinks Inc | $39,966 | legal-form clue: United States | hint 16: SS&C Intralinks: virtual data room.
+V0032 | Veniture d.o.o. | AP name: Veniture D.O.O. | $39,342 | legal-form clue: Croatia | hint 77: Weking d.o.o., Veniture d.o.o., Nefron obrt, Bijeli Pijesak obrt, Smart Group Services, TP Prime, Pingo, Ramiro, Omonia, Mosaic Concept, Limes Plus, Orcola, Akton: Croatian companies or sole traders of unknown function, most likely contractors; department by best inference, confidence low, description ends with "confirm with Finance".
+V0033 | Accutrainee Limited | AP name: Accutrainee Limited | $38,841 | legal-form clue: United Kingdom | hint 25: Accutrainee: legal trainee placement.
+V0034 | Mason Frank International Ltd | AP name: Mason Frank International Ltd | $38,148 | legal-form clue: United Kingdom | hint 3: Mason Frank: Salesforce-specialist recruitment agency.
+V0035 | Houlihan Lokey Advisors, LLC | AP name: Houlihan Lokey Advisors, Llc | $37,461 | legal-form clue: United States | hint 15: RSM UK Corporate Finance, Houlihan Lokey: M&A advisers.
+V0036 | Vector Capital Management LP | AP name: Vector Capital Management Lp | $32,427 | legal-form clue: none | hint 17: Vector Capital Management: private equity sponsor fees, non-recurring after the sale.
+V0037 | HubSpot Ireland Limited | AP name: Hubspot Ireland Limited | $32,187 | legal-form clue: Ireland | no hint
+V0038 | Nefron - Obrt Za Poslovne Usluge | AP name: Nefron - Obrt Za Poslovne Usluge | $30,614 | legal-form clue: Croatia | hint 77: Weking d.o.o., Veniture d.o.o., Nefron obrt, Bijeli Pijesak obrt, Smart Group Services, TP Prime, Pingo, Ramiro, Omonia, Mosaic Concept, Limes Plus, Orcola, Akton: Croatian companies or sole traders of unknown function, most likely contractors; department by best inference, confidence low, description ends with "confirm with Finance".
+V0039 | Planful, Inc. | AP name: Planful, Inc. | $27,741 | legal-form clue: United States | no hint
+V0040 | Cognism Limited | AP name: Cognism Limited | $27,013 | legal-form clue: United Kingdom | hint 53: Cognism, Lusha, 6sense: B2B contact and intent data.
+V0041 | Uberflip | AP name: Uberflip | $26,091 | legal-form clue: none | hint 52: Uberflip: content experience platform.

@@ -1,15 +1,9 @@
 vendor_id,reason
-V0018,Companies House lists Bisley Law Limited as a non-trading company and no website or SRA record describes its services
-V0065,no company named Pingo d.o.o. was found in Croatian registries or elsewhere after three searches
 V0074,no registry entry or other source was found for the sole trader after three searches
 V0082,two searches found no business named Catering Muring
 V0092,"a directory snippet places a sole trader of this name in Split, but no readable source shows its activity"
-V0106,no company named Centar za sigurnost d.o.o. was found in Croatian registries after two searches
 V0107,no company named Profi Bar d.o.o. was found after two searches
 V0111,no company or business name was found in search results or in four ABN register records
-V0116,no company named Orionw LLC was found after two searches
-V0127,individual payee (a sole proprietorship) with no business record to verify against after two searches
-V0129,two searches found no law firm named O'Donnell Salzano
 V0137,no company named Orcola d.o.o. was found in Croatian registries or elsewhere after two searches
 V0147,"court and land registry notices tie the company to an underground garage in Split, but no source states its activity"
 V0148,the name matches many unrelated businesses and no legal form or location narrows it down
@@ -22,7 +16,6 @@ V0164,two searches found no firm named N S Shastri And Co
 V0165,individual payee; no business record to verify against
 V0166,individual payee; no business record to verify against
 V0169,individual payee; no business record to verify against
-V0176,no company named Porezno Savjetništvo Tuk d.o.o. was found in Croatian directories after two searches
 V0177,individual payee; no business record to verify against
 V0178,individual payee; no business record to verify against
 V0180,no company named Aquila Remete d.o.o. was found after two searches
@@ -34,25 +27,20 @@ V0192,no club named Chamiers Recreation Club was found after two searches
 V0197,no club named P S Recreation Club was found after two searches
 V0205,no company named Oladi d.o.o. was found in Croatian registries after two searches
 V0209,no business named Winmaxi Tours & Travels was found after two searches
-V0210,no company named Digitalna Produkcija j.d.o.o. was found in Croatian registries after two searches
 V0217,no company named Galop-Prijevoz d.o.o. was found in Croatian registries after two searches
 V0219,no company named Urbani Eventi d.o.o. was found in Croatian registries after two searches
 V0223,no company named BB Football Scouting j.d.o.o. was found after two searches
-V0225,a Lider Media article ties it to the Croata brand but no source states what it does
 V0226,two searches and a page fetch found no company of this name
 V0227,no club named Friends Sports Club was found after two searches
 V0233,no company named Catering Ivić d.o.o. was found after two searches
 V0234,no business named Blink Events was found after two searches
 V0235,no business named Grafo-Jan was found under any spelling after two searches
 V0236,no business named Mesa Verde was found in Zagreb or Chennai after two searches
-V0244,a directory lists the company in Zagreb but no source states what it does
 V0253,no company named Streamlinereforms Inc or Streamline Reforms was found after two searches
 V0263,no registry entry or website for Tiganda j.d.o.o. was found after two searches
 V0266,no business named Lancefield Bus Service was found; results were only public bus route news
 V0267,the company appears on a paywalled registry page that does not show its main activity
-V0271,no organisation named Inicijativa Centar Za Edukaciju was found after two searches
 V0272,no registry entry or website for Niva Transport j.d.o.o. was found after two searches
-V0279,"no registry entry or website for Treci Posao d.o.o. was found after two searches, with and without diacritics"
 V0285,two searches found only a job listing and no registry record or description of the business
 V0289,the generic name matched only unrelated food businesses after two searches
 V0294,two possible UK businesses match the name but neither is confirmed
@@ -60,7 +48,6 @@ V0295,no company named Media Promo Plus d.o.o. was found after two searches
 V0296,no registry or website record for Expert-Ing d.o.o. was found after two searches
 V0301,no business matching Rishi Events And Entainment was found after two searches
 V0302,"no registry entry, website or other record for Kosmaz Technologies in Croatia was found after two searches"
-V0315,no business trading as Paint&Wine was found after two searches by its trading name
 V0317,two companies named Advena exist in payer countries and nothing ties either to this payee
 V0319,"two Croatian companies named Monile exist, neither as a j.d.o.o., and nothing ties either to this payee"
 V0320,no company named Puzzle Promotion j.d.o.o. was found after two searches
@@ -74,7 +61,6 @@ V0340,"no registry entry, website or other record for Till Trade d.o.o. was foun
 V0344,no Croatian company named Lemia d.o.o. was found after two searches
 V0346,Companies House lists Meluba Limited but no readable source shows what it does
 V0354,no association registered as Sportska udruga Split was found after two searches
-V0358,a paywalled registry listing names the company but no readable source shows what it provides
 V0360,"no registry entry, website or other record for New Block d.o.o. was found after two searches"
 V0367,no business trading as Istra Wine was found after two searches
 V0373,several unrelated businesses share the name and nothing ties one to this payee

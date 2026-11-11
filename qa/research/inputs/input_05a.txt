@@ -1,0 +1,20 @@
+V0162 | Pink Ribbon Shop | AP name: Pink Ribbon Shop | $2,251 | legal-form clue: none | no hint
+V0163 | StarHub Ltd | AP name: Starhub Ltd (Supplier) | $2,205 | legal-form clue: United Kingdom | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet. | name note: Supplier tag removed; the source system appears to hold a second record for this company
+V0164 | N S Shastri And Co | AP name: N S Shastri And Co | $2,194 | legal-form clue: none | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece.
+V0165 | John Smith | AP name: John Smith | $2,163 | legal-form clue: none | hint 78: Stipe Piric, John Smith, Fabiola Thistlewhaite, George Anchor, Susan Lee, Ansar Madovic: individual payees, likely contractors or reimbursements, G&A, confidence low.
+V0166 | Fabiola Thistlewhaite | AP name: Fabiola Thistlewhaite | $2,154 | legal-form clue: none | hint 78: Stipe Piric, John Smith, Fabiola Thistlewhaite, George Anchor, Susan Lee, Ansar Madovic: individual payees, likely contractors or reimbursements, G&A, confidence low.
+V0167 | HP Inc UK Limited | AP name: Hp Inc Uk Limited | $2,136 | legal-form clue: United States | no hint
+V0168 | Cision PR Newswire | AP name: Cision Pr Newswire | $2,110 | legal-form clue: none | hint 55: Carrington Communications, Cision PR Newswire: PR.
+V0169 | George Anchor | AP name: George Anchor | $2,107 | legal-form clue: none | hint 78: Stipe Piric, John Smith, Fabiola Thistlewhaite, George Anchor, Susan Lee, Ansar Madovic: individual payees, likely contractors or reimbursements, G&A, confidence low.
+V0170 | Yoxel, Inc | AP name: Yoxel, Inc | $2,044 | legal-form clue: United States | hint 4: Yoxel: Salesforce email and calendar sync.
+V0171 | GRT Hotels And Resorts P Ltd | AP name: Grt Hotels And Resorts P Ltd | $2,032 | legal-form clue: India | no hint
+V0172 | Apple Pty Ltd | AP name: Apple Pty Ltd | $2,031 | legal-form clue: Australia | no hint
+V0173 | Slack Technologies Limited | AP name: Slack Technologies Limited | $1,989 | legal-form clue: United Kingdom | no hint
+V0174 | G S Notary Public Limited | AP name: G S Notary Public Limited | $1,935 | legal-form clue: United Kingdom | no hint
+V0175 | Apple Distribution International Ltd | AP name: Apple Distribution International Ltd | $1,913 | legal-form clue: United Kingdom | no hint
+V0176 | Porezno Savjetništvo Tuk d.o.o. | AP name: Porezno Savjetniå¡Tvo Tuk D.O.O. | $1,813 | legal-form clue: Croatia | hint 12: BDO LLP, Grant Thornton, PwC, Crowe Horwath Revizija, Collards, McBurneys, N S Shastri, Pinnacle Partnership, Taxstudio, Porezno Savjetništvo Tuk, Eurofast: audit, tax and accounting across the UK, Croatia, India, Greece. | name note: mojibake repaired
+V0177 | Susan Lee | AP name: Susan Lee | $1,762 | legal-form clue: none | hint 78: Stipe Piric, John Smith, Fabiola Thistlewhaite, George Anchor, Susan Lee, Ansar Madovic: individual payees, likely contractors or reimbursements, G&A, confidence low.
+V0178 | Ansar Madovic | AP name: Ansar Madovic | $1,732 | legal-form clue: none | hint 78: Stipe Piric, John Smith, Fabiola Thistlewhaite, George Anchor, Susan Lee, Ansar Madovic: individual payees, likely contractors or reimbursements, G&A, confidence low.
+V0179 | Radius Group, Inc | AP name: Radius Group, Inc | $1,723 | legal-form clue: United States | hint 30: Radius Group: likely global payroll and expansion services, confidence low.
+V0180 | Aquila Remete d.o.o. | AP name: Aquila Remete D.O.O. | $1,706 | legal-form clue: Croatia | no hint
+V0181 | Clime India Private Limited | AP name: Clime India Private Limited | $1,678 | legal-form clue: India | no hint

@@ -1,0 +1,20 @@
+V0302 | Kosmaz Technologies Croatia | AP name: Kosmaz Technologies Croatia | $195 | legal-form clue: Croatia | no hint
+V0303 | DHL | AP name: Dhl | $191 | legal-form clue: none | no hint
+V0304 | Hotel Laguna d.d. | AP name: Hotel Laguna D.D. | $190 | legal-form clue: Croatia | no hint
+V0305 | Bigshare Services Private Limited | AP name: Bigshare Services Private Limited | $188 | legal-form clue: India | hint 42: Computershare-Caboodle, Bigshare, NSDL: share plan administration and depository.
+V0306 | Zettanet | AP name: Zettanet | $183 | legal-form clue: none | hint 69: Hrvatski Telekom, Telemach, T-Mobile, Vodafone Australia, Starhub, BT, Inet Telecoms, Zettanet: telecom and internet.
+V0307 | Hahn Air | AP name: Hahn Air | $183 | legal-form clue: none | no hint
+V0308 | Vitality Works | AP name: Vitality Works | $182 | legal-form clue: none | no hint
+V0309 | Avoxi Inc | AP name: Avoxi Inc | $178 | legal-form clue: United States | hint 70: Avoxi: cloud telephony numbers.
+V0310 | Zapier Inc. | AP name: Zapier Inc. | $167 | legal-form clue: United States | no hint
+V0311 | SolarWinds, Inc | AP name: Solarwinds, Inc | $166 | legal-form clue: United States | no hint
+V0312 | Xenon Savjetovanje d.o.o. | AP name: Xenon Savjetovanje D.O.O. | $164 | legal-form clue: Croatia | no hint
+V0313 | Floom Ltd | AP name: Floom Ltd | $162 | legal-form clue: United Kingdom | no hint
+V0314 | Notino s.r.o. | AP name: Notino S.R.O. | $161 | legal-form clue: Czech Republic or Slovakia | no hint
+V0315 | Paint&Wine, Vl. Stevo Dosen | AP name: Paint&Wine, Vl. Stevo Dosen | $159 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0316 | Parcelforce Worldwide | AP name: Parcelforce Worldwide | $155 | legal-form clue: none | no hint
+V0317 | Advena | AP name: Advena | $154 | legal-form clue: none | no hint
+V0318 | Hrvatski Nezavisnici Izvoznici Softvera | AP name: Hrvatski Nezavisnici Izvoznici Softvera | $154 | legal-form clue: Croatia | hint 73: Hrvatski Nezavisni Izvoznici Softvera, Split Tech City: industry and community memberships. | name note: Nezavisnici as in the source; the analyst hint spells it Nezavisni
+V0319 | Monile j.d.o.o. | AP name: Monile J.D.O.O. | $152 | legal-form clue: Croatia | no hint
+V0320 | Puzzle Promotion j.d.o.o. | AP name: Puzzle Promotion J.D.O.O. | $143 | legal-form clue: Croatia | no hint
+V0321 | Zagrebački Holding d.o.o. | AP name: Zagrebaä_x008d_Ki Holding D.O.O. | $143 | legal-form clue: Croatia | hint 67: Zagrebački Holding: Zagreb city utilities. | name note: mojibake repaired

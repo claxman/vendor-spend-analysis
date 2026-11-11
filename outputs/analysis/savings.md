@@ -8,14 +8,14 @@ Written 2026-11-11 by `scripts/03_savings.py` from `outputs/vendors_classified.c
 |---|---|
 | Vendor rows | 386 (41 levers in use) |
 | Total spend, 12 months | $7,887,360 |
-| Recurring base (`is_recurring` TRUE) | 270 rows, $7,556,683 (95.8%) |
-| Non-recurring spend (`is_recurring` FALSE) | 116 rows, $330,678 (4.2%) |
+| Recurring base (`is_recurring` TRUE) | 269 rows, $7,542,174 (95.6%) |
+| Non-recurring spend (`is_recurring` FALSE) | 117 rows, $345,186 (4.4%) |
 | Addressable spend (`is_addressable` TRUE) | 369 rows, $7,765,704 (98.5%) |
-| Spend on levers with a base above 0% | 300 rows, $7,323,271 (92.8%) |
-| Run-rate saving, low / base / high | $1,577,675 / $2,247,704 / $3,114,502 |
-| Base saving as a share of total spend | 28.5% |
-| Saving without any acquirer decision (vendor action alone) | $1,282,569 (16.3%) |
-| Year-1 saving (base times each lever's year-1 factor) | $1,221,950 (15.5%) |
+| Spend on levers with a base above 0% | 300 rows, $7,309,070 (92.7%) |
+| Run-rate saving, low / base / high | $1,565,930 / $2,229,687 / $3,095,673 |
+| Base saving as a share of total spend | 28.3% |
+| Saving without any acquirer decision (vendor action alone) | $1,263,566 (16.0%) |
+| Year-1 saving (base times each lever's year-1 factor) | $1,208,570 (15.3%) |
 
 ## Excluded spend by reason
 
@@ -32,20 +32,20 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | Customer-mandated platform fees | Excluded | 3 | $97,400 | 1.2% | $0 | Fees a customer requires the company to pay: not addressable. |
 | Statutory and government | Excluded | 6 | $15,646 | 0.2% | $0 | Taxes, government fees and regulators: not addressable. |
 | Student labour | Excluded | 3 | $54,117 | 0.7% | $0 | Workforce cost, set by the hiring plan, not a vendor action. |
-| One-off spend that falls away | Excluded | 46 | $32,998 | 0.4% | $0 | One-off spend falls away without action, so no saving is claimed on it; one-off payments to individuals are a control finding, not a saving (step 4b). |
+| One-off spend that falls away | Excluded | 46 | $47,199 | 0.6% | $0 | One-off spend falls away without action, so no saving is claimed on it; one-off payments to individuals are a control finding, not a saving (step 4b). |
 | Bank, payment and certification fees | Excluded | 3 | $5,299 | 0.1% | $0 | Added in step 4: fees set by transaction volume or by the certificates customers ask for, with no vendor action modelled. |
-| Total |  | 86 | $564,090 | 7.2% | $58,070 |  |
+| Total |  | 86 | $578,291 | 7.3% | $58,070 |  |
 
 ## Savings by opportunity
 
 | Opportunity | Rows | Spend | Low | Base | High | Without decision | Year 1 | Base share of spend |
 |---|---|---|---|---|---|---|---|---|
 | Salesforce platform agreement | 5 | $3,382,759 | $335,231 | $514,601 | $849,833 | $514,601 | $257,301 | 15.2% |
-| Office exit | 33 | $896,401 | $531,905 | $669,333 | $800,825 | $221,132 | $334,667 | 74.7% |
-| Back office into group shared services | 82 | $1,742,298 | $456,767 | $650,213 | $824,900 | $196,816 | $356,469 | 37.3% |
-| Second wave | 201 | $1,433,509 | $253,772 | $413,556 | $638,944 | $350,020 | $273,514 | 28.8% |
-| Excluded | 65 | $432,393 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Total | 386 | $7,887,360 | $1,577,675 | $2,247,704 | $3,114,502 | $1,282,569 | $1,221,950 | 28.5% |
+| Office exit | 32 | $896,340 | $531,874 | $669,290 | $800,776 | $221,120 | $334,645 | 74.7% |
+| Back office into group shared services | 84 | $1,750,394 | $458,590 | $653,457 | $829,563 | $198,236 | $358,720 | 37.3% |
+| Second wave | 200 | $1,411,273 | $240,234 | $392,339 | $615,501 | $329,609 | $257,904 | 27.8% |
+| Excluded | 65 | $446,594 | $0 | $0 | $0 | $0 | $0 | 0.0% |
+| Total | 386 | $7,887,360 | $1,565,930 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
 
 ## Savings by cost cluster
 
@@ -54,22 +54,22 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | Salesforce platform | 5 | $3,382,759 | $335,231 | $514,601 | $849,833 | $514,601 | $257,301 | 15.2% |
 | Office footprint | 10 | $837,043 | $502,226 | $627,782 | $753,338 | $209,261 | $313,891 | 75.0% |
 | Audit, tax, accounting and corporate services | 24 | $590,674 | $140,218 | $197,389 | $254,561 | $58,979 | $79,317 | 33.4% |
-| Travel and entertainment | 49 | $464,995 | $77,112 | $128,519 | $179,927 | $128,519 | $96,390 | 27.6% |
+| Travel and entertainment | 50 | $465,303 | $77,204 | $128,673 | $180,142 | $128,673 | $96,505 | 27.7% |
 | Insurance and benefits | 25 | $428,012 | $34,924 | $62,158 | $89,392 | $27,382 | $31,104 | 14.5% |
-| Recruiting and HR outsourcing | 18 | $404,135 | $166,544 | $231,463 | $277,622 | $79,876 | $188,032 | 57.3% |
+| Recruiting and HR outsourcing | 19 | $408,206 | $167,562 | $233,498 | $280,675 | $80,893 | $189,559 | 57.2% |
 | Software subscriptions (non-Salesforce) | 39 | $377,257 | $116,659 | $167,641 | $218,624 | $73,877 | $63,079 | 44.4% |
-| Outsourced engineering and contractors | 8 | $246,157 | $52,165 | $79,730 | $107,295 | $36,463 | $43,572 | 32.4% |
 | Cloud, telecom and IT | 30 | $238,201 | $31,666 | $56,243 | $87,152 | $35,974 | $30,910 | 23.6% |
+| Outsourced engineering and contractors | 6 | $227,624 | $47,007 | $71,268 | $95,529 | $28,806 | $37,528 | 31.3% |
 | M&A and transaction costs | 4 | $226,932 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Legal | 19 | $179,798 | $34,859 | $52,289 | $69,718 | $17,430 | $31,373 | 29.1% |
-| Marketing agencies, media and memberships | 25 | $141,008 | $19,850 | $31,664 | $105,808 | $31,664 | $23,748 | 22.5% |
+| Legal | 20 | $183,823 | $35,664 | $53,496 | $71,329 | $17,832 | $32,098 | 29.1% |
+| Marketing agencies, media and memberships | 27 | $177,352 | $27,119 | $42,567 | $123,980 | $42,567 | $31,926 | 24.0% |
 | Customer-mandated platform fees | 3 | $97,400 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Team events, perks and wellness | 37 | $81,157 | $25,703 | $38,554 | $48,192 | $38,554 | $28,915 | 47.5% |
-| Office running costs | 44 | $71,130 | $29,834 | $41,861 | $48,107 | $12,182 | $20,961 | 58.9% |
+| Office running costs | 44 | $85,577 | $29,803 | $41,818 | $48,057 | $12,169 | $20,940 | 48.9% |
 | Student labour | 3 | $54,117 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Unidentified and individual payees | 37 | $50,939 | $10,685 | $17,809 | $24,933 | $17,809 | $13,357 | 35.0% |
+| Unidentified and individual payees | 36 | $46,622 | $9,483 | $15,804 | $22,126 | $15,804 | $11,853 | 33.9% |
+| Team events, perks and wellness | 35 | $44,812 | $11,165 | $16,747 | $20,934 | $16,747 | $12,560 | 37.4% |
 | Statutory and government | 6 | $15,646 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Total | 386 | $7,887,360 | $1,577,675 | $2,247,704 | $3,114,502 | $1,282,569 | $1,221,950 | 28.5% |
+| Total | 386 | $7,887,360 | $1,565,930 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
 
 ## Savings by lever
 
@@ -80,15 +80,15 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | Kimble PSA licences | Salesforce platform agreement | none | 1 | $52,825 | $2,641 | $5,283 | $7,924 | $5,283 | $2,641 | 10.0% |
 | Slack and Yoxel inside the Salesforce renewal | Salesforce platform agreement | none | 2 | $4,033 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Office footprint | Office exit | remote_operating_model | 10 | $837,043 | $502,226 | $627,782 | $753,338 | $209,261 | $313,891 | 75.0% |
-| Office running costs | Office exit | remote_operating_model | 23 | $59,359 | $29,679 | $41,551 | $47,487 | $11,872 | $20,775 | 70.0% |
+| Office running costs | Office exit | remote_operating_model | 22 | $59,297 | $29,648 | $41,508 | $47,437 | $11,859 | $20,754 | 70.0% |
 | Audit, tax and accounting firms | Back office into group shared services | group_auditor | 15 | $553,641 | $138,410 | $193,774 | $249,138 | $55,364 | $77,510 | 35.0% |
 | Corporate secretarial, registered agent and share registry | Back office into group shared services | none | 5 | $18,075 | $1,808 | $3,615 | $5,423 | $3,615 | $1,808 | 20.0% |
 | R&D tax credit adviser (contingent fee) | Back office into group shared services | none | 1 | $13,659 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Law firms and legal resourcing | Back office into group shared services | group_legal | 12 | $174,296 | $34,859 | $52,289 | $69,718 | $17,430 | $31,373 | 30.0% |
+| Law firms and legal resourcing | Back office into group shared services | group_legal | 13 | $178,321 | $35,664 | $53,496 | $71,329 | $17,832 | $32,098 | 30.0% |
 | Employment-law settlement advice | Back office into group shared services | none | 3 | $1,930 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Recruitment agencies and job boards | Back office into group shared services | group_talent_function | 7 | $149,179 | $119,344 | $149,179 | $149,179 | $44,754 | $134,262 | 100.0% |
 | LinkedIn | Back office into group shared services | group_talent_function | 1 | $55,573 | $11,115 | $16,672 | $27,786 | $11,115 | $10,003 | 30.0% |
-| External training and coaching | Back office into group shared services | group_talent_function | 3 | $87,694 | $21,923 | $43,847 | $65,770 | $21,923 | $32,885 | 50.0% |
+| External training and coaching | Back office into group shared services | group_talent_function | 4 | $91,765 | $22,941 | $45,882 | $68,823 | $22,941 | $34,412 | 50.0% |
 | Employer-of-record providers | Back office into group shared services | group_payroll | 3 | $89,532 | $8,953 | $13,430 | $22,383 | $0 | $6,715 | 15.0% |
 | Payroll processing providers | Back office into group shared services | group_payroll | 2 | $20,838 | $5,209 | $8,335 | $12,503 | $2,084 | $4,168 | 40.0% |
 | Commercial insurance through brokers | Back office into group shared services | group_insurance_programme | 2 | $152,800 | $22,920 | $38,200 | $53,480 | $15,280 | $19,100 | 25.0% |
@@ -97,8 +97,8 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | HR and finance systems | Back office into group shared services | group_systems | 4 | $101,762 | $61,057 | $81,410 | $101,762 | $10,176 | $20,352 | 80.0% |
 | HubSpot | Back office into group shared services | parent_crm_instance | 1 | $32,187 | $19,312 | $25,750 | $32,187 | $3,219 | $6,437 | 80.0% |
 | Navan | Second wave | none | 2 | $415,913 | $62,387 | $103,978 | $145,570 | $103,978 | $77,984 | 25.0% |
-| Other travel, hotels, restaurants and food through AP | Second wave | none | 47 | $49,082 | $14,725 | $24,541 | $34,358 | $24,541 | $18,406 | 50.0% |
-| Team events, perks and wellness | Second wave | none | 36 | $64,257 | $25,703 | $38,554 | $48,192 | $38,554 | $28,915 | 60.0% |
+| Other travel, hotels, restaurants and food through AP | Second wave | none | 48 | $49,390 | $14,817 | $24,695 | $34,573 | $24,695 | $18,521 | 50.0% |
+| Team events, perks and wellness | Second wave | none | 34 | $27,912 | $11,165 | $16,747 | $20,934 | $16,747 | $12,560 | 60.0% |
 | Other software subscriptions | Second wave | none | 33 | $242,907 | $36,436 | $60,727 | $85,018 | $60,727 | $36,436 | 25.0% |
 | AWS | Second wave | none | 2 | $111,552 | $11,155 | $22,310 | $33,466 | $22,310 | $13,386 | 20.0% |
 | Telecom and internet providers | Second wave | remote_operating_model | 11 | $70,891 | $17,723 | $28,356 | $42,534 | $10,634 | $14,178 | 40.0% |
@@ -107,16 +107,16 @@ Every lever with a 0% base case, one line each. The spend stays in the file's to
 | Couriers and postage | Second wave | none | 9 | $3,100 | $155 | $310 | $620 | $310 | $186 | 10.0% |
 | Marketing agencies | Second wave | none | 3 | $37,770 | $11,331 | $18,885 | $26,439 | $18,885 | $14,164 | 50.0% |
 | TM Forum | Second wave | none | 2 | $58,070 | $0 | $0 | $58,070 | $0 | $0 | 0.0% |
-| Other marketing, media and events | Second wave | none | 14 | $42,598 | $8,520 | $12,779 | $21,299 | $12,779 | $9,584 | 30.0% |
-| Outsourced engineering and contractors | Second wave | group_engineering_sourcing | 4 | $216,335 | $43,267 | $64,900 | $86,534 | $21,633 | $32,450 | 30.0% |
-| Unidentified and individual payees | Second wave | none | 21 | $65,276 | $19,583 | $32,638 | $45,693 | $32,638 | $24,479 | 50.0% |
+| Other marketing, media and events | Second wave | none | 16 | $78,942 | $15,788 | $23,683 | $39,471 | $23,683 | $17,762 | 30.0% |
+| Outsourced engineering and contractors | Second wave | group_engineering_sourcing | 3 | $212,310 | $42,462 | $63,693 | $84,924 | $21,231 | $31,846 | 30.0% |
+| Unidentified and individual payees | Second wave | none | 20 | $46,759 | $14,028 | $23,379 | $32,731 | $23,379 | $17,534 | 50.0% |
 | M&A and transaction costs | Excluded | none | 4 | $226,932 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Customer-mandated platform fees | Excluded | none | 3 | $97,400 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Statutory and government | Excluded | none | 6 | $15,646 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Student labour | Excluded | none | 3 | $54,117 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| One-off spend that falls away | Excluded | none | 46 | $32,998 | $0 | $0 | $0 | $0 | $0 | 0.0% |
+| One-off spend that falls away | Excluded | none | 46 | $47,199 | $0 | $0 | $0 | $0 | $0 | 0.0% |
 | Bank, payment and certification fees | Excluded | none | 3 | $5,299 | $0 | $0 | $0 | $0 | $0 | 0.0% |
-| Total |  |  | 386 | $7,887,360 | $1,577,675 | $2,247,704 | $3,114,502 | $1,282,569 | $1,221,950 | 28.5% |
+| Total |  |  | 386 | $7,887,360 | $1,565,930 | $2,229,687 | $3,095,673 | $1,263,566 | $1,208,570 | 28.3% |
 
 ## Assumptions behind each lever
 
@@ -137,7 +137,7 @@ The register, repeated next to the figures it produces. Percentages are of each 
 | Employment-law settlement advice | `V0230`, `V0231`, `V0241`: small one-off payments to employment-law firms | 0% / 0% / 0% | 0% | 0.5 | none | These are one payment per leaver for settlement-agreement advice, not a vendor relationship. |
 | Recruitment agencies and job boards | the recruitment agencies, staffing firms and job boards in cluster Recruiting and HR outsourcing | 80% / 100% / 100% | 30% | 0.9 | group_talent_function | This spend follows hiring volume: with the group talent function hiring, the agencies and job boards end as open mandates close; without it, preferred suppliers and a fee cap are worth 30%. |
 | LinkedIn | LinkedIn (`V0026`) | 20% / 30% / 50% | 20% | 0.6 | group_talent_function | Recruiter seats fall when the group talent function does the hiring; the seat review alone is worth 20% at the next renewal. |
-| External training and coaching | leadership development, coaching and skills training in cluster Recruiting and HR outsourcing (`V0020`, `V0075`, `V0079`) | 25% / 50% / 75% | 25% | 0.75 | group_talent_function | Added in step 4: the group's own development programmes replace discretionary coaching and training; without the decision a cap on coaching spend is worth 25%; the change starts within 90 days. |
+| External training and coaching | leadership development, coaching and skills training in cluster Recruiting and HR outsourcing (`V0020`, `V0075`, `V0079`, and from step 5 `V0127`) | 25% / 50% / 75% | 25% | 0.75 | group_talent_function | Added in step 4: the group's own development programmes replace discretionary coaching and training; without the decision a cap on coaching spend is worth 25%; the change starts within 90 days. |
 | Employer-of-record providers | `V0016`, `V0090`, `V0179` | 10% / 15% / 25% | 0% | 0.5 | group_payroll | These invoices usually carry the employees' pay as a pass-through, so only the service fee is addressable, and only group payroll removes it. |
 | Payroll processing providers | `V0111`, `V0058` | 25% / 40% / 60% | 10% | 0.5 | group_payroll | Group payroll replaces outsourced processing as each country migrates; without it a re-tender is worth 10%. |
 | Commercial insurance through brokers | the broker and the US agency (`V0010`, `V0078`) | 15% / 25% / 35% | 10% | 0.5 | group_insurance_programme | Cover placed through brokers moves into the group programme at renewal; without the decision a re-broke is worth 10%. |
@@ -157,8 +157,8 @@ The register, repeated next to the figures it produces. Percentages are of each 
 | Marketing agencies | the marketing, media and PR agencies (`V0050`, `V0056`, `V0184`) | 30% / 50% / 70% | 50% | 0.75 | none | Agency retainers are consolidated or ended within 90 days. |
 | TM Forum | TM Forum (`V0025`, `V0249`) | 0% / 0% / 100% | 0% | 0.5 | none | A go-to-market credential; the high case applies only if the parent holds a membership that covers subsidiaries. |
 | Other marketing, media and events | the rest of cluster Marketing agencies, media and memberships, recurring rows | 20% / 30% / 50% | 30% | 0.75 | none | Media, events, memberships, print and stock assets are cut back under one marketing budget within 90 days. |
-| Outsourced engineering and contractors | the consultancies and development firms in cluster Outsourced engineering and contractors (`V0009`, whose share is provisional until Finance confirms the entity, question 3; `V0019`, `V0116`, `V0185`) | 20% / 30% / 40% | 10% | 0.5 | group_engineering_sourcing | The work continues, so the saving is the rate difference between the consultancies and the group's engineering sourcing; without the decision a rate renegotiation is worth 10%. |
-| Unidentified and individual payees | cluster Unidentified and individual payees, recurring rows, and the unidentified contractors (`V0065`, `V0074`, `V0137`) | 30% / 50% / 70% | 50% | 0.75 | none | Payments stop until Finance identifies the payee, and some are then re-approved; the stop starts within 90 days. |
+| Outsourced engineering and contractors | the consultancies and development firms in cluster Outsourced engineering and contractors (`V0009`, whose share is provisional until Finance confirms the work it supplies, question 3; `V0019`, `V0185`; `V0116` left in step 5, identified as a law firm) | 20% / 30% / 40% | 10% | 0.5 | group_engineering_sourcing | The work continues, so the saving is the rate difference between the consultancies and the group's engineering sourcing; without the decision a rate renegotiation is worth 10%. |
+| Unidentified and individual payees | cluster Unidentified and individual payees, recurring rows, and the unidentified contractors (`V0074`, `V0137`; `V0065` left in step 5, identified as a decorating contractor) | 30% / 50% / 70% | 50% | 0.75 | none | Payments stop until Finance identifies the payee, and some are then re-approved; the stop starts within 90 days. |
 | M&A and transaction costs | cluster M&A and transaction costs | 0% / 0% / 0% | 0% | 0.5 | none | Non-recurring deal costs that fall away without action. |
 | Customer-mandated platform fees | cluster Customer-mandated platform fees | 0% / 0% / 0% | 0% | 0.5 | none | Fees a customer requires the company to pay: not addressable. |
 | Statutory and government | cluster Statutory and government | 0% / 0% / 0% | 0% | 0.5 | none | Taxes, government fees and regulators: not addressable. |
@@ -172,17 +172,17 @@ For each decision: the base saving of the levers that depend on it, what vendor 
 
 | Decision | Levers | Rows | Spend | Saving with the decision (base) | Saving without it | Value of the decision | Year 1 with the decision |
 |---|---|---|---|---|---|---|---|
-| `remote_operating_model` | Office footprint; Office running costs; Telecom and internet providers | 44 | $967,292 | $697,689 | $231,766 | $465,923 | $348,845 |
-| `group_talent_function` | Recruitment agencies and job boards; LinkedIn; External training and coaching | 11 | $292,446 | $209,698 | $77,792 | $131,906 | $177,150 |
+| `remote_operating_model` | Office footprint; Office running costs; Telecom and internet providers | 43 | $967,230 | $697,646 | $231,754 | $465,892 | $348,823 |
+| `group_talent_function` | Recruitment agencies and job boards; LinkedIn; External training and coaching | 12 | $296,517 | $211,734 | $78,810 | $132,924 | $178,676 |
 | `group_insurance_programme` | Commercial insurance through brokers; Employee health and life insurance | 12 | $389,927 | $61,913 | $27,136 | $34,776 | $30,956 |
 | `group_auditor` | Audit, tax and accounting firms | 15 | $553,641 | $193,774 | $55,364 | $138,410 | $77,510 |
 | `parent_crm_instance` | HubSpot | 1 | $32,187 | $25,750 | $3,219 | $22,531 | $6,437 |
 | `group_it_procurement` | Employee hardware | 10 | $50,925 | $5,093 | $2,546 | $2,546 | $3,056 |
 | `group_payroll` | Employer-of-record providers; Payroll processing providers | 5 | $110,370 | $21,765 | $2,084 | $19,681 | $10,882 |
 | `group_systems` | HR and finance systems | 4 | $101,762 | $81,410 | $10,176 | $71,233 | $20,352 |
-| `group_legal` | Law firms and legal resourcing | 12 | $174,296 | $52,289 | $17,430 | $34,859 | $31,373 |
-| `group_engineering_sourcing` | Outsourced engineering and contractors | 4 | $216,335 | $64,900 | $21,633 | $43,267 | $32,450 |
-| Total |  | 118 | $2,889,181 | $1,414,281 | $449,146 | $965,134 | $739,012 |
+| `group_legal` | Law firms and legal resourcing | 13 | $178,321 | $53,496 | $17,832 | $35,664 | $32,098 |
+| `group_engineering_sourcing` | Outsourced engineering and contractors | 3 | $212,310 | $63,693 | $21,231 | $42,462 | $31,846 |
+| Total |  | 118 | $2,893,191 | $1,416,273 | $450,152 | $966,121 | $740,638 |
 
 ## Largest vendor savings
 
@@ -208,17 +208,17 @@ The 15 rows with the largest base saving.
 
 ## Savings on non-recurring rows
 
-116 rows have `is_recurring` FALSE ($330,678). A saving sits on them only in Travel and entertainment and Team events, perks and wellness, where the category recurs even when the payee does not; every other non-recurring row is in "One-off spend that falls away" at 0%.
+117 rows have `is_recurring` FALSE ($345,186). A saving sits on them only in Travel and entertainment and Team events, perks and wellness, where the category recurs even when the payee does not; every other non-recurring row is in "One-off spend that falls away" at 0%.
 
 | Lever | Non-recurring rows | Spend | Base saving | Year 1 |
 |---|---|---|---|---|
-| Other travel, hotels, restaurants and food through AP | 34 | $36,562 | $18,281 | $13,711 |
+| Other travel, hotels, restaurants and food through AP | 35 | $36,870 | $18,435 | $13,826 |
 | Team events, perks and wellness | 28 | $20,618 | $12,371 | $9,278 |
 | Employment-law settlement advice | 3 | $1,930 | $0 | $0 |
 | M&A and transaction costs | 4 | $226,932 | $0 | $0 |
-| One-off spend that falls away | 46 | $32,998 | $0 | $0 |
+| One-off spend that falls away | 46 | $47,199 | $0 | $0 |
 | Statutory and government | 1 | $11,637 | $0 | $0 |
-| Total | 116 | $330,678 | $30,652 | $22,989 |
+| Total | 117 | $345,186 | $30,806 | $23,104 |
 
 The ten largest:
 
@@ -243,11 +243,11 @@ The vendor rows sum to the levers, the clusters and the opportunities. Largest d
 |---|---|---|---|---|---|
 | Rows | 386 | 386 | 386 | 386 | 0 |
 | Spend | $7,887,360.40 | $7,887,360.40 | $7,887,360.40 | $7,887,360.40 | $0.00 |
-| Low | $1,577,675.01 | $1,577,675.01 | $1,577,675.01 | $1,577,675.01 | $0.00 |
-| Base | $2,247,703.53 | $2,247,703.53 | $2,247,703.53 | $2,247,703.53 | $0.00 |
-| High | $3,114,502.20 | $3,114,502.20 | $3,114,502.20 | $3,114,502.20 | $0.00 |
-| Without decision | $1,282,569.07 | $1,282,569.07 | $1,282,569.07 | $1,282,569.07 | $0.00 |
-| Year 1 | $1,221,950.21 | $1,221,950.21 | $1,221,950.21 | $1,221,950.21 | $0.00 |
+| Low | $1,565,929.90 | $1,565,929.90 | $1,565,929.90 | $1,565,929.90 | $0.00 |
+| Base | $2,229,687.31 | $2,229,687.31 | $2,229,687.31 | $2,229,687.31 | $0.00 |
+| High | $3,095,672.71 | $3,095,672.71 | $3,095,672.71 | $3,095,672.71 | $0.00 |
+| Without decision | $1,263,565.97 | $1,263,565.97 | $1,263,565.97 | $1,263,565.97 | $0.00 |
+| Year 1 | $1,208,569.61 | $1,208,569.61 | $1,208,569.61 | $1,208,569.61 | $0.00 |
 
 ## Lever assignments decided in this step
 
@@ -258,12 +258,12 @@ Rows whose lever is an analyst call rather than a cluster rule or a row the regi
 | V0020 | Big Frontier Pty Ltd (Cult Of Monday) | External training and coaching | a lever added in step 4, because the assumptions list has no line for training |
 | V0057 | Benefit Systems d.o.o. | Statutory cover and benefit schemes | the MultiSport card is the gym scheme the assumption names; it stays as an employee benefit at the hub (step 4b), and Gym4You consolidates into it on the Team events lever |
 | V0058 | Smart Group Services d.o.o. | Payroll processing providers | HR outsourcing, unconfirmed; the closest lever by sub_function, and its rationale already waits for group payroll |
-| V0065 | Pingo d.o.o. | Unidentified and individual payees | Terminate until identified, so the unidentified-payee lever rather than the engineering sourcing lever of its cluster |
 | V0074 | Bijeli Pijesak Obrt Za Poslovno Savjetovanje | Unidentified and individual payees | Terminate until identified, so the unidentified-payee lever rather than the engineering sourcing lever of its cluster |
 | V0075 | Ramiro d.o.o. | External training and coaching | a lever added in step 4, because the assumptions list has no line for training |
 | V0076 | Visalogic Limited | Law firms and legal resourcing | immigration work follows the legal cluster into the panel |
 | V0079 | Emerge Development Consultancy Ltd | External training and coaching | a lever added in step 4, because the assumptions list has no line for training |
 | V0098 | Mercer Limited | Employee health and life insurance | benefits consulting is the broking and scheme-terms work that the lever describes |
+| V0127 | Calm Achiever (A Unit Of Mohsin Ali Vakil) | External training and coaching | productivity training identified in step 5, so the training lever rather than the recruitment lever of its cluster |
 | V0137 | Orcola d.o.o. | Unidentified and individual payees | Terminate until identified, so the unidentified-payee lever rather than the engineering sourcing lever of its cluster |
 | V0142 | Bureau Veritas Croatia d.o.o. | Bank, payment and certification fees | a lever added in step 4 at 0%, because the assumptions list has no line for certification audits |
 | V0168 | Cision PR Newswire | Other marketing, media and events | a press release wire, not an agency |

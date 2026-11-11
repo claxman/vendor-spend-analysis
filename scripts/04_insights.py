@@ -296,14 +296,15 @@ def main() -> int:
         f"{ids(individuals)}), {len(surname_like)} single-word names that may be people ({ids(surname_like)}) and one payment "
         f"with no vendor name ({ids(unnamed)}, {money(spend_of(unnamed))}). Each is a contractor-status or reimbursement "
         "question before it is a saving.",
-        f"- A payee name that matches no trading law firm: `V0018` {bisley['vendor_name_clean']}, "
-        f"{money(to_float(bisley['spend_12m']))}. The provider of this data modified vendor names, so an unmatched name is a "
-        "question for Finance (which entity invoiced, and for what; question 7), not evidence of a problem. The spend is "
+        f"- A law firm paid under a name that no longer trades: `V0018` {bisley['vendor_name_clean']}, "
+        f"{money(to_float(bisley['spend_12m']))}. The firm merged into Gordons Partnership in January 2024 and its company is "
+        "now registered as non-trading, so the question for Finance is which entity invoices now (question 7). The provider "
+        "of this data also modified vendor names, so an unmatched name is a question, not evidence of a problem. The spend is "
         "legal work and follows the law-firms lever whoever the payee proves to be; the payee check is a control action.",
         f"- Sole traders paid at contractor scale: {len(obrt_scale)} Croatian obrt rows of $5,000 or more, "
         f"{money(spend_of(obrt_scale))} ({ids(obrt_scale)}), and {len(hinted_unknown)} Croatian companies of unknown function "
         f"({money(spend_of(hinted_unknown))}, led by `V0009` Weking at {money(to_float(weking['spend_12m']))}, whose "
-        f"{money(to_float(srows['V0009']['saving_base']))} base saving is provisional until Finance confirms the entity). "
+        f"{money(to_float(srows['V0009']['saving_base']))} base saving is provisional until Finance confirms the work it supplies). "
         "One-person businesses supplying labour carry an employment-status question as well as an identification one; "
         "with modified vendor names, an unidentified name is a question for Finance, not a finding against the payee.",
         f"- Retail merchants in the vendor master: the forensic pass flags {len(retail_flagged)} consumer or retail payees, "

@@ -1,0 +1,20 @@
+V0282 | Safestore Ltd | AP name: Safestore Ltd | $287 | legal-form clue: United Kingdom | no hint
+V0283 | Split Tech City | AP name: Split Tech City | $284 | legal-form clue: Croatia | hint 73: Hrvatski Nezavisni Izvoznici Softvera, Split Tech City: industry and community memberships.
+V0284 | National Securities Depository Limited (NSDL) | AP name: National Securities Depository Limited(Nsdl) | $281 | legal-form clue: United Kingdom | hint 42: Computershare-Caboodle, Bigshare, NSDL: share plan administration and depository.
+V0285 | Adamma Info Services Private Limited | AP name: Adamma Info Services Private Limited | $273 | legal-form clue: India | no hint
+V0286 | The Riding House Cafe | AP name: The Riding House Cafe | $265 | legal-form clue: none | no hint
+V0287 | Stillmark Zagreb d.o.o. | AP name: Stillmark Zagreb D.O.O. | $263 | legal-form clue: Croatia | no hint
+V0288 | LastPass Ireland Limited | AP name: Lastpass Ireland Limited | $263 | legal-form clue: Ireland | no hint
+V0289 | Taste Of Health | AP name: Taste Of Health | $259 | legal-form clue: none | no hint
+V0290 | Infodata | AP name: Infodata | $241 | legal-form clue: none | no hint
+V0291 | Amazon (Aus) | AP name: Amazon (Aus) | $233 | legal-form clue: Australia | no hint
+V0292 | Regency Hampers Ltd | AP name: Regency Hampers Ltd | $248 | legal-form clue: United Kingdom | no hint
+V0293 | Bella Operation A/S | AP name: Bella Operation A/S | $241 | legal-form clue: Denmark | no hint
+V0294 | The Plant Man | AP name: The Plant Man | $235 | legal-form clue: none | no hint
+V0295 | Media Promo Plus d.o.o. | AP name: Media Promo Plus D.O.O. | $226 | legal-form clue: Croatia | no hint
+V0296 | Expert-Ing d.o.o. | AP name: Expert-Ing D.O.O. | $225 | legal-form clue: Croatia | no hint
+V0297 | Atlassian Pty Ltd | AP name: Atlassian Pty Ltd | $224 | legal-form clue: Australia | no hint
+V0298 | DJs For U | AP name: Djs For U | $220 | legal-form clue: none | hint 75: Lajnap, Escape Art, Maniax, Sportkart, Paint & Fun, Paint&Wine, DJs For U, Blitz Cinestar, Good Game Global, Chamiers and P S Recreation Clubs, Sportska Udruga Split, Friends Sports Club: team events and recreation.
+V0299 | Freepik Company | AP name: Freepik Company | $203 | legal-form clue: none | no hint
+V0300 | Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Štampar | AP name: Nastavni Zavod Za Javno Zdravstvo Dr. Andrija Å Tampar | $199 | legal-form clue: none | hint 65: Nastavni Zavod za Javno Zdravstvo, Specijalistička ordinacija medicine rada (three), Ustanova za zdravstvenu skrb: statutory occupational health examinations. | name note: mojibake repaired
+V0301 | Rishi Events And Entainment | AP name: Rishi Events And Entainment | $198 | legal-form clue: none | no hint
