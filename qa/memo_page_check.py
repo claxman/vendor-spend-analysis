@@ -4,8 +4,10 @@ lines to spare.
 
 This machine has no LibreOffice, pandoc or PDF library, and its Microsoft Word refuses the AppleScript "save as"
 command (error -1708 for every format), so the check uses what does work here:
-  1. Pages, driven by AppleScript through osascript, opens the Word file and exports it as PDF. The PDF embeds
-     Calibri and Calibri Bold, the memo's fonts.
+  1. The open command (Launch Services) puts the Word file in Pages, starting Pages if needed, and AppleScript through
+     osascript has Pages export the document as PDF. The PDF embeds Calibri and Calibri Bold, the memo's fonts.
+     (Pages' own AppleScript open command worked in step 7 but not in step 8: it answered "can't be opened right now,
+     Pages couldn't read the file", one alert per try, and every later event timed out behind the alerts.)
   2. macOS PDFKit, through osascript's JavaScript, reads the PDF back: the page count, the position of every
      character, hence the number of text lines and the lowest line on the page, and whether the header line and
      each table row sit on one line. The lines to spare are the space between the lowest line and the bottom
@@ -53,14 +55,30 @@ TABLE_ROWS = [("$669,000", "Your decision; no"), ("$653,000", "Your decisions; h
 TABLE_END = "Total"
 ROW_PITCH_MAX_PT = 20
 
+CLOSE_SCRIPT = '''on run argv
+  set docName to item 1 of argv
+  tell application "Pages"
+    with timeout of 30 seconds
+      if exists document docName then close document docName saving no
+    end timeout
+  end tell
+  return "ok"
+end run
+'''
+
 RENDER_SCRIPT = '''on run argv
-  set inPath to item 1 of argv
+  set docName to item 1 of argv
   set outPath to item 2 of argv
   tell application "Pages"
-    set d to open (POSIX file inPath)
-    if d is missing value then error "Pages did not open " & inPath
-    export d to (POSIX file outPath) as PDF
-    close d saving no
+    with timeout of 120 seconds
+      repeat 60 times
+        if exists document docName then exit repeat
+        delay 1
+      end repeat
+      if not (exists document docName) then error "Pages has not opened " & docName
+      export document docName to (POSIX file outPath) as PDF
+      close document docName saving no
+    end timeout
   end tell
   return "ok"
 end run
@@ -94,13 +112,24 @@ function run(argv) {
 '''
 
 
-def render(docx: Path, pdf: Path, script: Path) -> None:
-    """Pages exports the Word file as PDF; three tries, because Pages sometimes answers a missing value while busy."""
+def pages_running() -> bool:
+    return subprocess.run(["pgrep", "-x", "Pages"], capture_output=True).returncode == 0
+
+
+def render(docx: Path, pdf: Path, scripts: dict[str, Path]) -> None:
+    """The open command puts the Word file in Pages, starting Pages if needed; AppleScript waits for the document,
+    exports it as PDF and closes it. A document of the same name left open by an earlier run is closed first, so that
+    Pages reads the file afresh. Three tries, because Pages sometimes answers late while busy."""
+    name = docx.stem   # Pages names the document after the file, without its extension
+    if pages_running():
+        subprocess.run(["osascript", str(scripts["close"]), name], capture_output=True, text=True, timeout=60)
+    subprocess.run(["open", "-g", "-a", str(PAGES_APP), str(docx)], check=True, timeout=60)
     for attempt in range(1, 4):
-        out = subprocess.run(["osascript", str(script), str(docx), str(pdf)], capture_output=True, text=True, timeout=240)
+        out = subprocess.run(["osascript", str(scripts["render"]), name, str(pdf)], capture_output=True, text=True,
+                             timeout=240)
         if out.returncode == 0 and pdf.exists():
             return
-        time.sleep(2 * attempt)
+        time.sleep(5 * attempt)
     raise RuntimeError(f"Pages could not render {docx.name}: {out.stderr.strip() or out.stdout.strip()}")
 
 
@@ -128,13 +157,15 @@ def main(argv: list[str]) -> int:
         return 2
     texts = HEADER_TEXTS + [a for a, _ in TABLE_ROWS] + [c for _, c in TABLE_ROWS] + [TABLE_END]
     with tempfile.TemporaryDirectory() as tmp:
-        render_script, measure_script = Path(tmp) / "render.applescript", Path(tmp) / "measure.js"
-        render_script.write_text(RENDER_SCRIPT, encoding="utf-8")
+        scripts = {"close": Path(tmp) / "close.applescript", "render": Path(tmp) / "render.applescript"}
+        scripts["close"].write_text(CLOSE_SCRIPT, encoding="utf-8")
+        scripts["render"].write_text(RENDER_SCRIPT, encoding="utf-8")
+        measure_script = Path(tmp) / "measure.js"
         measure_script.write_text(MEASURE_SCRIPT, encoding="utf-8")
         MEMO_PDF.parent.mkdir(parents=True, exist_ok=True)
         if MEMO_PDF.exists():
             MEMO_PDF.unlink()
-        render(docx, MEMO_PDF, render_script)
+        render(docx, MEMO_PDF, scripts)
         memo = measure(MEMO_PDF, measure_script, texts)
     memo["pages"] = int(memo["pages"])   # PDFKit's page count arrives as text through the JavaScript bridge
     pdf_pages = pdf_page_count(MEMO_PDF)
@@ -160,8 +191,9 @@ def main(argv: list[str]) -> int:
         f"Written by `qa/memo_page_check.py` for `{rel(docx)}`, rendered to `{rel(MEMO_PDF)}`.",
         "",
         "How it was checked: Microsoft Word on this machine refuses the AppleScript save-as command (error -1708 for "
-        "every format), so Pages, driven by AppleScript through osascript, opened the Word file and exported it as PDF "
-        "(the PDF embeds Calibri and Calibri Bold). macOS PDFKit, through osascript's JavaScript, then read the PDF "
+        "every format), so the open command put the Word file in Pages and AppleScript through osascript had Pages "
+        "export it as PDF (the PDF embeds Calibri and Calibri Bold). macOS PDFKit, through osascript's JavaScript, then "
+        "read the PDF "
         "back: the page size, the page count, the position of every character (hence the number of text lines and the "
         "lowest line), and whether the header line and each table row sit on one line. The lines to spare are the space "
         "between the lowest line and the bottom margin, divided by the height of a body line. The page objects in the "

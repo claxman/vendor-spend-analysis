@@ -2,7 +2,7 @@
 
 Written by `qa/memo_page_check.py` for `outputs/memo.docx`, rendered to `outputs/memo.pdf`.
 
-How it was checked: Microsoft Word on this machine refuses the AppleScript save-as command (error -1708 for every format), so Pages, driven by AppleScript through osascript, opened the Word file and exported it as PDF (the PDF embeds Calibri and Calibri Bold). macOS PDFKit, through osascript's JavaScript, then read the PDF back: the page size, the page count, the position of every character (hence the number of text lines and the lowest line), and whether the header line and each table row sit on one line. The lines to spare are the space between the lowest line and the bottom margin, divided by the height of a body line. The page objects in the PDF were counted again from the file.
+How it was checked: Microsoft Word on this machine refuses the AppleScript save-as command (error -1708 for every format), so the open command put the Word file in Pages and AppleScript through osascript had Pages export it as PDF (the PDF embeds Calibri and Calibri Bold). macOS PDFKit, through osascript's JavaScript, then read the PDF back: the page size, the page count, the position of every character (hence the number of text lines and the lowest line), and whether the header line and each table row sit on one line. The lines to spare are the space between the lowest line and the bottom margin, divided by the height of a body line. The page objects in the PDF were counted again from the file.
 
 | Measure | Result |
 |---|---|

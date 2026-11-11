@@ -1,9 +1,9 @@
 # Vendor spend review
 
 **To:** group CEO and CFO   **From:** Chaitanya Laxman, VP Operations, the acquired business   **Date:** November 11, 2026
-**Subject:** Vendor review: $2,229,000 a year, $1,209,000 in year 1
+**Subject:** Vendor review: $2,229,000 a year in savings, $1,209,000 of it in year 1
 
-**Bottom line.** 386 vendors, $7,887,000 of accounts-payable spend over 12 months: the base case saves $2,229,000 a year, 28% of spend, $1,209,000 of it in year 1. The high case is $3,097,000 if every decision and negotiation lands at the top of its range.
+**Bottom line.** 386 vendors, $7,887,000 of accounts-payable spend over 12 months: the base case saves $2,229,000 a year, 28% of spend, $1,209,000 of it in year 1. The high case, $3,097,000, needs every decision and negotiation at the top of its range.
 
 **Context.** Salesforce alone is $3,117,000, about 40% of spend, because our product runs on its platform.
 

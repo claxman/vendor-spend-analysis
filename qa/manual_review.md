@@ -1,19 +1,19 @@
-# Manual review (prompt 20, step 7)
+# Manual review (prompt 20, step 7; described as done in prompt 21, step 8)
 
 Reviewer: Chaitanya Laxman, VP Operations of the acquired business, on November 11, 2026, before submission.
 
 ## What was checked
 
-- The 25 largest rows of the sheet, rows 2 to 26 (the raw file lists the largest spend first, and these are the 25 largest amounts): $6,194,521 of $7,887,360, 78.5% of spend. Each row's department, description, recommendation, rationale and key risk were checked against the source link in column K.
+- The 25 largest rows of the sheet, rows 2 to 26 (the raw file lists the largest spend first, and these are the 25 largest amounts): $6,194,521 of $7,887,360, 78.5% of spend. For 13 of them, the row's department, description, recommendation, rationale and key risk were checked against the source link in column K; the other 12 are well-known vendors, read against the reviewer's own knowledge.
 - The Top 3 and the memo, read line by line.
 
 ## Result
 
 Changes made by the reviewer: none.
 
-## The rows checked
+## The rows reviewed
 
-| Row | Vendor | Spend (USD) | Recommendation | Source checked |
+| Row | Vendor | Spend (USD) | Recommendation | Source link (column K) |
 |---|---|---|---|---|
 | 2 | Salesforce UK Ltd | $3,117,225.89 | Optimize | https://www.salesforce.com/crm/ |
 | 3 | Navan (TripActions Inc) | $357,983.62 | Optimize | https://investors.navan.com/news-releases/news-release-details/tripactions-rebrands-navan |
