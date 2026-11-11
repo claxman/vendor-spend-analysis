@@ -2,7 +2,7 @@
 
 Written by `scripts/merge_validate.py`, which merged the batch files in `outputs/batches/` into `outputs/vendors_classified.csv`, sorted by `vendor_id` (the original sheet order), and ran `qa/check_outputs.py` on it. The report is rebuilt on every run and is not edited by hand: the reason for a row with `verified` FALSE goes in `qa/verification_exceptions.csv`.
 
-**Result: PASS.** All 49 checks passed.
+**Result: PASS.** All 50 checks passed.
 
 ## Counts
 
@@ -310,7 +310,7 @@ Rows per recommendation on each savings lever, with the lever's base saving perc
 
 ## Checks
 
-The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C20, the savings checks V1 to V11 once `outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D4 and the sheet check W1 once the documents and the workbook exist (step 6).
+The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural checks S1 to S6, classification checks C1 to C20, the savings checks V1 to V11 once `outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D5 and the sheet check W1 once the documents and the workbook exist (step 6).
 
 | Check | Result | Rule |
 |---|---|---|
@@ -362,8 +362,9 @@ The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merg
 | D2 | PASS | Every table with a Total row in the documents adds up |
 | D3 | PASS | No project vocabulary (lever, cluster, depends_on, hint, batch) in the Top 3, the memo or the methodology |
 | D4 | PASS | The four documents are in American English: none of the common British forms |
+| D5 | PASS | Every calculation in the Top 3 reproduces from savings.csv: each rate of a spend names one saving line's spend to the dollar, its product is spend times rate to the dollar, and the products and the other lines add to the stated total, which rounds to the opportunity's base saving (step 9) |
 | W1 | PASS | outputs/sheet/Vendor Analysis Assessment - Chaitanya Laxman.xlsx matches its sources cell by cell, keeps the raw row order and the Department dropdown, uses only Config departments, and its saving column sums to the base saving |
 
 ## Failures
 
-None: all 49 checks passed.
+None: all 50 checks passed.

@@ -170,6 +170,12 @@ def thousands(x: float) -> int:
     return int(round(x / 1000.0)) * 1000
 
 
+def dollars(x: float) -> int:
+    """A dollar figure rounded to the nearest dollar, half up, as an integer: the rounding the documents use when a
+    calculation is written out in full (step 9)."""
+    return int(x + 0.5) if x >= 0 else -int(-x + 0.5)
+
+
 def money_k(x: float) -> str:
     return money(thousands(x))
 ROLLUP_LABELS = {"opportunity": "Opportunity", "cost_cluster": "Cost cluster", "lever": "Lever"}

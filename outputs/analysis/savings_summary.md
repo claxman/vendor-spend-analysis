@@ -61,6 +61,44 @@ The two decisions the memo asks for, valued as in the Opportunities table (base 
 | The two decisions together | $903,000 |
 | Cost of each month of delay, one twelfth of the two together | $75,000 |
 
+## Calculations that reproduce
+
+For the three opportunities the Top 3 presents: each saving line's spend to the dollar, its base rate, and its saving as spend times rate rounded to the dollar, so that the Top 3 can state every calculation and a reader can reproduce it. An opportunity with more than four lines names its three largest and groups the rest in one row. Each Total is the sum of the rounded rows above it, and the rounded figure is the one the Opportunities table shows.
+
+### Salesforce platform agreement
+
+| Saving line | Spend | Rate | Saving |
+|---|---|---|---|
+| Salesforce platform agreement | $3,117,226 | 15% | $467,584 |
+| PDF Butler OEM pricing | $208,675 | 20% | $41,735 |
+| Kimble PSA licences | $52,825 | 10% | $5,283 |
+| Slack and Yoxel inside the Salesforce renewal | $4,033 | 0% | $0 |
+| Total | $3,382,759 |  | $514,602 |
+
+Rounded to the nearest $1,000: $515,000.
+
+### Office exit
+
+| Saving line | Spend | Rate | Saving |
+|---|---|---|---|
+| Office footprint | $837,043 | 75% | $627,782 |
+| Office running costs | $59,297 | 70% | $41,508 |
+| Total | $896,340 |  | $669,290 |
+
+Rounded to the nearest $1,000: $669,000.
+
+### Back office into group shared services
+
+| Saving line | Spend | Rate | Saving |
+|---|---|---|---|
+| Audit, tax and accounting firms | $553,641 | 35% | $193,774 |
+| Recruitment agencies and job boards | $149,179 | 100% | $149,179 |
+| HR and finance systems | $101,762 | 80% | $81,410 |
+| The other 12 lines together | $945,812 | 0% to 80% | $229,093 |
+| Total | $1,750,394 |  | $653,456 |
+
+Rounded to the nearest $1,000: $653,000.
+
 ## Spend that falls away without action
 
 Deal and one-off costs that end on their own; they carry no saving in the model.

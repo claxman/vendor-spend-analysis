@@ -46,8 +46,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from savings_model import (  # noqa: E402
-    MNA_CLUSTER, MONEY_COLUMNS, ROLLUP_HEADINGS, SAVING_COLUMNS, SAVINGS_COLUMNS, format_row, load_register,
-    render_rollup_sections, rollup, saving_row, to_float, totals as savings_totals,
+    MNA_CLUSTER, MONEY_COLUMNS, ROLLUP_HEADINGS, SAVING_COLUMNS, SAVINGS_COLUMNS, dollars, format_row, load_register,
+    render_rollup_sections, rollup, saving_row, thousands, to_float, totals as savings_totals,
 )
 from vsa_common import (  # noqa: E402
     EM_DASH, EN_DASH, LINK_GROUPS, MERGE_GROUPS, money, names_group, rel, section_rows, strip_accents,
@@ -631,8 +631,102 @@ def allowed_figures() -> set[str]:
     return found
 
 
-def document_checks(res: Results, docs: dict[Path, str], allowed: set[str]) -> None:
-    """D1 to D4 on the documents: {path: text}."""
+# ---------------------------------------------------------------- the Top 3 calculations (step 9, prompt 22)
+
+TOP3_NAME = "top3_opportunities.md"
+# "75% of the $837,043 of leases and coworking ($627,782)" or "15% off the $3,117,226 platform agreement ($467,584)":
+# the rate, the spend and the product, with nothing else priced in between.
+CALC_RE = re.compile(r"(\d+)% (?:of|off) (?:the )?\$([\d,]+)[^$()]*\(\$([\d,]+)\)")
+REST_RE = re.compile(r"\bother (\w+) lines[^$()]*\(\$([\d,]+)\)")
+TOTAL_RE = re.compile(r": \$([\d,]+) a year, \$([\d,]+) rounded")
+BASE_LINE_RE = re.compile(r"Estimated annual saving \(USD, base case\): \$([\d,]+)")
+NUMBER_WORDS = {w: i for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen "
+    "eighteen nineteen twenty".split())}
+
+
+def as_dollars(s: str) -> int:
+    return int(s.replace(",", ""))
+
+
+def as_count(word: str) -> int | None:
+    return int(word) if word.isdigit() else NUMBER_WORDS.get(word.lower())
+
+
+def calculation_problems(text: str, srows: list[dict]) -> list[str]:
+    """Every '## n.' section of the Top 3 against savings.csv. Each 'R% of $spend ... ($product)' statement must name
+    exactly one saving line of the section's opportunity (the same rate, the same spend to the dollar), and its product
+    must be that line's spend times rate rounded to the dollar. Lines the statements leave out must appear as 'the other
+    N lines ... ($rest)' with their base saving to the dollar, unless they save nothing. The products and the rest add
+    to the stated '$total a year, $rounded rounded', and the rounded figure is the section's base saving, which is the
+    opportunity's base to the nearest $1,000."""
+    lines_by_opp: dict[str, dict[str, dict]] = {}
+    for s in srows:
+        d = lines_by_opp.setdefault(s["opportunity"], {}).setdefault(
+            s["lever"], {"spend": 0.0, "base": 0.0, "pct": int(float(s["pct_base"]))})
+        d["spend"] += to_float(s["spend_12m"])
+        d["base"] += to_float(s["saving_base"])
+    base_by_opp = {o: sum(d["base"] for d in lines.values()) for o, lines in lines_by_opp.items()}
+    sections = [s for s in re.split(r"\n(?=## \d+\. )", text) if s.startswith("## ")]
+    if not sections:
+        return ["no numbered opportunity sections"]
+    problems = []
+    for sec in sections:
+        title = sec.splitlines()[0][3:].strip()
+        m = BASE_LINE_RE.search(sec)
+        if not m:
+            problems.append(f"{title}: no base saving line")
+            continue
+        stated_base = as_dollars(m.group(1))
+        opps = [o for o, b in base_by_opp.items() if thousands(b) == stated_base]
+        if len(opps) != 1:
+            problems.append(f"{title}: a base saving of ${stated_base:,} matches {len(opps)} opportunities in savings.csv")
+            continue
+        lines = lines_by_opp[opps[0]]
+        calcs = CALC_RE.findall(sec)
+        if not calcs:
+            problems.append(f"{title}: no calculation (a rate of a spend with its product)")
+            continue
+        matched: list[str] = []
+        parts: list[int] = []
+        for rate, spend, product in calcs:
+            rate, spend, product = int(rate), as_dollars(spend), as_dollars(product)
+            hits = [n for n, d in lines.items() if d["pct"] == rate and dollars(d["spend"]) == spend and n not in matched]
+            if len(hits) != 1:
+                problems.append(f"{title}: {rate}% of ${spend:,} names {len(hits)} saving lines")
+                continue
+            matched.append(hits[0])
+            want = dollars(lines[hits[0]]["spend"] * rate / 100)
+            if want != product:
+                problems.append(f"{title}: {rate}% of ${spend:,} is ${want:,}, stated ${product:,}")
+            parts.append(product)
+        rest_lines = [n for n in lines if n not in matched]
+        rest_base = dollars(sum(lines[n]["base"] for n in rest_lines))
+        rest = REST_RE.search(sec)
+        if rest:
+            count, stated_rest = as_count(rest.group(1)), as_dollars(rest.group(2))
+            if count != len(rest_lines):
+                problems.append(f"{title}: 'the other {rest.group(1)} lines' against {len(rest_lines)} lines left")
+            if stated_rest != rest_base:
+                problems.append(f"{title}: the other lines save ${rest_base:,}, stated ${stated_rest:,}")
+            parts.append(stated_rest)
+        elif rest_base:
+            problems.append(f"{title}: {len(rest_lines)} saving lines worth ${rest_base:,} are not stated")
+        t = TOTAL_RE.search(sec)
+        if not t:
+            problems.append(f"{title}: no '$total a year, $rounded rounded' statement")
+            continue
+        total, rounded = as_dollars(t.group(1)), as_dollars(t.group(2))
+        if sum(parts) != total:
+            problems.append(f"{title}: the parts add to ${sum(parts):,}, stated ${total:,}")
+        if thousands(total) != rounded or rounded != stated_base:
+            problems.append(f"{title}: ${total:,} rounds to ${thousands(total):,}, stated ${rounded:,} against a base of "
+                            f"${stated_base:,}")
+    return problems
+
+
+def document_checks(res: Results, docs: dict[Path, str], allowed: set[str], srows: list[dict] | None = None) -> None:
+    """D1 to D5 on the documents: {path: text}; D5 needs the savings rows."""
     bad = [f"{rel(p)}: {', '.join(figure_problems(t, allowed)[:4])}" for p, t in docs.items() if figure_problems(t, allowed)]
     res.add("D1", "Every dollar figure and percentage in the four documents appears in a file under outputs/analysis or qa "
                   "(savings_summary.md first)", not bad, f"bad: {sample(bad) or 'none'}")
@@ -646,6 +740,15 @@ def document_checks(res: Results, docs: dict[Path, str], allowed: set[str]) -> N
            for p, t in docs.items() if BRITISH.search(t)]
     res.add("D4", "The four documents are in American English: none of the common British forms", not bad,
             f"bad: {sample(bad) or 'none'}")
+    top3 = next((t for p, t in docs.items() if p.name == TOP3_NAME), None)
+    title = ("Every calculation in the Top 3 reproduces from savings.csv: each rate of a spend names one saving line's "
+             "spend to the dollar, its product is spend times rate to the dollar, and the products and the other lines add "
+             "to the stated total, which rounds to the opportunity's base saving (step 9)")
+    if srows is None or top3 is None:
+        res.add("D5", title, None, "savings.csv or the Top 3 not produced yet")
+    else:
+        bad = calculation_problems(top3, srows)
+        res.add("D5", title, not bad, f"bad: {sample(bad) or 'none'}")
 
 
 def sheet_builder():
@@ -1306,27 +1409,54 @@ def self_test(clean: list[dict]) -> bool:
         all_ok &= caught
         print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
               f" (checks failing: {', '.join(res.failed()) or 'none'})")
-    # The document checks, on a synthetic document and a synthetic set of allowed figures.
+    # The document checks, on synthetic documents and a synthetic set of allowed figures: a Top 3 whose calculations
+    # reproduce from synthetic savings rows (D5), and a plain document for the other three.
     clean_doc = ("Spend was $7,887,000 and the base saving $2,229,000 (28%).\n\n| Move | Base | Year 1 |\n|---|---|---|\n"
                  "| Offices | $1,000 | $500 |\n| Audit | $2,000 | $700 |\n| Total | $3,000 | $1,200 |\n")
-    allowed = {"$7,887,000", "$2,229,000", "28%", "$1,000", "$2,000", "$3,000", "$500", "$700", "$1,200"}
+    calc_doc = ("# Top 3\n\n## 1. Offices\n\nThe model ends 75% of the $837,043 of leases ($627,782) and 70% of the $59,297 "
+                "of running costs ($41,508): $669,290 a year, $669,000 rounded.\n\n"
+                "Estimated annual saving (USD, base case): $669,000\n")
+    calc_rows = [
+        {"vendor_id": "S1", "opportunity": "Office exit", "lever": "Leases", "spend_12m": "837042.75", "pct_base": "75",
+         "saving_base": "627782.0625"},
+        {"vendor_id": "S2", "opportunity": "Office exit", "lever": "Running costs", "spend_12m": "59296.81",
+         "pct_base": "70", "saving_base": "41507.767"},
+    ]
+    left_out = {"vendor_id": "S3", "opportunity": "Office exit", "lever": "Parking", "spend_12m": "1000", "pct_base": "10",
+                "saving_base": "100"}
+    allowed = {"$7,887,000", "$2,229,000", "28%", "$1,000", "$2,000", "$3,000", "$500", "$700", "$1,200",
+               "$837,043", "$627,782", "$59,297", "$41,508", "$669,290", "$669,000", "75%", "70%"}
+
+    def doc_set(top3: str, other: str) -> dict:
+        return {p: (top3 if p.name == TOP3_NAME else other) for p in DOCUMENTS}
+
     doc_cases = [
-        ("Figure that no analysis file carries", clean_doc.replace("$2,229,000", "$2,300,000"), "D1"),
-        ("Percentage that no analysis file carries", clean_doc.replace("(28%)", "(29%)"), "D1"),
-        ("Table whose Total does not add up", clean_doc.replace("| Total | $3,000 |", "| Total | $4,000 |"), "D2"),
-        ("Project vocabulary in the memo", clean_doc.replace("base saving", "lever"), "D3"),
-        ("British form in a document", clean_doc.replace("Spend was", "Spend was optimised at"), "D4"),
+        ("Figure that no analysis file carries", doc_set(calc_doc, clean_doc.replace("$2,229,000", "$2,300,000")),
+         calc_rows, "D1"),
+        ("Percentage that no analysis file carries", doc_set(calc_doc, clean_doc.replace("(28%)", "(29%)")), calc_rows, "D1"),
+        ("Table whose Total does not add up",
+         doc_set(calc_doc, clean_doc.replace("| Total | $3,000 |", "| Total | $4,000 |")), calc_rows, "D2"),
+        ("Project vocabulary in the memo", doc_set(calc_doc, clean_doc.replace("base saving", "lever")), calc_rows, "D3"),
+        ("British form in a document", doc_set(calc_doc, clean_doc.replace("Spend was", "Spend was optimised at")),
+         calc_rows, "D4"),
+        ("Calculation whose product is not spend times rate",
+         doc_set(calc_doc.replace("($627,782)", "($627,783)"), clean_doc), calc_rows, "D5"),
+        ("Calculation whose spend is no saving line's", doc_set(calc_doc.replace("$837,043", "$837,044"), clean_doc),
+         calc_rows, "D5"),
+        ("Products that do not add to the stated total",
+         doc_set(calc_doc.replace("$669,290 a year", "$669,291 a year"), clean_doc), calc_rows, "D5"),
+        ("Saving line left out of the calculation", doc_set(calc_doc, clean_doc), calc_rows + [left_out], "D5"),
     ]
     res = Results()
-    document_checks(res, {p: clean_doc for p in DOCUMENTS}, allowed)
+    document_checks(res, doc_set(calc_doc, clean_doc), allowed, calc_rows)
     doc_clean = not res.failed()
     all_ok &= doc_clean
-    print(f"{'PASS' if doc_clean else 'FAIL'}    a synthetic document whose figures all appear in the allowed set, whose table "
-          f"adds up and whose text is plain American English passes D1 to D4"
+    print(f"{'PASS' if doc_clean else 'FAIL'}    synthetic documents whose figures all appear in the allowed set, whose table "
+          f"adds up, whose text is plain American English and whose Top 3 calculation reproduces pass D1 to D5"
           + ("" if doc_clean else f" (failed: {', '.join(res.failed())})"))
-    for title, text, expected in doc_cases:
+    for title, docs, srows, expected in doc_cases:
         res = Results()
-        document_checks(res, {p: text for p in DOCUMENTS}, allowed)
+        document_checks(res, docs, allowed, srows)
         caught = expected in res.failed()
         all_ok &= caught
         print(f"{'PASS' if caught else 'FAIL'}    planted error caught by {expected}: {title}"
@@ -1358,9 +1488,10 @@ def run(classified: Path = CLASSIFIED, report: Path = VALIDATION_REPORT, savings
     else:
         res.add("C*", "Classification checks C1 to C20", None, f"{rel(classified)} not produced yet")
     if documents and all(p.exists() for p in DOCUMENTS):
-        document_checks(res, {p: p.read_text(encoding="utf-8") for p in DOCUMENTS}, allowed_figures())
+        document_checks(res, {p: p.read_text(encoding="utf-8") for p in DOCUMENTS}, allowed_figures(),
+                        read_csv(savings) if savings.exists() else None)
     elif documents:
-        res.add("D*", "Document checks D1 to D4", None, "not every document is written yet")
+        res.add("D*", "Document checks D1 to D5", None, "not every document is written yet")
     if documents and SHEET.exists() and SHEET_BUILDER.exists():
         sheet_check(res, SHEET)
     elif documents:

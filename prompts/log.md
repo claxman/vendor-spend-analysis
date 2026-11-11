@@ -429,3 +429,23 @@ Append this prompt to prompts/log.md as prompt 21. Wording corrections, then reb
 
 Rebuild the documents and the workbook, run all checks and both self-tests, re-run the memo page check, commit as "Step 8: wording corrections" and push. Print the changed lines and the page-check result.
 ```
+
+## Prompt 22 (2026-11-11)
+
+```text
+Append this prompt to prompts/log.md as prompt 22. Last corrections; the rules of prompt 19 still apply.
+
+1. Top 3, the calculations must reproduce. As written, a reader who multiplies gets a different answer (75% of $896,000 is $672,000, not $669,000; 15% of $3,117,000 is $468,000, not $515,000). State each calculation with its own base and rate, from the savings files:
+   - Offices: the lease and coworking spend at 75% and the running costs at 70%, with both spend figures, so the two products add to the saving shown.
+   - Salesforce: 15% of the platform agreement, 20% of the document app and 10% of the PSA tool, with each spend figure, adding to the saving shown.
+   - Back office: name the three largest lines with spend, rate and saving (audit and accounting, recruiters, finance and HR systems), and the rest as one figure, adding to the saving shown.
+   Explanations may run to 120 words. Add a check that recomputes every "rate of spend" statement in the Top 3 from savings.csv and fails if the rounded product does not match.
+2. Memo, the Scale line: replace it with one sentence that states what the saving is worth rather than calling it modest: the base saving as a share of this business's third-party spend, that it falls straight to operating profit, and that the same review repeats on every acquisition. The word limit outside the table is now 380; keep one page.
+3. Methodology, two lines under Approach, and the word limit is now 450:
+   - The department rule in one sentence: the Config list names company functions, so SaaS is read as the function that runs the hosted product (platform, hosting, monitoring); company-wide software sits in G&A as corporate IT and function-specific software with its function.
+   - Config has no HR or IT department, so HR, recruiting, travel, benefits, insurance and corporate IT sit in G&A, which is why it holds the most rows.
+   Reword the tools line to "Claude Opus 5.5 through the classification step, Claude Fable 5.1 after it."
+4. README: under "What this is", add the two deliverable links: the Google Sheet https://docs.google.com/spreadsheets/d/1LBowVBvWB4T5Ii1-9YZGiAOpO9L_ngidNbsS86yXrgQ and the memo https://docs.google.com/document/d/1ZVG70hx3l9UNfTCQIN2medwAudMVrYi-nsck-Ck9fN0. Update the prompt count wherever it is stated and add this step to the README table.
+
+Rebuild the documents and the workbook, run all checks and both self-tests and the memo page check, commit as "Step 9: calculations that reproduce" and push. Print the three Top 3 explanations, the new Scale line, the new methodology lines, and the memo word count and page result.
+```

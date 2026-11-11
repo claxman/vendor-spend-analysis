@@ -36,4 +36,4 @@
 
 **Not counted:** $274,000 of deal and one-off costs that fall away on their own.
 
-**Scale.** Modest against group revenue; the value is a review that repeats on every acquisition.
+**Scale.** $2,229,000 a year is 28% of this business's third-party spend; it falls straight to operating profit, and the same review repeats on every acquisition.

@@ -5,8 +5,8 @@ file that fits one US Letter page.
 US Letter, 0.75 inch margins, Calibri 10.5 point, single spacing with 2 points after each paragraph and no blank
 lines; To, From and Date on one line and the Subject on the next (as in memo.md); the memo's table as a real table
 with fixed column widths of 3.4, 1.0, 1.0 and 1.6 inches, set in the table grid and in every cell, 9.5-point cells,
-so that every row fits on one line. Prints the word count outside the table, which the memo keeps at or under 360
-(exit code 1 above it). qa/memo_page_check.py renders the file to PDF and confirms the page count.
+so that every row fits on one line. Prints the word count outside the table, which the memo keeps at or under 380
+(the limit of prompt 22, step 9; exit code 1 above it). qa/memo_page_check.py renders the file to PDF and confirms the page count.
 
 Usage:
     python scripts/06_build_memo_docx.py
@@ -29,7 +29,7 @@ from vsa_common import rel  # noqa: E402
 
 MEMO_MD = ROOT / "outputs" / "memo.md"
 MEMO_DOCX = ROOT / "outputs" / "memo.docx"
-WORD_LIMIT = 360
+WORD_LIMIT = 380
 PAGE_WIDTH, PAGE_HEIGHT, MARGIN = Inches(8.5), Inches(11), Inches(0.75)
 COLUMN_WIDTHS = [Inches(3.4), Inches(1.0), Inches(1.0), Inches(1.6)]   # 7.0 inches, the text width
 BODY_PT, TABLE_PT, TITLE_PT = 10.5, 9.5, 12

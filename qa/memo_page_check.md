@@ -9,13 +9,13 @@ How it was checked: Microsoft Word on this machine refuses the AppleScript save-
 | Page size | 8.5 by 11.0 in (US Letter) |
 | Pages (PDFKit) | 1 |
 | Pages (objects in the PDF) | 1 |
-| Text lines on the page | 36 |
-| Bottom of the lowest line, from the bottom of the page | 193.6 pt |
+| Text lines on the page | 37 |
+| Bottom of the lowest line, from the bottom of the page | 180.6 pt |
 | Bottom margin | 54 pt |
-| Space left below the last line | 139.6 pt, 1.94 in |
-| Lines to spare at 10.5 pt with 2 pt after (14.8 pt a line) | 9.4 (at least 8 required) |
+| Space left below the last line | 126.6 pt, 1.76 in |
+| Lines to spare at 10.5 pt with 2 pt after (14.8 pt a line) | 8.5 (at least 8 required) |
 | Header line (To, From, Date) on one line | yes |
 | Table row pitch, amount to next amount (pt) | 17.4, 17.4, 17.4, 17.4 |
 | Every table row on one line (pitch under 20 pt, last cell level with the amount) | yes |
 
-Result: PASS: the memo is 1 page with 9.4 lines to spare.
+Result: PASS: the memo is 1 page with 8.5 lines to spare.

@@ -343,7 +343,7 @@ def render(m: dict, clean: list[dict], paths: dict, items: list | None) -> str:
     else:
         lines += ["The merge checks M1 to M7 on the batches, then `qa/check_outputs.py` on the merged file: structural "
                   "checks S1 to S6, classification checks C1 to C20, the savings checks V1 to V11 once "
-                  "`outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D4 and the sheet "
+                  "`outputs/analysis/savings.csv` exists (steps 4 and 5), and the document checks D1 to D5 and the sheet "
                   "check W1 once the documents and the workbook exist (step 6).", "",
                   *table(["Check", "Result", "Rule"], [[cid, status, rule] for cid, status, rule, _ in items]), ""]
     lines += ["## Failures", ""]

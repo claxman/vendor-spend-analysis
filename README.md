@@ -4,6 +4,8 @@
 
 A review of the acquired business's third-party vendor spend for an acquisition due diligence: 386 vendor rows and $7,887,000 of spend over 12 months, each row classified, verified online and given a recommendation, with a savings model, a second-pass review, and the documents for the CEO and CFO of the group. The outputs were produced in one Claude Code session, prompt by prompt, with the prompts that directed the analysis logged, every step committed and every figure computed by a script from the data.
 
+Deliverables: the Google Sheet, https://docs.google.com/spreadsheets/d/1LBowVBvWB4T5Ii1-9YZGiAOpO9L_ngidNbsS86yXrgQ, and the memo, https://docs.google.com/document/d/1ZVG70hx3l9UNfTCQIN2medwAudMVrYi-nsck-Ck9fN0.
+
 ## Results in five lines
 
 - Base-case run-rate saving of $2,229,000 a year, 28% of spend, in a range of $1,566,000 to $3,097,000; $1,209,000 lands in year 1.
@@ -30,7 +32,8 @@ A review of the acquired business's third-party vendor spend for an acquisition 
 | 5 | 18 | `13e3708` | Second-pass review (all rows, then 142 fresh web checks), the working files kept, reader-facing text |
 | 6 | 19 | `2c3abf2` | Presentation figures, the Top 3, the memo, this README, the methodology and the sheet workbook |
 | 7 | 20 | `6db69ff` | Final corrections: the memo on one page, decision-led rationales, the workbook's saving columns, the manual review |
-| 8 | 21 | this commit | Wording corrections: the memo's subject line, how the classification lines were written, the manual review as done, the prompt count |
+| 8 | 21 | `07ab5fb` | Wording corrections: the memo's subject line, how the classification lines were written, the manual review as done, the prompt count |
+| 9 | 22 | this commit | Calculations that reproduce: each Top 3 calculation written out in whole dollars and recomputed by a check, the memo's Scale line, the department rule in the methodology, the deliverable links |
 
 The decisions behind each step are in `docs/decisions.md`; the prompts are in `prompts/log.md`, in the order given.
 
@@ -53,7 +56,7 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are in `p
 - `scripts/merge_validate.py`: merges the batches, runs every check, writes `qa/validation_report.md`.
 - `scripts/savings_model.py`, `03_savings.py`: the savings model and its outputs. `04_insights.py`: the insights.
 - `scripts/05_build_sheet.py`: the workbook and its read-back check. `06_build_memo_docx.py`: the memo as a Word file.
-- `qa/check_outputs.py`: the checks (M1 to M7, S1 to S6, C1 to C20, V1 to V11, D1 to D4, W1) and the planted-error self-test. `qa/memo_page_check.py`: renders the memo to PDF with Pages, reads it back with macOS PDFKit and confirms the page count and the lines to spare (`qa/memo_page_check.md`).
+- `qa/check_outputs.py`: the checks (M1 to M7, S1 to S6, C1 to C20, V1 to V11, D1 to D5, W1) and the planted-error self-test. `qa/memo_page_check.py`: renders the memo to PDF with Pages, reads it back with macOS PDFKit and confirms the page count and the lines to spare (`qa/memo_page_check.md`).
 - `qa/validation_report.md`: the result of every check, the distributions and the cross-tab of recommendation by saving line.
 - `qa/verification_log.csv`, `qa/verification_exceptions.csv`: every web lookup, and the reason for each unconfirmed row.
 - `qa/vendor_groups.csv`, `qa/name_changes.csv`: the merge map and the name repairs.
@@ -61,7 +64,7 @@ The decisions behind each step are in `docs/decisions.md`; the prompts are in `p
 - `qa/manual_review.md`: the VP Operations' own check of the 25 largest rows (13 against their source links, 12 well-known vendors against the reviewer's own knowledge), and of the Top 3 and the memo, before submission.
 - `qa/research/`: the research inputs, findings, logs and failed attempts of step 3, with a README; `qa/classification_lines/`: the per-batch classification lines the builder read.
 - `docs/taxonomy.md`, `clusters.md`, `recommendation_rules.md`, `vendor_hints.md`, `savings_assumptions.md`: the rules the classification and the model follow. `docs/decisions.md`: every decision, newest first, with the open questions for Finance.
-- `prompts/log.md`: the 21 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
+- `prompts/log.md`: the 22 prompts, in the order given (one housekeeping omission is marked in place). `prompts/research_brief.md`: the brief the research agents worked from.
 
 ## How to re-run
 
@@ -87,7 +90,7 @@ The classification lines in `qa/classification_lines/` were written by Claude Co
 
 ## Quality checks and evidence
 
-- Every build runs 49 checks: the merge (M1 to M7), the rule documents (S1 to S6), the classification (C1 to C20: allowed values, one-sentence rationales, banned phrases, risk notes, every recorded decision, no project workings in the reader-facing text, American English), the savings model (V1 to V11: ranges, tags, one saving line per row, roll-ups to the cent, recommendation against saving rate, the group function first in every rationale that rests on a group decision, a reason on every Terminate row that saves under half its spend), the documents (D1 to D4: every figure traceable, every table adds up, no project vocabulary, American English) and the workbook (W1). Results: `qa/validation_report.md`.
+- Every build runs 50 checks: the merge (M1 to M7), the rule documents (S1 to S6), the classification (C1 to C20: allowed values, one-sentence rationales, banned phrases, risk notes, every recorded decision, no project workings in the reader-facing text, American English), the savings model (V1 to V11: ranges, tags, one saving line per row, roll-ups to the cent, recommendation against saving rate, the group function first in every rationale that rests on a group decision, a reason on every Terminate row that saves under half its spend), the documents (D1 to D5: every figure traceable, every table adds up, no project vocabulary, American English, every calculation in the Top 3 recomputed from the savings file) and the workbook (W1). Results: `qa/validation_report.md`.
 - Planted-error self-tests show that each check catches what it should (`qa/check_outputs.py --self-test`, `scripts/merge_validate.py --self-test`).
 - Web verification: `qa/verification_log.csv` (every lookup), `qa/verification_exceptions.csv` (the 67 unconfirmed rows), `qa/research/` (the agents' findings).
 - Second-pass review: `qa/second_pass_review.csv` and `qa/second_pass_report.md`.

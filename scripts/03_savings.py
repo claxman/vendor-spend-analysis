@@ -36,7 +36,7 @@ sys.path.insert(0, str(ROOT / "qa"))
 import check_outputs  # noqa: E402
 from savings_model import (  # noqa: E402
     ANALYST_CALLS, FALLS_AWAY_LEVERS, MONEY_COLUMNS, MUST_NOT_CUT, OPPORTUNITIES, PCT_COLUMNS, REGISTER, SAVING_COLUMNS,
-    SAVINGS_COLUMNS, build, decision_values, money_k, reconciliation, render_rollup_sections, rollup, thousands,
+    SAVINGS_COLUMNS, build, decision_values, dollars, money_k, reconciliation, render_rollup_sections, rollup, thousands,
     to_float, totals,
 )
 from vsa_common import money, pct, rel, table, write_text  # noqa: E402
@@ -52,6 +52,36 @@ LARGEST_VENDOR = "V0002"
 
 def whole_pct(part: float, whole: float) -> str:
     return f"{round(100 * part / whole):d}%" if whole else "n/a"
+
+
+NAMED_LINES = 3   # an opportunity with more lines than NAMED_LINES + 1 names its largest three and groups the rest
+
+
+def calculation_table(srows: list[dict], opp: str) -> list[str]:
+    """Step 9 (prompt 22): the calculation behind one opportunity in whole dollars, so that the Top 3 can state it and
+    a reader can reproduce it. One row per saving line: its spend to the dollar, its base rate, and spend times rate
+    rounded to the dollar; the three largest lines and the rest as one row where there are more than four; a Total
+    that is the sum of the rounded rows; and the figure rounded to the nearest $1,000, as the Opportunities table
+    shows it. qa/check_outputs.py (D5) recomputes every calculation the Top 3 states from savings.csv."""
+    per: dict[str, dict] = {}
+    for s in srows:
+        if s["opportunity"] != opp:
+            continue
+        d = per.setdefault(s["lever"], {"spend": 0.0, "base": 0.0, "pct": int(float(s["pct_base"]))})
+        d["spend"] += to_float(s["spend_12m"])
+        d["base"] += to_float(s["saving_base"])
+    ordered = sorted(per.items(), key=lambda kv: (-kv[1]["base"], kv[0]))
+    named, rest = (ordered, []) if len(ordered) <= NAMED_LINES + 1 else (ordered[:NAMED_LINES], ordered[NAMED_LINES:])
+    body = [[name, dollars(d["spend"]), f"{d['pct']}%", dollars(d["spend"] * d["pct"] / 100)] for name, d in named]
+    if rest:
+        rates = sorted({d["pct"] for _, d in rest})
+        body.append([f"The other {len(rest)} lines together", dollars(math.fsum(d["spend"] for _, d in rest)),
+                     f"{rates[0]}% to {rates[-1]}%", dollars(math.fsum(d["base"] for _, d in rest))])
+    exact = math.fsum(d["base"] for _, d in ordered)
+    out = [[n, money(sp), r, money(sv)] for n, sp, r, sv in body]
+    out.append(["Total", money(sum(b[1] for b in body)), "", money(sum(b[3] for b in body))])
+    return [f"### {opp}", "", *table(["Saving line", "Spend", "Rate", "Saving"], out), "",
+            f"Rounded to the nearest $1,000: {money(thousands(exact))}."]
 
 
 def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], levers: dict[str, dict]) -> str:
@@ -137,7 +167,15 @@ def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], le
                       ["The two decisions together", money(two)],
                       ["Cost of each month of delay, one twelfth of the two together", money(thousands(two / 12))],
                   ])]
-    falls = [(name, thousands(by_lever[name]["spend"]), by_lever[name]["rows"]) for name in FALLS_AWAY_LEVERS if name in by_lever]
+    lines += ["", "## Calculations that reproduce", "",
+              "For the three opportunities the Top 3 presents: each saving line's spend to the dollar, its base rate, and "
+              "its saving as spend times rate rounded to the dollar, so that the Top 3 can state every calculation and a "
+              "reader can reproduce it. An opportunity with more than four lines names its three largest and groups the "
+              "rest in one row. Each Total is the sum of the rounded rows above it, and the rounded figure is the one the "
+              "Opportunities table shows.", ""]
+    for n, opp in enumerate(OPPORTUNITIES[:3]):
+        lines += ([""] if n else []) + calculation_table(srows, opp)
+    falls =[(name, thousands(by_lever[name]["spend"]), by_lever[name]["rows"]) for name in FALLS_AWAY_LEVERS if name in by_lever]
     lines += ["", "## Spend that falls away without action", "",
               "Deal and one-off costs that end on their own; they carry no saving in the model.", "",
               *table(["Spend", "Rows", "Figure"], [[n, r, money(s)] for n, s, r in falls]
