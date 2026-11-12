@@ -104,17 +104,17 @@ Rounded to the nearest $1,000: $653,000.
 
 ## Office exit check
 
-A check of the office assumption from the rows (step 11): what closing every site except the Zagreb lease saves on the Office footprint line, against the share the base case takes.
+A cross-check of the office assumption from the rows (steps 11 and 12): what closing every site except Zagreb, with its lease untouched, would save on the Office footprint line, against the 75% the base case applies evenly to every lease row while keeping the Zagreb hub space, right-sized at the next break.
 
 | Measure | Rows | Figure | Share of the line |
 |---|---|---|---|
 | Leases and coworking, the Office footprint line | 10 | $837,043 | 100% |
 | The Zagreb lease (`V0007` Zagrebtower d.o.o.) | 1 | $183,754 | 22% |
-| Every other site, adviser and charge on the line: what closing every site except the Zagreb lease saves | 9 | $653,289 | 78% |
+| Every other site, adviser and charge on the line: what closing every site except Zagreb, with its lease untouched, would save | 9 | $653,289 | 78% |
 | The base case, 75% of the line |  | $627,782 | 75% |
-| Kept at the base case beyond the Zagreb lease, for registered addresses |  | $25,507 | 3% |
+| Difference between the cross-check and the base case |  | $25,507 | 3% |
 
-Rounded to the nearest $1,000: closing every site except the Zagreb lease saves $653,000 on leases alone, against $628,000 at 75%, so the 75% equals keeping Zagreb whole.
+Rounded to the nearest $1,000: as a cross-check, closing every site except Zagreb with its lease untouched would save $653,000 (78% of the leases), against $628,000 at the 75% applied evenly to every lease row, so the 75% sits just below that.
 
 ## People-linked spend not counted
 

@@ -121,7 +121,7 @@ def outside_platform_rows(opp_lines: list[tuple[str, dict]], tot: dict) -> list[
 
 def office_check_table(srows: list[dict]) -> list[str]:
     """Step 11 (prompt 24): a check of the office assumption from the rows. The Office footprint line's spend, the Zagreb
-    lease, and every other site, adviser and charge on the line (what closing every site except the Zagreb lease saves),
+    lease, and every other site, adviser and charge on the line (what closing every site except Zagreb would save),
     in whole dollars, against the share the base case takes; the line is the lease plus the rest."""
     sel = [s for s in srows if s["lever"] == OFFICE_LEVER]
     zagreb = [s for s in sel if s["vendor_id"] == ZAGREB_LEASE[0]]
@@ -134,14 +134,16 @@ def office_check_table(srows: list[dict]) -> list[str]:
     base = dollars(exact * pct_base / 100)
     body = [[f"Leases and coworking, the {OFFICE_LEVER} line", str(len(sel)), money(line), "100%"],
             [f"The Zagreb lease (`{ZAGREB_LEASE[0]}` {zagreb[0]['vendor_name_clean']})", "1", money(lease), whole_pct(lease, line)],
-            ["Every other site, adviser and charge on the line: what closing every site except the Zagreb lease saves",
+            ["Every other site, adviser and charge on the line: what closing every site except Zagreb, with its lease "
+             "untouched, would save",
              str(len(sel) - 1), money(others), whole_pct(others, line)],
             [f"The base case, {pct_base}% of the line", "", money(base), f"{pct_base}%"],
-            ["Kept at the base case beyond the Zagreb lease, for registered addresses", "", money(others - base),
+            ["Difference between the cross-check and the base case", "", money(others - base),
              whole_pct(others - base, line)]]
     return [*table(["Measure", "Rows", "Figure", "Share of the line"], body), "",
-            f"Rounded to the nearest $1,000: closing every site except the Zagreb lease saves {money(thousands(others))} on "
-            f"leases alone, against {money(thousands(base))} at {pct_base}%, so the {pct_base}% equals keeping Zagreb whole."]
+            f"Rounded to the nearest $1,000: as a cross-check, closing every site except Zagreb with its lease untouched would "
+            f"save {money(thousands(others))} ({whole_pct(others, line)} of the leases), against {money(thousands(base))} at the "
+            f"{pct_base}% applied evenly to every lease row, so the {pct_base}% sits just below that."]
 
 
 def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], levers: dict[str, dict]) -> str:
@@ -237,8 +239,9 @@ def render_summary(srows: list[dict], rows: list[dict], decisions: list[str], le
     for n, opp in enumerate(OPPORTUNITIES[:3]):
         lines += ([""] if n else []) + calculation_table(srows, opp)
     lines += ["", "## Office exit check", "",
-              "A check of the office assumption from the rows (step 11): what closing every site except the Zagreb lease "
-              "saves on the Office footprint line, against the share the base case takes.", "",
+              "A cross-check of the office assumption from the rows (steps 11 and 12): what closing every site except "
+              "Zagreb, with its lease untouched, would save on the Office footprint line, against the 75% the base case "
+              "applies evenly to every lease row while keeping the Zagreb hub space, right-sized at the next break.", "",
               *office_check_table(srows)]
     lines += ["", "## People-linked spend not counted", "",
               "Vendor spend that moves only with the workforce plan, which this review does not count: health and life "

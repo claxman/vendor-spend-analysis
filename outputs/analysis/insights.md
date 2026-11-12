@@ -1,6 +1,6 @@
 # Insights
 
-Written 2026-11-11 by `scripts/04_insights.py` from `outputs/vendors_classified.csv`, `outputs/analysis/savings.csv`, `qa/vendor_groups.csv`, `outputs/analysis/01_forensic_flags.csv`, `qa/verification_exceptions.csv`, `docs/savings_assumptions.md` and `docs/decisions.md`. Every figure is computed from those files and every finding names its rows. Total spend in the file: $7,887,360 across 386 rows and 381 vendors after the 5 merges. Whole dollars; the costs are the file's modified values.
+Written 2026-11-12 by `scripts/04_insights.py` from `outputs/vendors_classified.csv`, `outputs/analysis/savings.csv`, `qa/vendor_groups.csv`, `outputs/analysis/01_forensic_flags.csv`, `qa/verification_exceptions.csv`, `docs/savings_assumptions.md` and `docs/decisions.md`. Every figure is computed from those files and every finding names its rows. Total spend in the file: $7,887,360 across 386 rows and 381 vendors after the 5 merges. Whole dollars; the costs are the file's modified values.
 
 ## 1. Platform dependency and concentration
 

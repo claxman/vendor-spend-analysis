@@ -483,3 +483,26 @@ Append this prompt to prompts/log.md as prompt 24. Run it after prompt 23 is com
 
 Rebuild everything, run all checks, both self-tests and the page check, commit as "Step 11: what the platform bill is" and push. Print the Salesforce explanation, the V0002 row, the new range and totals, the office sentence and the Scale line.
 ```
+
+## Prompt 25 (2026-11-12)
+
+```text
+Append this prompt to prompts/log.md as prompt 25. It corrects one sentence from prompt 24, makes the Salesforce explanation plainer and verifies one statement about the tools. No rate, row saving or total may change: confirm at the end that outputs/analysis/savings.csv is unchanged by this step.
+
+1. Office cross-check. The sentence added in prompt 24, "The 75% equals keeping the Zagreb lease whole", is not exact (closing every other site saves 78% of the lease line, not 75%) and it contradicts row V0007, which keeps Zagreb as the hub and right-sizes it. In the Top 3:
+   - say again that the model keeps one hub space in Zagreb, right-sized at the next break, as row V0007 says;
+   - say that the 75% is applied evenly to every lease row;
+   - give the cross-check as a cross-check: closing every site except Zagreb, with the Zagreb lease untouched, would save $653,000 (78% of the leases), so the 75% sits just below that.
+   Correct the same claim in docs/savings_assumptions.md (the Office footprint reasoning) and in the closing sentence of "Office exit check" in savings_summary.md. "Equals" goes from all three, and none of them says the plan keeps Zagreb whole. The office explanation may run to 140 words.
+
+2. Salesforce explanation in the Top 3: up to 170 words, plain sentences, no chains of semicolons.
+   - Replace "The base is a placeholder between the readings" with what the base is: until the contract shows which reading applies, the base takes the middle of the 5% to 25% range modeled on the platform agreement. Replace "placeholder" the same way in docs/savings_assumptions.md.
+   - State the published rates, from the lookups already logged against V0002: Salesforce's standard share is 15% of net revenue, 25% for embedded apps, and the standard rate was 25% until May 2017. Say that these are what the best rate and the older rate refer to.
+   - Keep the two readings, every calculation in whole dollars, the range, year 1 and the main risk.
+
+3. The methodology and the README say the work ran in one Claude Code session, with one model through the classification step and another after it. Verify both statements against the session records Claude Code keeps on this machine for this folder. State what the records show; where they cannot confirm a statement, remove it rather than leave it.
+
+4. Leave the memo, the vendor tab and every figure as they are. Update the prompt count wherever it is stated and add this step to the README table.
+
+Rebuild everything, run all checks, both self-tests and the page check, commit as "Step 12: office cross-check and platform wording" and push. Print the two Top 3 explanations in full with their word counts, the corrected sentences in the other two files, what the session records showed, and git diff --stat for the step.
+```
