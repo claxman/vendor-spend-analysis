@@ -506,3 +506,22 @@ Append this prompt to prompts/log.md as prompt 25. It corrects one sentence from
 
 Rebuild everything, run all checks, both self-tests and the page check, commit as "Step 12: office cross-check and platform wording" and push. Print the two Top 3 explanations in full with their word counts, the corrected sentences in the other two files, what the session records showed, and git diff --stat for the step.
 ```
+
+## Prompt 26 (2026-11-12)
+
+```text
+Append this prompt to prompts/log.md as prompt 26. It makes four memo lines and four sentences of the Salesforce explanation readable for someone who has not seen the analysis. No figure changes: confirm at the end that outputs/analysis/savings.csv is unchanged.
+
+1. Memo, Decisions needed, first two bullets: say what the dollar figure is. Each decision is worth that much a year more than the fallback the business can do on its own. Use:
+   - "A remote operating model, keeping one hub space: worth $448,000 a year more than the fallback of one flexible provider and trimmed office costs."
+   - "Group shared functions for audit, hiring, legal, payroll, insurance and finance systems: worth $455,000 a year more than the fallback of tenders, re-broking and seat reviews."
+2. Memo, Risks, second bullet: "Retention of the Zagreb engineers: their contractors and office change at once; benefits and a hub space stay."
+3. Memo, Risks, third bullet: say which figure. "Notice periods and exit costs are unknown; year 1 counts half a year of the office saving."
+4. The memo may run to 400 words and must stay on one page with the page check passing. Change nothing else in the memo. Carry the four lines into memo.docx, memo.pdf and the CEOCFO tab of the workbook.
+5. Top 3, Salesforce explanation: keep the first sentence, and keep everything from "Until the contract shows" to the end exactly as it is. Replace the sentences between them with these, in this order:
+   "Such products normally pay Salesforce a partner revenue share, not per-seat licenses. The first question for the contract is which of the two this bill is, and at what rate. Salesforce's published standard share is 15% of net revenue (25% for embedded apps), and it was 25% until May 2017. A revenue share moves with revenue, not seat counts, so the levers are the rate, what counts as net revenue and the company's own seats. The saving is small on the 15% rate and large on an older 25%. Licenses would instead mean a seat true-down and renewal terms."
+   The explanation may run to 185 words.
+6. The methodology may run to 480 words: update the prompt count and the prompt list without trimming other lines. Add this step to the README table.
+
+Rebuild everything, run all checks, both self-tests and the page check, commit as "Step 13: lines a first-time reader can follow" and push. Print the four memo lines, the Salesforce explanation with its word count, the memo word count, the page check result and git diff --stat for the step.
+```

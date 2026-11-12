@@ -21,13 +21,13 @@ Python 3.11, openpyxl, python-docx; Pages rendered the memo to PDF.
 Web search, page fetch; git and GitHub, a commit per step.
 
 ## Prompts
-Twenty-five prompts directed the analysis, logged in prompts/log.md in the order given.
+Twenty-six prompts directed the analysis, logged in prompts/log.md in the order given.
 Prompt 6: taxonomy, recommendation rules, cost groups, 79 analyst notes.
 Prompt 15: classify all rows, a web search and lookup log each.
 Prompt 16: Salesforce as the product platform; URLs naming individuals withheld.
 Prompt 17: the savings assumptions, line by line.
 Prompt 18: the second-pass review; reader-facing text.
-Prompts 19 to 25: documents, workbook, manual review, corrections, calculations, platform bill, cross-checks.
+Prompts 19 to 26: documents, workbook, manual review, corrections, calculations, platform bill, cross-checks, plain lines.
 Research brief: prompts/research_brief.md.
 
 ## Validation and evidence
